@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  redis:
+    image: redis:alpine
+    container_name: redis_cache
+    ports:
+      - '$REDIS_PORT:$REDIS_PORT'
+    volumes:
+      - /tmp/redis/ssv-app-data:/data
+    restart: always
+
+  app:
+    links:
+      - redis
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: sh -c "yarn start:prod:api"
+    volumes:
+      - /tmp/log/ssv-app-api:/opt/app/logs
+    ports:
+      - '$PORT:$PORT'
+    environment:
+      - PORT
+      - NODE_ENV
+      - MONGO_DB
+      - REDIS_HOST=redis_cache
+      - REDIS_PORT
+    restart: on-failure
+
+  worker:
+    links:
+      - redis
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: sh -c "yarn start:prod:worker"
+    ports:
+      - '$WORKER_PORT:$WORKER_PORT'
+    environment:
+      - WORKER_PORT
+      - MONGO_DB
+      - NODE_ENV
+      - REDIS_HOST=redis_cache
+      - REDIS_PORT
+    restart: on-failure
