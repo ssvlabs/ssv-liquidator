@@ -1,30 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, UpdateResult, DeleteResult } from 'typeorm';
 
-import { Validator, ValidatorDocument } from './schema/validator.schema';
+import { Validator } from './validator.entity';
 @Injectable()
 export class ValidatorService {
-  constructor(@InjectModel(Validator.name) private _validatorDocument: Model<ValidatorDocument>) {}
+  constructor(@InjectRepository(Validator) private _validatorRepository: Repository<Validator>) {}
 
-  async saveMany(validators: any): Promise<void> {
-    const bulkUpdateOps = validators.reduce((aggr, event) => {
-      aggr.push({
-        updateOne: {
-          filter: { id: event.id },
-          update: {
-            $set: { ...event },
-          },
-          upsert: true,
-          setDefaultsOnInsert: true,
-        },
-      });
-      return aggr;
-    }, []);
-    await this._validatorDocument.bulkWrite(bulkUpdateOps);
+  async findAll(): Promise<Validator[]> {
+    return await this._validatorRepository.find();
   }
 
-  async list(filter: any): Promise<Validator[]> {
-    return this._validatorDocument.find(filter).lean().exec();
+  async findBy(filters): Promise<Validator[]> {
+    return await this._validatorRepository.find(filters);
+  }
+
+  async create(validator: Validator): Promise<Validator> {
+    return await this._validatorRepository.save(validator);
+  }
+
+  async update(validator: Validator): Promise<UpdateResult> {
+    return await this._validatorRepository.update(validator.id, validator);
+  }
+
+  async delete(id): Promise<DeleteResult> {
+    return await this._validatorRepository.delete(id);
   }
 }

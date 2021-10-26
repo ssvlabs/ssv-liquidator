@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 
 import { ValidatorModule } from '../../modules/validators/validator.module';
@@ -15,14 +15,12 @@ import CronProviders from './cron.provider';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    MongooseModule.forRootAsync({
-      useFactory: (configService: ConfService) => ({
-        uri: configService.get('MONGO_DB'),
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useFindAndModify: false,
-      }),
-      inject: [ConfService],
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: 'db',
+      synchronize: true,
+      logging: false,
+      entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
     }),
     ScheduleModule.forRoot(),
     SharedModule,

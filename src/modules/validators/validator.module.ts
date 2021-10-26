@@ -1,16 +1,14 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { QueueModule } from '../../queues/queue.module';
 import { ValidatorController } from './validator.controller';
 import { ValidatorService } from './validator.service';
-import { Validator, ValidatorSchema } from './schema/validator.schema';
+import { Validator } from './validator.entity';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: Validator.name, schema: ValidatorSchema },
-    ]),
+    TypeOrmModule.forFeature([Validator]),
     QueueModule,
   ],
   controllers: [ValidatorController],

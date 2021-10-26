@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
-import { System, SystemDocument } from './schema/system.schema';
+import { System } from './system.entity';
 
 export enum SystemType {
   VALIDATORS_LAST_BLOCK_NUMBER = 'VALIDATORS_LAST_BLOCK_NUMBER',
@@ -11,16 +11,18 @@ export enum SystemType {
 
 @Injectable()
 export class SystemService {
-  constructor(@InjectModel(System.name) private _systemDocument: Model<SystemDocument>) {}
-
-  async save(type: SystemType, payload: any): Promise<void> {
-    this._systemDocument.findOneAndUpdate({ type }, { $set: { payload } }, { new: true })
-      .lean()
-      .exec();
-  }
+  constructor(@InjectRepository(System) private _systemRepository: Repository<System>) {}
 
   async get(type: SystemType): Promise<any> {
-    const result = await this._systemDocument.findOne({ type }).lean().exec();
-    return result?.payload || {};
+    const result = await this._systemRepository.findOne({ type });
+    return result?.payload;
+  }
+
+  async save(type: SystemType, payload: any): Promise<void> {
+    if (await this.get(type)) {
+      await this._systemRepository.update(type, payload);
+    } else {
+      await this._systemRepository.save({ type, payload });
+    }
   }
 }
