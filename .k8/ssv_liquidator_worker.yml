@@ -3,7 +3,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: ssv-liquidator-worker
-  namespace: ssv
+  namespace: liquidation
 spec:
   accessModes:
     - ReadWriteOnce
