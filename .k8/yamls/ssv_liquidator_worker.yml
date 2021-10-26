@@ -40,12 +40,6 @@ spec:
         - containerPort: 3030
         command: ["/bin/sh"]
         args: ["-c", "yarn start:prod:worker"]
-        volumeMounts:
-        - mountPath: "/data/"
-          name: data
-      volumes:
-      - persistentVolumeClaim:
-          claimName: ssv-liquidator-worker
         env:
         - name: WORKER_PORT
           value: "3030"
@@ -57,4 +51,10 @@ spec:
           value: "6379"
 
        - name: REDIS_PORT
-          value: "stage-ssv-liquidator.mfeph2.0001.usw2.cache.amazonaws.com"            
+          value: "stage-ssv-liquidator.mfeph2.0001.usw2.cache.amazonaws.com"
+        volumeMounts:
+        - mountPath: "/data/"
+          name: data
+      volumes:
+      - persistentVolumeClaim:
+          claimName: ssv-liquidator-worker            
