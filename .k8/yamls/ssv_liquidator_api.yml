@@ -87,7 +87,8 @@ spec:
           value: "stage-ssv-liquidator.mfeph2.0001.usw2.cache.amazonaws.com"
         volumeMounts:
         - mountPath: "/data/"
-          name: data
+          name: ssv-liquidator-api
       volumes:
       - persistentVolumeClaim:
-          claimName: ssv-liquidator-api            
+          claimName: ssv-liquidator-api
+        name: ssv-liquidator-api
