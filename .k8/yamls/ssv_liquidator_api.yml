@@ -1,0 +1,94 @@
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ssv-liquidator-api
+  namespace: REPLACE_NAMESPACE
+spec:
+  hosts:
+  - "ssv-liquidator.REPLACE_DOMAIN_SUFFIX"
+  gateways:
+  - ssv-liquidator-api
+  http:
+  - route:
+    - destination:
+        host: ssv-liquidator-api-svc
+        port:
+          number: 80
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: ssv-liquidator-api
+  namespace: REPLACE_NAMESPACE
+spec:
+  selector:
+    istio: ingressgateway-int
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "ssv-liquidator.REPLACE_DOMAIN_SUFFIX"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ssv-liquidator-api-svc
+  namespace: REPLACE_NAMESPACE 
+  labels:
+    name: ssv-liquidator-api-svc
+spec:
+  type: ClusterIP 
+  ports:
+    - port: 80 
+      protocol: TCP
+      targetPort: 3000
+  selector:
+    app: ssv-liquidator-api
+---
+apiVersion: REPLACE_API_VERSION
+kind: Deployment
+metadata:
+  labels:
+    app: ssv-liquidator-api
+  name: ssv-liquidator-api
+  namespace: REPLACE_NAMESPACE
+spec:
+  replicas: REPLACE_REPLICAS
+  selector:
+    matchLabels:
+      app: ssv-liquidator-api
+  template:
+    metadata:
+      labels:
+        app: ssv-liquidator-api
+    spec:
+      containers:
+      - name: ssv-liquidator-api
+        image: REPLACE_DOCKER_REPO:REPLACE_IMAGETAG
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        command: ["/bin/sh"]
+        args: ["-c", "yarn start:prod:api"]
+        env:
+        - name: PORT
+          value: "3000"
+
+        - name: NODE_ENV
+          value: "stage"
+
+        - name: REDIS_PORT
+          value: "6379"
+
+        - name: REDIS_HOST
+          value: "stage-ssv-liquidator.mfeph2.0001.usw2.cache.amazonaws.com"
+        volumeMounts:
+        - mountPath: "/data/"
+          name: ssv-liquidator-api
+      volumes:
+      - persistentVolumeClaim:
+          claimName: ssv-liquidator-api
+        name: ssv-liquidator-api
