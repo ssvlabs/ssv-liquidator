@@ -26,6 +26,9 @@ services:
       - NODE_ENV
       - REDIS_HOST=redis_cache
       - REDIS_PORT
+      - SSV_NETWORK_ADDRESS
+      - SSV_REGISTRY_ADDRESS
+      - NODE_URL
     restart: on-failure
 
   worker:
@@ -42,4 +45,7 @@ services:
       - NODE_ENV
       - REDIS_HOST=redis_cache
       - REDIS_PORT
+      - SSV_NETWORK_ADDRESS
+      - SSV_REGISTRY_ADDRESS
+      - NODE_URL
     restart: on-failure

@@ -11,7 +11,7 @@ import { ConfService } from '../../../shared/services/conf.service';
 
 const Web3 = require('web3');
 
-const CONTRACT_ABI = require('../../../shared/abi.json');
+const CONTRACT_ABI = require('../../../shared/abi-ssv-network.json');
 @Processor(QueuesEnum.BURN_RATES)
 export class BurnRatesTask {
   constructor(
@@ -26,7 +26,7 @@ export class BurnRatesTask {
     console.log(`syncing burn rate updates events...`);
     try {
       const web3 = new Web3(this._config.get('NODE_URL'));
-      const contract = new web3.eth.Contract(CONTRACT_ABI, this._config.get('CONTRACT_ADDRESS'));
+      const contract = new web3.eth.Contract(CONTRACT_ABI, this._config.get('SSV_NETWORK_ADDRESS'));
       const missedRecords = await this._addressService.findBy({ where: { burnRate: null }, take: 100 });
       const burnRates = await Promise.all(missedRecords.map(({ ownerAddress }) => contract.methods.burnRate(ownerAddress).call()));
       const balances = await Promise.all(missedRecords.map(({ ownerAddress }) => contract.methods.totalBalanceOf(ownerAddress).call()));

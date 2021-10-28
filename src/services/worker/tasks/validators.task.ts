@@ -8,7 +8,7 @@ import { ConfService } from '../../../shared/services/conf.service';
 import UtilsService from '../../../providers/utils.service';
 const Web3 = require('web3');
 
-const CONTRACT_ABI = require('../../../shared/abi.json');
+const CONTRACT_ABI = require('../../../shared/abi-ssv-registry.json');
 @Processor(QueuesEnum.VALIDATORS)
 export class ValidatorsTask {
   constructor(
@@ -22,7 +22,7 @@ export class ValidatorsTask {
     // eslint-disable-next-line no-console
     console.log(`fetching register validator events...`);
     const web3 = new Web3(this._config.get('NODE_URL'));
-    const contract = new web3.eth.Contract(CONTRACT_ABI, this._config.get('CONTRACT_ADDRESS'));
+    const contract = new web3.eth.Contract(CONTRACT_ABI, this._config.get('SSV_REGISTRY_ADDRESS'));
     const latestBlock = await web3.eth.getBlockNumber();
     const fromBlock = await this._systemService.get(SystemType.VALIDATORS_LAST_BLOCK_NUMBER);
     const filters = {
