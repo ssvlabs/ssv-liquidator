@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 
-import { ValidatorService } from '../../../modules/validators/validator.service';
+import { AddressService } from '../../../modules/addresses/address.service';
 import { QueueService } from '../../../queues/queue.service';
 
 @Injectable()
 export class BurnRateCron {
   constructor(
-    private _validatorService: ValidatorService,
+    private _addressService: AddressService,
     private _queuesService: QueueService,
   ) {}
 

@@ -6,7 +6,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { contextMiddleware } from '../../middlewares';
-import { ValidatorModule } from '../../modules/validators/validator.module';
+import { AddressModule } from '../../modules/addresses/address.module';
 import { HealthModule } from '../../modules/health/health.module';
 import { ConfService } from '../../shared/services/conf.service';
 import { SharedModule } from '../../shared/shared.module';
@@ -16,14 +16,14 @@ import { SharedModule } from '../../shared/shared.module';
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: 'db',
+      database: 'local.db',
       synchronize: true,
       logging: false,
       entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
     }),
     SharedModule,
     ScheduleModule.forRoot(),
-    ValidatorModule,
+    AddressModule,
     HealthModule,
   ],
 })

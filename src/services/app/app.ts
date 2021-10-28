@@ -43,7 +43,6 @@ async function bootstrap() {
   );
 
   const configService = app.get(ConfService);
-  console.log('mongo string:', configService.get('MONGO_DB'));
 
   app.connectMicroservice({
     transport: Transport.TCP,
@@ -56,7 +55,7 @@ async function bootstrap() {
 
   await app.startAllMicroservicesAsync();
 
-  if (['development', 'staging'].includes(configService.nodeEnv)) {
+  if (['development', 'stage'].includes(configService.nodeEnv)) {
     setupSwagger(app);
   }
 

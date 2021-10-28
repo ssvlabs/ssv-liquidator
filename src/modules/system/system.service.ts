@@ -15,14 +15,16 @@ export class SystemService {
 
   async get(type: SystemType): Promise<any> {
     const result = await this._systemRepository.findOne({ type });
-    return result?.payload;
+    return result?.payload
+      ? JSON.parse(result.payload)
+      : null;
   }
 
   async save(type: SystemType, payload: any): Promise<void> {
     if (await this.get(type)) {
-      await this._systemRepository.update(type, payload);
+      await this._systemRepository.update(type, { payload: JSON.stringify(payload) });
     } else {
-      await this._systemRepository.save({ type, payload });
+      await this._systemRepository.save({ type, payload: JSON.stringify(payload) });
     }
   }
 }
