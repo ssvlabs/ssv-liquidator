@@ -44,7 +44,6 @@ export class ValidatorsTask {
           }
           return aggr;
         }, {}));
-  
       await Promise.all(UtilsService.toChunks(result, 900).map(chunk => this._addressService.create(chunk)));
       await Promise.all(UtilsService.toChunks(result, 100).map(chunk => this._addressService.saveUsedOperators(chunk)));
   

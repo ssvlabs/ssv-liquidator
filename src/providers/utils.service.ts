@@ -33,7 +33,12 @@ export default class UtilsService {
     * convert raw public key to hashed value
     */
   static convertPublickey(rawValue) {
-    const decoded = (new Web3()).eth.abi.decodeParameter('string', rawValue.replace('0x', ''));
-    return crypto.createHash('sha256').update(decoded).digest('hex');
+    try {
+      const decoded = (new Web3()).eth.abi.decodeParameter('string', rawValue.replace('0x', ''));
+      return crypto.createHash('sha256').update(decoded).digest('hex');
+    } catch (e) {
+      console.warn('PUBKEY WAS NOT CONVERTED DUE TO ', e);
+      return rawValue;
+    }
   }
 }
