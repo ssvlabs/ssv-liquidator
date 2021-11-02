@@ -32,14 +32,14 @@ export class BurnRatesTask {
       const balances = await Promise.allSettled(missedRecords.map(({ ownerAddress }) => contract.methods.totalBalanceOf(ownerAddress).call()));
       console.log("burnRates", burnRates);
       console.log("balances", balances);
-      missedRecords.forEach((record, index) => {
+      for (const [index, record] of missedRecords.entries()) {
         const burnRate = +(burnRates[index] as any).value;
         const balance = +(balances[index] as any).value;
         if (burnRate > 0 && balance > 0) {
           record.burnRate = burnRate;
-          record.liquidateAtBlock = +(balance / burnRate).toFixed(0);
+          record.liquidateAtBlock = await web3.eth.getBlockNumber() + +(balance / burnRate).toFixed(0);
         }
-      });
+      }
       await Promise.all(missedRecords.map(record => this._addressService.update(record)));
     } catch(e) {
       console.log(e);
