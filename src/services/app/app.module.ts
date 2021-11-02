@@ -16,7 +16,7 @@ import { SharedModule } from '../../shared/shared.module';
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: 'local.db',
+      database: __dirname + '/../../../data/local.db',
       synchronize: true,
       logging: false,
       entities: [__dirname + '/../../**/*.entity{.ts,.js}'],

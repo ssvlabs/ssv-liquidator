@@ -10,8 +10,8 @@ export class Address {
   @Column({ default: null })
   burnRate: number;
 
-  @Column({ type: 'date', default: null })
-  liquidateAt: Date;
+  @Column({ default: null })
+  liquidateAtBlock: number;
 
   @CreateDateColumn()
   createdAt: Date;

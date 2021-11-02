@@ -28,15 +28,16 @@ export class BurnRatesTask {
       const web3 = new Web3(this._config.get('NODE_URL'));
       const contract = new web3.eth.Contract(CONTRACT_ABI, this._config.get('SSV_NETWORK_ADDRESS'));
       const missedRecords = await this._addressService.findBy({ where: { burnRate: null }, take: 100 });
-      const burnRates = await Promise.all(missedRecords.map(({ ownerAddress }) => contract.methods.burnRate(ownerAddress).call()));
-      const balances = await Promise.all(missedRecords.map(({ ownerAddress }) => contract.methods.totalBalanceOf(ownerAddress).call()));
+      const burnRates = await Promise.allSettled(missedRecords.map(({ ownerAddress }) => contract.methods.burnRate(ownerAddress).call()));
+      const balances = await Promise.allSettled(missedRecords.map(({ ownerAddress }) => contract.methods.totalBalanceOf(ownerAddress).call()));
       console.log("burnRates", burnRates);
       console.log("balances", balances);
       missedRecords.forEach((record, index) => {
-        if (+burnRates[index] > 0) {
-          record.burnRate = +burnRates[index];
-          const daysToLiquidate = +(+balances[index] / +burnRates[index]).toFixed(0);
-          record.liquidateAt = moment().add(daysToLiquidate, 'days').toDate();  
+        const burnRate = +(burnRates[index] as any).value;
+        const balance = +(balances[index] as any).value;
+        if (burnRate > 0 && balance > 0) {
+          record.burnRate = burnRate;
+          record.liquidateAtBlock = +(balance / burnRate).toFixed(0);
         }
       });
       await Promise.all(missedRecords.map(record => this._addressService.update(record)));

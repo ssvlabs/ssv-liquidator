@@ -7,7 +7,7 @@ services:
     ports:
       - '$REDIS_PORT:$REDIS_PORT'
     volumes:
-      - /tmp/redis/ssv-app-data:/data
+      - /tmp/redis/ssv-app-data:/opt/app/data
     restart: always
 
   app:
@@ -19,6 +19,7 @@ services:
     command: sh -c "yarn start:prod:api"
     volumes:
       - /tmp/log/ssv-app-api:/opt/app/logs
+      - sqlite-data:/opt/app/data
     ports:
       - '$PORT:$PORT'
     environment:
@@ -38,6 +39,8 @@ services:
       context: .
       dockerfile: Dockerfile
     command: sh -c "yarn start:prod:worker"
+    volumes:
+      - sqlite-data:/opt/app/data
     ports:
       - '$WORKER_PORT:$WORKER_PORT'
     environment:
@@ -49,3 +52,6 @@ services:
       - SSV_REGISTRY_ADDRESS
       - NODE_URL
     restart: on-failure
+
+volumes:
+  sqlite-data:

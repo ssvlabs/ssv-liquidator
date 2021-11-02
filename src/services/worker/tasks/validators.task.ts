@@ -21,16 +21,16 @@ export class ValidatorsTask {
   async fetch(job: Job): Promise<void> {
     // eslint-disable-next-line no-console
     console.log(`fetching register validator events...`);
-    const web3 = new Web3(this._config.get('NODE_URL'));
-    const contract = new web3.eth.Contract(CONTRACT_ABI, this._config.get('SSV_REGISTRY_ADDRESS'));
-    const latestBlock = await web3.eth.getBlockNumber();
-    const fromBlock = await this._systemService.get(SystemType.VALIDATORS_LAST_BLOCK_NUMBER);
-    const filters = {
-      fromBlock: fromBlock ? fromBlock + 1 : 0,
-      toBlock: latestBlock
-    };
-    console.log(`fetching new validators...`, filters);
     try {
+      const web3 = new Web3(this._config.get('NODE_URL'));
+      const contract = new web3.eth.Contract(CONTRACT_ABI, this._config.get('SSV_REGISTRY_ADDRESS'));
+      const latestBlock = await web3.eth.getBlockNumber();
+      const fromBlock = await this._systemService.get(SystemType.VALIDATORS_LAST_BLOCK_NUMBER);
+      const filters = {
+        fromBlock: fromBlock ? fromBlock + 1 : 0,
+        toBlock: latestBlock
+      };
+      console.log(`fetching new validators...`, filters);
       const events = await contract.getPastEvents('ValidatorAdded', filters);
       const result = events
         .map(row => Object.keys(row.returnValues).reduce((aggr, key) => {
