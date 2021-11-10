@@ -28,7 +28,7 @@ module.exports = {
   },
   mode: 'development',
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: ['.tsx', '.ts', '.js', '.jsx'],
   },
   plugins: [
     new webpack.ProgressPlugin(),
