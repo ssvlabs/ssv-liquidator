@@ -14,7 +14,7 @@ export const colorCodeStatus = (status) => {
     case 'Liquidated':
       return { bgColor: 'red', color: 'white' };
     case 'To liquidate':
-      return { bgColor: 'yellow', color: 'white' };
+      return { bgColor: 'yellow', color: 'black' };
     case 'Running':
       return { bgColor: 'green', color: 'white' };
     default:
