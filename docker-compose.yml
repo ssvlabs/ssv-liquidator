@@ -11,6 +11,8 @@ services:
     restart: always
 
   worker:
+    stdin_open: true
+    tty: true
     links:
       - redis
     build:

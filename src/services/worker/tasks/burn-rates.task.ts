@@ -27,7 +27,7 @@ export class BurnRatesTask {
     try {
       const web3 = new Web3(this._config.get('NODE_URL'));
       const contract = new web3.eth.Contract(CONTRACT_ABI, this._config.get('SSV_NETWORK_ADDRESS'));
-      const missedRecords = await this._addressService.findBy({ where: { burnRate: null }, take: 100 });
+      const missedRecords = await this._addressService.findBy({ take: 100 }); // where: { burnRate: null }, 
       const burnRates = await Promise.allSettled(missedRecords.map(({ ownerAddress }) => contract.methods.burnRate(ownerAddress).call()));
       const balances = await Promise.allSettled(missedRecords.map(({ ownerAddress }) => contract.methods.totalBalanceOf(ownerAddress).call()));
       console.log("burnRates", burnRates);
