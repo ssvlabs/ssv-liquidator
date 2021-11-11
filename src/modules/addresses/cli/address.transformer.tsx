@@ -13,12 +13,8 @@ export const colorCodeStatus = (status) => {
   switch (status) {
     case 'Liquidated':
       return { bgColor: 'red', color: 'white' };
-    case 'Failed':
-      return { bgColor: 'red', color: 'white' };
-    case 'Pending':
+    case 'To liquidate':
       return { bgColor: 'yellow', color: 'white' };
-    case 'Succeeded':
-      return { bgColor: 'green', color: 'white' };
     case 'Running':
       return { bgColor: 'green', color: 'white' };
     default:
@@ -30,9 +26,9 @@ const textStatus = (blockDiff) => {
   switch(true) {
     case (blockDiff <= 0):
       return 'Liquidated';
-    case (blockDiff <= 5040): // 1 day: 3.5 blocks per minute * 60 * 24
+    case (blockDiff < 100):
       return 'To liquidate';
-    case (blockDiff > 5040):
+    case (blockDiff >= 100):
       return 'Running';
     default:
       return '';
