@@ -1,7 +1,7 @@
-import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import _ from 'lodash';
-
-export class UtilsService {
+const Web3 = require('web3');
+export default class UtilsService {
   /**
    * convert entity to dto class instance
    * @param {{new(entity: E, options: any): T}} model
@@ -17,5 +17,28 @@ export class UtilsService {
     }
 
     return new model(entity, options);
+  }
+
+  /**
+    * convert array to chunks by request size
+    */
+  static toChunks(items, size) {
+    return Array.from(
+      new Array(Math.ceil(items.length / size)),
+      (_, i) => items.slice(i * size, i * size + size)
+    );
+  }
+
+  /**
+    * convert raw public key to hashed value
+    */
+  static convertPublickey(rawValue) {
+    try {
+      const decoded = (new Web3()).eth.abi.decodeParameter('string', rawValue.replace('0x', ''));
+      return crypto.createHash('sha256').update(decoded).digest('hex');
+    } catch (e) {
+      console.warn('PUBKEY WAS NOT CONVERTED DUE TO ', e);
+      return rawValue;
+    }
   }
 }

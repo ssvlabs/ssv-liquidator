@@ -3,8 +3,8 @@ import { Entity, Column, PrimaryColumn } from 'typeorm';
 @Entity()
 export class System {
   @PrimaryColumn()
-  payload: string;
+  type: string;
 
   @Column()
-  type: string;
+  payload: string;
 }

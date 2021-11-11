@@ -1,0 +1,61 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ssv-liquidator-worker-svc
+  namespace: REPLACE_NAMESPACE 
+  labels:
+    name: ssv-liquidator-worker-svc
+spec:
+  type: ClusterIP 
+  ports:
+    - port: 80 
+      protocol: TCP
+      targetPort: 3030
+  selector:
+    app: ssv-liquidator-worker
+---
+apiVersion: REPLACE_API_VERSION
+kind: Deployment
+metadata:
+  labels:
+    app: ssv-liquidator-worker
+  name: ssv-liquidator-worker
+  namespace: REPLACE_NAMESPACE
+spec:
+  replicas: REPLACE_REPLICAS
+  selector:
+    matchLabels:
+      app: ssv-liquidator-worker
+  template:
+    metadata:
+      labels:
+        app: ssv-liquidator-worker
+    spec:
+      containers:
+      - name: ssv-liquidator-worker
+        image: REPLACE_DOCKER_REPO:REPLACE_IMAGETAG
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3030
+        command: ["/bin/sh"]
+        args: ["-c", "yarn start:prod:worker"]
+        env:
+        - name: WORKER_PORT
+          value: "3030"
+
+        - name: NODE_ENV
+          value: "stage"
+
+        - name: REDIS_PORT
+          value: "6379"
+
+        - name: REDIS_HOST
+          value: "stage-ssv-liquidator.mfeph2.0001.usw2.cache.amazonaws.com"
+        volumeMounts:
+        - mountPath: "/data/"
+          name: ssv-liquidator-worker
+      volumes:
+      - persistentVolumeClaim:
+          claimName: ssv-liquidator-worker            
+        name: ssv-liquidator-worker 
