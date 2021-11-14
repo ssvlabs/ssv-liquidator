@@ -53,7 +53,7 @@ Download docker from Official website
 
 ### Docker-compose installation
 
-Download docker from [Official website](https://docs.docker.com/compose/install)
+Download docker-compose from [Official website](https://docs.docker.com/compose/install)
 
 ### Configuration settings
 
