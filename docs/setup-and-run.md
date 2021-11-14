@@ -1,8 +1,8 @@
 # Setup and run
 
 - [Setup and run](#setup-and-run)
-  - [First-time setup](#first-time-setup)
-  - [Installation](#installation)
+  - [First-time setup for local mode](#first-time-setup-for-local-mode)
+    - [Installation](#installation)
     - [Message broker](#message-broker)
     - [Database](#database)
   - [Docker](#docker)
@@ -12,7 +12,7 @@
   - [Run in local-mode](#run-in-local-mode)
   - [Run in docker-mode](#run-in-docker-mode)
 
-## First-time setup - local build
+## First-time setup for local mode
 
 Make sure you have the following installed:
 
@@ -31,11 +31,12 @@ yarn install
 
 ### Message broker
 
-The Redis server as message-broker is used to handle periodic operations such as synchronizing burn rates and store new validator accounts.
+The Redis server as a message-broker is used to handle periodic operations such as synchronizing burn rates, store new validator accounts and run liquidation process.
 
 ### Database
 
-> Note: The boilerplate uses [TypeORM](https://github.com/typeorm/typeorm) with Data Mapper pattern.
+> Note: The app uses [TypeORM](https://github.com/typeorm/typeorm) with Data Mapper pattern.
+
 Sqlite 2 is used for data storage. It's a local file-based database that doesn't need any setting on your part.
 
 ## Docker
