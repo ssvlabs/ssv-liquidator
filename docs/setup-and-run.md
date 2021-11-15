@@ -16,8 +16,8 @@
 
 Make sure you have the following installed:
 
-- [Node](https://nodejs.org/en/) (at least the latest LTS)
-- [Yarn](https://yarnpkg.com/lang/en/docs/install/) (at least 1.0)
+- [Node.js](https://nodejs.org/en/) (the latest LTS)
+- [Yarn](https://yarnpkg.com/lang/en/docs/install/) (version 1.0 or higher)
 - [Redis Server](https://redis.io/topics/quickstart)
 
 ## Installation
@@ -31,13 +31,13 @@ yarn install
 
 ### Message broker
 
-The Redis server as a message-broker is used to handle periodic operations such as synchronizing burn rates, store new validator accounts and run liquidation process.
+The Redis server as a message-broker is used to handle periodic operations such as synchronizing burn rates, storing new validator accounts and running liquidation process.
 
 ### Database
 
 > Note: The app uses [TypeORM](https://github.com/typeorm/typeorm) with Data Mapper pattern.
 
-Sqlite 2 is used for data storage. It's a local file-based database that doesn't need any setting on your part.
+SQLite 2 is used for data storage. It's a local file-based database that doesn't need any settings on your part.
 
 ## Docker
 
@@ -45,7 +45,7 @@ if you are familiar with [docker](https://www.docker.com/) and [docker-compose](
 
 ### Docker installation
 
-Download docker from Official website
+Download Docker from the official website:
 
 - Mac <https://docs.docker.com/docker-for-mac/install/>
 - Windows <https://docs.docker.com/docker-for-windows/install/>
@@ -53,11 +53,11 @@ Download docker from Official website
 
 ### Docker-compose installation
 
-Download docker-compose from [Official website](https://docs.docker.com/compose/install)
+Download Docker Compose from [the official website](https://docs.docker.com/compose/install)
 
 ### Configuration settings
 
-Before start run the app fill correct configurations in `.env` file:
+Before running the app, create a `.env` file and fill in the relevant configuration:
 
 ```env
 WORKER_PORT=3030
@@ -78,7 +78,7 @@ yarn start:worker
 
 ### Run in docker-mode
 
-Open terminal and navigate to project directory and run the following command.
+Open an additional terminal\CMD window and navigate to the project directory and run the following command:
 
 ```bash
 docker-compose up
