@@ -41,8 +41,6 @@ SQLite 2 is used for data storage. It's a local file-based database that doesn't
 
 ## Docker
 
-if you are familiar with [docker](https://www.docker.com/) and [docker-compose](https://docs.docker.com/compose) then you can run built in docker-compose file, which will install and configure application and database for you.
-
 ### Docker installation
 
 Download Docker from the official website:
