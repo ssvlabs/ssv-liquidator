@@ -57,7 +57,7 @@ Download Docker from the official website
 Download Docker Compose from [the official website](https://docs.docker.com/compose/install)
 
 ### 3. Run in docker-mode
-Open terminal\CMD window and navigate to the project directory and run the following command:
+Open Terminal or CMD window and navigate to the project directory and run the following command:
 
 ```bash
 docker-compose up
