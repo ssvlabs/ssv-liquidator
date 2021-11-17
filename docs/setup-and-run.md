@@ -12,7 +12,7 @@
 
 ### Configuration settings
 
-Before start run the app fill correct configurations in `.env` file:
+Before running the app, create a `.env` file and fill in the relevant configuration:
 
 ```env
 WORKER_PORT=3030
@@ -47,17 +47,17 @@ yarn start:worker
 
 
 ### 1. Docker installation
-Download docker from Official website
+Download Docker from the official website
 
 - Mac <https://docs.docker.com/docker-for-mac/install/>
 - Windows <https://docs.docker.com/docker-for-windows/install/>
 - Ubuntu <https://docs.docker.com/install/linux/docker-ce/ubuntu/>
 
-### 2. Docker-compose installation
-Download docker-compose from [Official website](https://docs.docker.com/compose/install)
+### 2. Docker Compose installation
+Download Docker Compose from [the official website](https://docs.docker.com/compose/install)
 
 ### 3. Run in docker-mode
-Open terminal and navigate to project directory and run the following command.
+Open terminal\CMD window and navigate to the project directory and run the following command:
 
 ```bash
 docker-compose up
