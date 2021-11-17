@@ -26,8 +26,8 @@ SSV_REGISTRY_ADDRESS=... # [TEMPORARY] SSV Registery contract address
 
 Make sure you have the following installed:
 
-- [Node](https://nodejs.org/en/) (at least the latest LTS)
-- [Yarn](https://yarnpkg.com/lang/en/docs/install/) (at least 1.0)
+- [Node.js](https://nodejs.org/en/) (the latest LTS)
+- [Yarn](https://yarnpkg.com/lang/en/docs/install/) (version 1.0 or higher)
 - [Redis Server](https://redis.io/topics/quickstart)
 > Be sure that Redis server is up
 ### 1. Local installation
