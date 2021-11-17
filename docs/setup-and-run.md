@@ -45,7 +45,6 @@ yarn start:worker
 
 ## Docker
 
-if you are familiar with [docker](https://www.docker.com/) and [docker-compose](https://docs.docker.com/compose) then you can run built in docker-compose file, which will install and configure application and database for you.
 
 ### 1. Docker installation
 Download docker from Official website
