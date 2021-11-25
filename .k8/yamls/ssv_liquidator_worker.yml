@@ -52,6 +52,18 @@ spec:
 
         - name: REDIS_HOST
           value: "stage-ssv-liquidator.mfeph2.0001.usw2.cache.amazonaws.com"
+
+        - name: SSV_NETWORK_ADDRESS
+          valueFrom:
+            secretKeyRef:
+              name: config-secrets
+              key: ssv_network_address
+
+        - name: SSV_REGISTRY_ADDRESS
+          valueFrom:
+            secretKeyRef:
+              name: config-secrets
+              key: ssv_registry_address
         volumeMounts:
         - mountPath: "/data/"
           name: ssv-liquidator-worker
