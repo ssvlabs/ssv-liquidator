@@ -3,17 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult, DeleteResult, getConnection } from 'typeorm';
 
 import { Address } from './address.entity';
-import { AddressUsedOperators } from './address-used-operators.entity';
 import { ConfService } from '../../shared/services/conf.service';
 
 const Web3 = require('web3');
+const CONTRACT_ABI = require('../../shared/abi-ssv-network.json');
 @Injectable()
 export class AddressService {
   private _web3;
   constructor(
     private _config: ConfService,
     @InjectRepository(Address) private _addressRepository: Repository<Address>,
-    @InjectRepository(AddressUsedOperators) private _addressUsedOperatorsRepository: Repository<AddressUsedOperators>
   ) {
     this._web3 = new Web3(this._config.get('NODE_URL'));
   }
@@ -21,6 +20,12 @@ export class AddressService {
   async currentBlockNumber(): Promise<number> {
     return await this._web3.eth.getBlockNumber();
   }
+
+  async minimumBlocksBeforeLiquidation(): Promise<number> {
+    const contract = new this._web3.eth.Contract(CONTRACT_ABI, this._config.get('SSV_NETWORK_ADDRESS'));
+    return contract.methods.minimumBlocksBeforeLiquidation().call();
+  }
+
   async findAll(): Promise<Address[]> {
     return await this._addressRepository.find();
   }
@@ -43,25 +48,21 @@ export class AddressService {
       .execute();
   }
 
-  async saveUsedOperators(addresses: Address[]): Promise<void> {
-    await Promise.all(addresses.map(address => this._addressUsedOperatorsRepository.delete({ ownerAddress: address.ownerAddress })));
-
-    const addressOperators = addresses.reduce((aggr, item) => {
-      item.operatorPublicKeys.forEach(operatorPublicKey => aggr.push({ ownerAddress: item.ownerAddress, operatorPublicKey }));
+  async update(address: any): Promise<void> {
+    const record = await this._addressRepository.findOne({ ownerAddress: address.ownerAddress });
+    const updates = Object.keys(address).reduce((aggr, key) => {
+      if (record[key] !== address[key]) {
+        aggr[key] = address[key];
+      }
       return aggr;
-    }, []);
-
-    await getConnection()
-      .createQueryBuilder()
-      .insert()
-      .into(AddressUsedOperators)
-      .values(addressOperators)
-      .orIgnore(true)
-      .execute();
-  }
-
-  async update(address: Address): Promise<UpdateResult> {
-    return await this._addressRepository.update(address.ownerAddress, address);
+    }, {});
+    if (Object.keys(updates).length) {
+      await this._addressRepository.save({
+        ...record,
+        ...address,
+        updatedAt: new Date()
+      });
+    }
   }
 
   async delete(id): Promise<DeleteResult> {

@@ -64,11 +64,6 @@ spec:
               name: config-secrets
               key: ssv_network_address
 
-        - name: SSV_REGISTRY_ADDRESS
-          valueFrom:
-            secretKeyRef:
-              name: config-secrets
-              key: ssv_registry_address
         volumeMounts:
         - mountPath: "/data/"
           name: ssv-liquidator-worker

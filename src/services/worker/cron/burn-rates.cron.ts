@@ -12,7 +12,22 @@ export class BurnRateCron {
   ) {}
 
   @Cron('0 * * * * *')
-  async update(): Promise<void> {
+  async syncBurnRates(): Promise<void> {
     await this._queuesService.syncBurnRatesJob();
+  }
+
+  @Cron('0 * * * * *')
+  async syncLiquidatedAddresses(): Promise<void> {
+    await this._queuesService.syncLiquidatedAddressesJob();
+  }
+
+  @Cron('0 * * * * *')
+  async syncDeposits(): Promise<void> {
+    await this._queuesService.syncDepositsJob();
+  }
+
+  @Cron('0 * * * * *')
+  async syncWithdraws(): Promise<void> {
+    await this._queuesService.syncWithdrawsJob();
   }
 }

@@ -22,6 +22,13 @@ import { QueueService } from './queue.service';
         }),
         inject: [ConfService],
       },
+      {
+        name: QueuesEnum.LIQUIDATION,
+        useFactory: async (configService: ConfService) => ({
+          redis: configService.redisOptions,
+        }),
+        inject: [ConfService],
+      },
     ),
   ],
   providers: [QueueService],

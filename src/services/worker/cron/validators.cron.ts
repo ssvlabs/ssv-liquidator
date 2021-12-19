@@ -10,7 +10,12 @@ export class ValidatorCron {
   ) {}
 
   @Cron('0 * * * * *')
-  async fetchValidators(): Promise<void> {
-    await this._queuesService.fetchValidatorsJob();
+  async fetchNewValidators(): Promise<void> {
+    await this._queuesService.fetchNewValidatorsJob();
+  }
+
+  @Cron('0 * * * * *')
+  async fetchUpdatedValidators(): Promise<void> {
+    await this._queuesService.fetchUpdatedValidatorsJob();
   }
 }

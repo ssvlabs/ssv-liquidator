@@ -20,7 +20,6 @@ REDIS_HOST=localhost # redis server host
 REDIS_PORT=6379 # redis server port
 NODE_URL=http://... # ETH1 Node url
 SSV_NETWORK_ADDRESS=... # SSV Network contract address
-SSV_REGISTRY_ADDRESS=... # [TEMPORARY] SSV Registery contract address
 ```
 ## Local mode
 

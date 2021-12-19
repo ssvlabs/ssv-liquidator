@@ -22,13 +22,17 @@ export const colorCodeStatus = (status) => {
   }
 };
 
-const textStatus = (blockDiff) => {
+const textStatus = (item, extra: any) => {
+  const { currentBlockNumber, minimumBlocksBeforeLiquidation } = extra;
+  const blockDiff = item.liquidateAtBlock
+    ? item.liquidateAtBlock - currentBlockNumber
+    : null;
   switch(true) {
-    case (blockDiff <= 0):
+    case item.isLiquidated:
       return 'Liquidated';
-    case (blockDiff < 100):
+    case (blockDiff !== null && blockDiff < minimumBlocksBeforeLiquidation):
       return 'To liquidate';
-    case (blockDiff >= 100):
+    case (blockDiff === null || blockDiff >= minimumBlocksBeforeLiquidation):
       return 'Running';
     default:
       return '';
@@ -45,8 +49,7 @@ export const transformAddressData = (items, extra: any) => {
   try {
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
-      const blockDiff = item.liquidateAtBlock - extra.currentBlockNumber;
-      const status = textStatus(blockDiff);
+      const status = textStatus(item, extra);
       addresses.push({
         owner: { text: item.ownerAddress },
         burnRate: { text: `${item.burnRate / 1e18} SSV` },

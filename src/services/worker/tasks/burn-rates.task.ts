@@ -21,27 +21,118 @@ export class BurnRatesTask {
   ) {}
 
   @Process(TasksQueuesEnum.SYNC_BURN_RATES.name)
-  async sync(job: Job): Promise<void> {
+  async syncBurnRates(job: Job): Promise<void> {
     // eslint-disable-next-line no-console
-    console.log(`syncing burn rate updates events...`);
+    console.log(`syncing burn rate updates...`);
     try {
       const web3 = new Web3(this._config.get('NODE_URL'));
       const contract = new web3.eth.Contract(CONTRACT_ABI, this._config.get('SSV_NETWORK_ADDRESS'));
-      const missedRecords = await this._addressService.findBy({ take: 100 }); // where: { burnRate: null }, 
+      const missedRecords = await this._addressService.findBy({ where: { burnRate: null }, take: 100, select: ['ownerAddress'] });
       const burnRates = await Promise.allSettled(missedRecords.map(({ ownerAddress }) => contract.methods.burnRate(ownerAddress).call()));
       const balances = await Promise.allSettled(missedRecords.map(({ ownerAddress }) => contract.methods.totalBalanceOf(ownerAddress).call()));
-      console.log("burnRates", burnRates);
-      console.log("balances", balances);
       for (const [index, record] of missedRecords.entries()) {
         const burnRate = +(burnRates[index] as any).value;
         const balance = +(balances[index] as any).value;
-        if (burnRate > 0 && balance > 0) {
-          record.burnRate = burnRate;
-          record.liquidateAtBlock = await web3.eth.getBlockNumber() + +(balance / burnRate).toFixed(0);
-        }
+        record.burnRate = burnRate;
+        record.liquidateAtBlock = burnRate > 0
+          ? await web3.eth.getBlockNumber() + +(balance / burnRate).toFixed(0)
+          : null;
       }
       await Promise.all(missedRecords.map(record => this._addressService.update(record)));
     } catch(e) {
+      console.log(e);
+    }
+  }
+
+  @Process(TasksQueuesEnum.SYNC_LIQUIDATED_ADDRESSES.name)
+  async syncLiquidatedAddresses(job: Job): Promise<void> {
+    // eslint-disable-next-line no-console
+    console.log(`fetching liquidated addresses events...`);
+    try {
+      const web3 = new Web3(this._config.get('NODE_URL'));
+      const contract = new web3.eth.Contract(CONTRACT_ABI, this._config.get('SSV_NETWORK_ADDRESS'));
+      const latestBlock = await web3.eth.getBlockNumber();
+      const fromBlock = await this._systemService.get(SystemType.LIQUIDATED_LAST_BLOCK_NUMBER);
+      const filters = {
+        fromBlock: fromBlock ? fromBlock + 1 : 0,
+        toBlock: latestBlock
+      };
+      console.log(`fetching liquidated addresses...`, filters);
+      const events = await contract.getPastEvents('AccountLiquidated', filters);
+      const result = events
+        .map(row => Object.keys(row.returnValues).reduce((aggr, key) => {
+          if (isNaN(key as any)) {
+            aggr[key] = row.returnValues[key];
+          }
+          return aggr;
+        }, {}));
+      await Promise.all(result.map(item => this._addressService.update({ ownerAddress: item.ownerAddress, burnRate: null })));
+  
+      await this._systemService.save(SystemType.LIQUIDATED_LAST_BLOCK_NUMBER, latestBlock);
+      console.log(`got ${events.length} events of liquidated addresses...`)
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  @Process(TasksQueuesEnum.SYNC_DEPOSITS.name)
+  async syncFundsDeposited(job: Job): Promise<void> {
+    // eslint-disable-next-line no-console
+    console.log(`fetching deposits events...`);
+    try {
+      const web3 = new Web3(this._config.get('NODE_URL'));
+      const contract = new web3.eth.Contract(CONTRACT_ABI, this._config.get('SSV_NETWORK_ADDRESS'));
+      const latestBlock = await web3.eth.getBlockNumber();
+      const fromBlock = await this._systemService.get(SystemType.DEPOSITED_LAST_BLOCK_NUMBER);
+      const filters = {
+        fromBlock: fromBlock ? fromBlock + 1 : 0,
+        toBlock: latestBlock
+      };
+      console.log(`fetching deposits...`, filters);
+      const events = await contract.getPastEvents('FundsDeposited', filters);
+      const result = events
+        .map(row => Object.keys(row.returnValues).reduce((aggr, key) => {
+          if (isNaN(key as any)) {
+            aggr[key] = row.returnValues[key];
+          }
+          return aggr;
+        }, {}));
+      await Promise.all(result.map(item => this._addressService.update({ ownerAddress: item.ownerAddress, burnRate: null })));
+  
+      await this._systemService.save(SystemType.DEPOSITED_LAST_BLOCK_NUMBER, latestBlock);
+      console.log(`got ${events.length} events of deposits...`)
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  @Process(TasksQueuesEnum.SYNC_WITHDRAWS.name)
+  async syncFundsWithdrawn(job: Job): Promise<void> {
+    // eslint-disable-next-line no-console
+    console.log(`fetching withdraw events...`);
+    try {
+      const web3 = new Web3(this._config.get('NODE_URL'));
+      const contract = new web3.eth.Contract(CONTRACT_ABI, this._config.get('SSV_NETWORK_ADDRESS'));
+      const latestBlock = await web3.eth.getBlockNumber();
+      const fromBlock = await this._systemService.get(SystemType.WITHDRAWN_LAST_BLOCK_NUMBER);
+      const filters = {
+        fromBlock: fromBlock ? fromBlock + 1 : 0,
+        toBlock: latestBlock
+      };
+      console.log(`fetching withdraws...`, filters);
+      const events = await contract.getPastEvents('FundsWithdrawn', filters);
+      const result = events
+        .map(row => Object.keys(row.returnValues).reduce((aggr, key) => {
+          if (isNaN(key as any)) {
+            aggr[key] = row.returnValues[key];
+          }
+          return aggr;
+        }, {}));
+      await Promise.all(result.map(item => this._addressService.update({ ownerAddress: item.ownerAddress, burnRate: null })));
+  
+      await this._systemService.save(SystemType.WITHDRAWN_LAST_BLOCK_NUMBER, latestBlock);
+      console.log(`got ${events.length} events of withdraws...`)
+    } catch (e) {
       console.log(e);
     }
   }

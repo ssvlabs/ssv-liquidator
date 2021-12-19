@@ -5,10 +5,11 @@ export class Address {
   @PrimaryColumn()
   ownerAddress: string;
 
-  operatorPublicKeys: [];
-
   @Column({ default: null })
   burnRate: number;
+
+  @Column({ default: false })
+  isLiquidated: boolean;
 
   @Column({ default: null })
   liquidateAtBlock: number;
@@ -16,6 +17,8 @@ export class Address {
   @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({
+    default: () => "NOW()"
+  })
   updatedAt: Date;
 }

@@ -51,8 +51,9 @@ export class BaseContainer extends Component<IBaseProps, IBaseState> {
     this.timer = setInterval(async() => {
       const items = await this.props.service.findAll();
       const currentBlockNumber = await this.props.service.currentBlockNumber();
+      const minimumBlocksBeforeLiquidation = await this.props.service.minimumBlocksBeforeLiquidation();
       this.setStateSafely({
-        items: this.props.transformer(items, { currentBlockNumber })
+        items: this.props.transformer(items, { currentBlockNumber, minimumBlocksBeforeLiquidation })
       });
     }, 1000);
   }
