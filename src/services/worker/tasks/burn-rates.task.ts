@@ -26,17 +26,19 @@ export class BurnRatesTask {
     console.log(`syncing burn rate updates...`);
     try {
       const web3 = new Web3(this._config.get('NODE_URL'));
-      const contract = new web3.eth.Contract(CONTRACT_ABI, this._config.get('SSV_NETWORK_ADDRESS'));
       const missedRecords = await this._addressService.findBy({ where: { burnRate: null }, take: 100, select: ['ownerAddress'] });
-      const burnRates = await Promise.allSettled(missedRecords.map(({ ownerAddress }) => contract.methods.burnRate(ownerAddress).call()));
-      const balances = await Promise.allSettled(missedRecords.map(({ ownerAddress }) => contract.methods.totalBalanceOf(ownerAddress).call()));
+      const burnRates = await Promise.allSettled(missedRecords.map(({ ownerAddress }) => this._addressService.burnRate(ownerAddress)));
+      const balances = await Promise.allSettled(missedRecords.map(({ ownerAddress }) => this._addressService.totalBalanceOf(ownerAddress)));
+      const liquidated = await Promise.allSettled(missedRecords.map(({ ownerAddress }) => this._addressService.isLiquidated(ownerAddress)));
       for (const [index, record] of missedRecords.entries()) {
         const burnRate = +(burnRates[index] as any).value;
         const balance = +(balances[index] as any).value;
+        const isLiquidated = (liquidated[index] as any).value;
         record.burnRate = burnRate;
         record.liquidateAtBlock = burnRate > 0
           ? await web3.eth.getBlockNumber() + +(balance / burnRate).toFixed(0)
           : null;
+        record.isLiquidated = isLiquidated;
       }
       await Promise.all(missedRecords.map(record => this._addressService.update(record)));
     } catch(e) {
@@ -51,7 +53,7 @@ export class BurnRatesTask {
     try {
       const web3 = new Web3(this._config.get('NODE_URL'));
       const contract = new web3.eth.Contract(CONTRACT_ABI, this._config.get('SSV_NETWORK_ADDRESS'));
-      const latestBlock = await web3.eth.getBlockNumber();
+      const latestBlock = await this._addressService.currentBlockNumber();
       const fromBlock = await this._systemService.get(SystemType.LIQUIDATED_LAST_BLOCK_NUMBER);
       const filters = {
         fromBlock: fromBlock ? fromBlock + 1 : 0,
@@ -82,7 +84,7 @@ export class BurnRatesTask {
     try {
       const web3 = new Web3(this._config.get('NODE_URL'));
       const contract = new web3.eth.Contract(CONTRACT_ABI, this._config.get('SSV_NETWORK_ADDRESS'));
-      const latestBlock = await web3.eth.getBlockNumber();
+      const latestBlock = await this._addressService.currentBlockNumber();
       const fromBlock = await this._systemService.get(SystemType.DEPOSITED_LAST_BLOCK_NUMBER);
       const filters = {
         fromBlock: fromBlock ? fromBlock + 1 : 0,
@@ -113,7 +115,7 @@ export class BurnRatesTask {
     try {
       const web3 = new Web3(this._config.get('NODE_URL'));
       const contract = new web3.eth.Contract(CONTRACT_ABI, this._config.get('SSV_NETWORK_ADDRESS'));
-      const latestBlock = await web3.eth.getBlockNumber();
+      const latestBlock = await this._addressService.currentBlockNumber();
       const fromBlock = await this._systemService.get(SystemType.WITHDRAWN_LAST_BLOCK_NUMBER);
       const filters = {
         fromBlock: fromBlock ? fromBlock + 1 : 0,

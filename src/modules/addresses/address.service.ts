@@ -35,6 +35,14 @@ export class AddressService {
     return this._contract.methods.isOwnerValidatorsDisabled(ownerAddress).call();
   }
 
+  async burnRate(ownerAddress): Promise<string> {
+    return this._contract.methods.burnRate(ownerAddress).call();
+  }
+
+  async totalBalanceOf(ownerAddress): Promise<string> {
+    return this._contract.methods.totalBalanceOf(ownerAddress).call();
+  }
+
   async findAll(): Promise<Address[]> {
     return await this._addressRepository.find();
   }
@@ -73,6 +81,8 @@ export class AddressService {
           updatedAt: new Date()
         });
       }  
+    } else {
+      await this._addressRepository.save(address);
     }
   }
 
