@@ -55,7 +55,7 @@ export class BaseContainer extends Component<IBaseProps, IBaseState> {
       this.setStateSafely({
         items: this.props.transformer(items, { currentBlockNumber, minimumBlocksBeforeLiquidation })
       });
-    }, 1000);
+    }, 10000);
   }
 
   render() {

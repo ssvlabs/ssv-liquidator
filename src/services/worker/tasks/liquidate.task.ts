@@ -32,7 +32,7 @@ export class LiquidationTask {
         take: this._config.get('LIQUIDATE_BATCH_SIZE'),
       });
       for (const { ownerAddress } of toLiquidateRecords) {
-        const liquidatable = await contract.methods.liquidatable(ownerAddress).call();
+        const liquidatable = await this._addressService.liquidatable(ownerAddress);
         if (liquidatable) {
           const data = (await contract.methods.liquidate(ownerAddress)).encodeABI();
           const transaction = {
@@ -53,7 +53,7 @@ export class LiquidationTask {
           })
           .on('receipt', console.log);
         } else {
-          const isLiquidated = await contract.methods.isOwnerValidatorsDisabled(ownerAddress).call();
+          const isLiquidated = await this._addressService.isLiquidated(ownerAddress);
           isLiquidated && this._addressService.update({ ownerAddress, burnRate: null, isLiquidated: true });
         }
       }

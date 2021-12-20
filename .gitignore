@@ -6,7 +6,7 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
+dump.rdb
 # Runtime data
 pids
 *.pid

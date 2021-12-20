@@ -10,11 +10,13 @@ const CONTRACT_ABI = require('../../shared/abi-ssv-network.json');
 @Injectable()
 export class AddressService {
   private _web3;
+  private _contract;
   constructor(
     private _config: ConfService,
     @InjectRepository(Address) private _addressRepository: Repository<Address>,
   ) {
     this._web3 = new Web3(this._config.get('NODE_URL'));
+    this._contract = new this._web3.eth.Contract(CONTRACT_ABI, this._config.get('SSV_NETWORK_ADDRESS'));
   }
 
   async currentBlockNumber(): Promise<number> {
@@ -22,8 +24,15 @@ export class AddressService {
   }
 
   async minimumBlocksBeforeLiquidation(): Promise<number> {
-    const contract = new this._web3.eth.Contract(CONTRACT_ABI, this._config.get('SSV_NETWORK_ADDRESS'));
-    return contract.methods.minimumBlocksBeforeLiquidation().call();
+    return this._contract.methods.minimumBlocksBeforeLiquidation().call();
+  }
+
+  async liquidatable(ownerAddress): Promise<boolean> {
+    return this._contract.methods.liquidatable(ownerAddress).call();
+  }
+
+  async isLiquidated(ownerAddress): Promise<boolean> {
+    return this._contract.methods.isOwnerValidatorsDisabled(ownerAddress).call();
   }
 
   async findAll(): Promise<Address[]> {
@@ -50,18 +59,20 @@ export class AddressService {
 
   async update(address: any): Promise<void> {
     const record = await this._addressRepository.findOne({ ownerAddress: address.ownerAddress });
-    const updates = Object.keys(address).reduce((aggr, key) => {
-      if (record[key] !== address[key]) {
-        aggr[key] = address[key];
-      }
-      return aggr;
-    }, {});
-    if (Object.keys(updates).length) {
-      await this._addressRepository.save({
-        ...record,
-        ...address,
-        updatedAt: new Date()
-      });
+    if (record) {
+      const updates = Object.keys(address).reduce((aggr, key) => {
+        if (record[key] !== address[key]) {
+          aggr[key] = address[key];
+        }
+        return aggr;
+      }, {});
+      if (Object.keys(updates).length) {
+        await this._addressRepository.save({
+          ...record,
+          ...address,
+          updatedAt: new Date()
+        });
+      }  
     }
   }
 

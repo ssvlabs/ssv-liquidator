@@ -32,10 +32,8 @@ const textStatus = (item, extra: any) => {
       return 'Liquidated';
     case (blockDiff !== null && blockDiff < minimumBlocksBeforeLiquidation):
       return 'To liquidate';
-    case (blockDiff === null || blockDiff >= minimumBlocksBeforeLiquidation):
-      return 'Running';
     default:
-      return '';
+      return 'Running';
   }
 }
 
@@ -52,7 +50,7 @@ export const transformAddressData = (items, extra: any) => {
       const status = textStatus(item, extra);
       addresses.push({
         owner: { text: item.ownerAddress },
-        burnRate: { text: `${item.burnRate / 1e18} SSV` },
+        burnRate: { text: item.burnRate !== null ? `${item.burnRate / 1e18} SSV` : '' },
         status: {
           text: status,
           ...colorCodeStatus(status),

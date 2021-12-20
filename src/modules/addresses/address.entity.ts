@@ -17,8 +17,6 @@ export class Address {
   @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({
-    default: () => "NOW()"
-  })
+  @UpdateDateColumn()
   updatedAt: Date;
 }
