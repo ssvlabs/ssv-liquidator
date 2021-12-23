@@ -92,5 +92,3 @@ spec:
       - persistentVolumeClaim:
           claimName: ssv-liquidator-worker            
         name: ssv-liquidator-worker 
-
-    restart: on-failure
