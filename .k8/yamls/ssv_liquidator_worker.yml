@@ -58,11 +58,32 @@ spec:
         - name: NODE_URL
           value: "http://eth1.stage.bloxinfra.com/"
 
+        - name: LIQUIDATE_BATCH_SIZE
+          value: "2"
+
+        - name: GAS
+          value: "1500000"
+
+        - name: GAS_PRICE
+          value: "30000000000"
+
         - name: SSV_NETWORK_ADDRESS
           valueFrom:
             secretKeyRef:
               name: config-secrets
               key: ssv_network_address
+
+        - name: ACCOUNT_ADDRESS
+          valueFrom:
+            secretKeyRef:
+              name: config-secrets
+              key: account_address
+
+        - name: ACCOUNT_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: config-secrets
+              key: account_private_key
 
         volumeMounts:
         - mountPath: "/data/"
@@ -71,3 +92,5 @@ spec:
       - persistentVolumeClaim:
           claimName: ssv-liquidator-worker            
         name: ssv-liquidator-worker 
+
+    restart: on-failure
