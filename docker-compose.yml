@@ -1,20 +1,9 @@
 version: '3'
 
 services:
-  redis:
-    image: redis:alpine
-    container_name: redis_cache
-    ports:
-      - '$REDIS_PORT:$REDIS_PORT'
-    volumes:
-      - /tmp/redis/ssv-app-data:/opt/app/data
-    restart: always
-
   worker:
     stdin_open: true
     tty: true
-    links:
-      - redis
     build:
       context: .
       dockerfile: Dockerfile
@@ -26,8 +15,6 @@ services:
     environment:
       - WORKER_PORT
       - NODE_ENV
-      - REDIS_HOST=redis_cache
-      - REDIS_PORT
       - SSV_NETWORK_ADDRESS
       - NODE_URL
       - ACCOUNT_ADDRESS

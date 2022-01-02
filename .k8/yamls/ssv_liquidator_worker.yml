@@ -49,12 +49,6 @@ spec:
         - name: NODE_ENV
           value: "stage"
 
-        - name: REDIS_PORT
-          value: "6379"
-
-        - name: REDIS_HOST
-          value: "stage-ssv-liquidator.mfeph2.0001.usw2.cache.amazonaws.com"
-
         - name: NODE_URL
           value: "http://eth1.stage.bloxinfra.com/"
 
