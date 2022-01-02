@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { RedisOptions } from 'ioredis';
 
 export class ConfService extends ConfigService {
   public getNumber(key: string): number {
@@ -8,14 +7,5 @@ export class ConfService extends ConfigService {
 
   get nodeEnv(): string {
     return this.get('NODE_ENV') || 'development';
-  }
-
-  get redisOptions(): RedisOptions {
-    return {
-      host: this.get('REDIS_HOST'),
-      port: this.getNumber('REDIS_PORT'),
-      enableReadyCheck: false,
-      maxRetriesPerRequest: null,
-    };
   }
 }

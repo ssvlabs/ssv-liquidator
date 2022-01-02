@@ -16,8 +16,6 @@ Before running the app, create a `.env` file and fill in the relevant configurat
 
 ```env
 WORKER_PORT=3030
-REDIS_HOST=localhost # redis server host
-REDIS_PORT=6379 # redis server port
 NODE_URL=http://... # ETH1 Node url
 SSV_NETWORK_ADDRESS=... # SSV Network contract address
 ```
@@ -27,8 +25,6 @@ Make sure you have the following installed:
 
 - [Node.js](https://nodejs.org/en/) (the latest LTS)
 - [Yarn](https://yarnpkg.com/lang/en/docs/install/) (version 1.0 or higher)
-- [Redis Server](https://redis.io/topics/quickstart)
-> Make sure that Redis server is up
 ### 1. Local installation
 
 ```bash

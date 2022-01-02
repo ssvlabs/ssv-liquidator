@@ -1,33 +1,47 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 
-import { AddressService } from '../../../modules/addresses/address.service';
-import { QueueService } from '../../../queues/queue.service';
+import { BurnRatesTask } from '../tasks/burn-rates.task';
 
 @Injectable()
 export class BurnRateCron {
   constructor(
-    private _addressService: AddressService,
-    private _queuesService: QueueService,
+    private _burnRatesTask: BurnRatesTask,
   ) {}
 
   @Cron('0 * * * * *')
   async syncBurnRates(): Promise<void> {
-    await this._queuesService.syncBurnRatesJob();
+    try {
+      await this._burnRatesTask.syncBurnRates();
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   @Cron('0 * * * * *')
   async syncLiquidatedAddresses(): Promise<void> {
-    await this._queuesService.syncLiquidatedAddressesJob();
+    try {
+      await this._burnRatesTask.syncLiquidatedAddresses();
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   @Cron('0 * * * * *')
   async syncDeposits(): Promise<void> {
-    await this._queuesService.syncDepositsJob();
+    try {
+      await this._burnRatesTask.syncFundsDeposited();
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   @Cron('0 * * * * *')
   async syncWithdraws(): Promise<void> {
-    await this._queuesService.syncWithdrawsJob();
+    try {
+      await this._burnRatesTask.syncFundsWithdrawn();
+    } catch (e) {
+      console.log(e);
+    }
   }
 }

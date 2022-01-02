@@ -1,21 +1,29 @@
 import { Injectable } from '@nestjs/common';
 
-import { QueueService } from '../../../queues/queue.service';
 import { Cron } from '@nestjs/schedule';
+import { ValidatorsTask } from '../tasks/validators.task';
 
 @Injectable()
 export class ValidatorCron {
   constructor(
-    private _queuesService: QueueService,
+    private _validatorsTask: ValidatorsTask,
   ) {}
 
   @Cron('0 * * * * *')
   async fetchNewValidators(): Promise<void> {
-    await this._queuesService.fetchNewValidatorsJob();
+    try {
+      await this._validatorsTask.fetchNewValidators();
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   @Cron('0 * * * * *')
   async fetchUpdatedValidators(): Promise<void> {
-    await this._queuesService.fetchUpdatedValidatorsJob();
+    try {
+      await this._validatorsTask.fetchUpdatedValidators();
+    } catch (e) {
+      console.log(e);
+    }
   }
 }
