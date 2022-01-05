@@ -20,7 +20,6 @@ services:
       - ACCOUNT_ADDRESS
       - ACCOUNT_PRIVATE_KEY
       - LIQUIDATE_BATCH_SIZE
-      - GAS
       - GAS_PRICE
     restart: on-failure
 

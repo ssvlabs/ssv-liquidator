@@ -55,11 +55,8 @@ spec:
         - name: LIQUIDATE_BATCH_SIZE
           value: "2"
 
-        - name: GAS
-          value: "1500000"
-
         - name: GAS_PRICE
-          value: "30000000000"
+          value: "high"
 
         - name: SSV_NETWORK_ADDRESS
           valueFrom:
