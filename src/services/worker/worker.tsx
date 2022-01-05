@@ -14,8 +14,6 @@ async function bootstrap() {
   const app = await NestFactory.create(WorkerModule, { logger: ['error', 'warn'], });
   const configService = app.select(WorkerModule).get(ConfService);
   const addressService = app.select(WorkerModule).get(AddressService);
-  // const addressView = app.select(WorkerModule).get(AddressView);
-  // console.log(await addressView.list());
 
   const { App } = importJsx(path.join(__dirname,'/../../shared/cli/app'));
   render(<App resource='addresses' service={addressService} />);

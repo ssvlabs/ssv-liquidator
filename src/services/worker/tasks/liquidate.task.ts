@@ -17,6 +17,13 @@ export class LiquidationTask {
     // eslint-disable-next-line no-console
     console.log(`fetching register validator events...`);
     const web3 = new Web3(this._config.get('NODE_URL'));
+    let gasPrice = +await web3.eth.getGasPrice();
+    const gas = (await web3.eth.getBlock('latest')).gasLimit;
+    if (this._config.get('GAS_PRICE') === 'slow') {
+      gasPrice -= web3.utils.toWei('10', 'ether');
+    } else if (this._config.get('GAS_PRICE') === 'high') {
+      gasPrice += web3.utils.toWei('10', 'ether');
+    }
     const contract = new web3.eth.Contract(CONTRACT_ABI, this._config.get('SSV_NETWORK_ADDRESS'));
     const minimumBlocksBeforeLiquidation = +await this._addressService.minimumBlocksBeforeLiquidation();
     const currentBlockNumber = +await this._addressService.currentBlockNumber();
@@ -31,8 +38,8 @@ export class LiquidationTask {
         const transaction = {
           to: this._config.get('SSV_NETWORK_ADDRESS'),
           value: 0,
-          gas: +this._config.get('GAS'),
-          gasPrice: +this._config.get('GAS_PRICE'),
+          gas,
+          gasPrice,
           nonce: await web3.eth.getTransactionCount(this._config.get('ACCOUNT_ADDRESS'), 'latest'),
           data
         };
@@ -44,7 +51,10 @@ export class LiquidationTask {
             console.log('❗Something went wrong while submitting your transaction:', error);
           }
         })
-        .on('receipt', console.log);
+        .on('receipt', (data) => {
+          // gasPrice * data.gasUsed
+          console.log(data);
+        });
       } else {
         const isLiquidated = await this._addressService.isLiquidated(ownerAddress);
         isLiquidated && this._addressService.update({ ownerAddress, burnRate: null, isLiquidated: true });
