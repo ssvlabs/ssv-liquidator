@@ -34,6 +34,7 @@ export class LiquidationTask {
     for (const { ownerAddress } of toLiquidateRecords) {
       const liquidatable = await this._addressService.liquidatable(ownerAddress);
       if (liquidatable) {
+        console.log('LIQUIDATE PARAMS', { gas, gasPrice});
         const data = (await contract.methods.liquidate(ownerAddress)).encodeABI();
         const transaction = {
           to: this._config.get('SSV_NETWORK_ADDRESS'),
