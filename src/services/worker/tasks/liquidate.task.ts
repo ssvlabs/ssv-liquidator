@@ -18,6 +18,7 @@ export class LiquidationTask {
     console.log(`fetching register validator events...`);
     const web3 = new Web3(this._config.get('NODE_URL'));
     let gasPrice = +await web3.eth.getGasPrice();
+    console.log("GAS NETWORK PRICE", gasPrice, web3.utils.toWei('10', 'ether'))
     const gas = (await web3.eth.getBlock('latest')).gasLimit;
     if (this._config.get('GAS_PRICE') === 'slow') {
       gasPrice -= web3.utils.toWei('10', 'ether');
@@ -35,7 +36,7 @@ export class LiquidationTask {
       const liquidatable = await this._addressService.liquidatable(ownerAddress);
       if (liquidatable) {
         console.log('LIQUIDATE PARAMS', { gas, gasPrice});
-        const data = (await contract.methods.liquidate(ownerAddress)).encodeABI();
+        const data = (await contract.methods.liquidate([ownerAddress])).encodeABI();
         const transaction = {
           to: this._config.get('SSV_NETWORK_ADDRESS'),
           value: 0,
