@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { HttpModule, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 
 import { AddressModule } from '../../modules/addresses/address.module';
+import { EarningModule } from '../../modules/earnings/earning.module';
 import { SystemModule } from '../../modules/system/system.module';
 import { ConfService } from '../../shared/services/conf.service';
 // tasks list
@@ -21,9 +22,11 @@ import CronProviders from './cron.provider';
       entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
     }),
     ScheduleModule.forRoot(),
+    HttpModule,
     SharedModule,
     SystemModule,
     AddressModule,
+    EarningModule,
   ],
   providers: [ConfService, ...TaskProviders, ...CronProviders],
 })

@@ -1,21 +1,23 @@
 import React, { Component } from 'react';
+import importJsx from 'import-jsx';
+import path from 'path';
 import { Text } from 'ink';
 
-interface IBaseProps {
-  cellSpacing?: number;
-  componentRef;
+import { transformEarningData } from './earning.transformer';
+const { EarningsComponent } = importJsx(path.join(__dirname,'/../../earnings/cli/earning.component'));
+
+interface IEarningsProps {
   service;
-  transformer;
 }
 
-interface IBaseState {
+interface IEarningsState {
   items?: any;
   err?: string;
 }
 
-export class BaseContainer extends Component<IBaseProps, IBaseState> {
+export class Earnings extends Component<IEarningsProps, IEarningsState> {
   private timer;
-  private willComponentUnmount: boolean;
+  private willComponentUnmount;
 
   constructor(props) {
     super(props);
@@ -34,13 +36,8 @@ export class BaseContainer extends Component<IBaseProps, IBaseState> {
     await this.listenForChanges();
   }
 
-  componentDidUpdate() {}
-
-  componentWillUnmount() {
-    if (this.timer) {
-      clearInterval(this.timer);
-    }
-    this.willComponentUnmount = true;
+  async componentWillUnmount() {
+    clearInterval(this.timer);
   }
 
   async listenForChanges() {
@@ -50,18 +47,16 @@ export class BaseContainer extends Component<IBaseProps, IBaseState> {
 
     this.timer = setInterval(async() => {
       const items = await this.props.service.findAll();
-      const currentBlockNumber = await this.props.service.currentBlockNumber();
-      const minimumBlocksBeforeLiquidation = await this.props.service.minimumBlocksBeforeLiquidation();
       this.setStateSafely({
-        items: this.props.transformer(items, { currentBlockNumber, minimumBlocksBeforeLiquidation })
+        items: transformEarningData(items)
       });
-    }, 10000);
+    }, 1000);
   }
 
   render() {
     if (!this.state.err) {
       return (
-        <this.props.componentRef items={this.state.items}/>
+        <EarningsComponent items={this.state.items}/>
       );
     } else {
       return (

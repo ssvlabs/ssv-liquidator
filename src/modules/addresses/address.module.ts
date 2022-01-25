@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-// import { AddressView } from './cli/address.view';
 import { AddressService } from './address.service';
 import { Address } from './address.entity';
 

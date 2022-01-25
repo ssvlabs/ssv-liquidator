@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult, DeleteResult, getConnection } from 'typeorm';
+import { Repository, DeleteResult, getConnection } from 'typeorm';
 
 import { Address } from './address.entity';
 import { ConfService } from '../../shared/services/conf.service';

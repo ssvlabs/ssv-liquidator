@@ -1,29 +1,70 @@
 import React, { Component } from 'react';
 import importJsx from 'import-jsx';
 import path from 'path';
+import { Text } from 'ink';
+
 import { transformAddressData } from './address.transformer';
 const { AddressesComponent } = importJsx(path.join(__dirname,'/../../addresses/cli/address.component'));
-const { BaseContainer } = importJsx(path.join(__dirname,'/../../../shared/cli//base.container'));
-
 interface IAddressesProps {
   service;
 }
 
 interface IAddressesState {
+  items?: any;
+  err?: string;
 }
 
 export class Addresses extends Component<IAddressesProps, IAddressesState> {
+  private timer;
+  private willComponentUnmount;
+
   constructor(props) {
     super(props);
+    this.state = { items: [], err: '' };
+    this.timer;
+    this.willComponentUnmount = false;
+  }
+
+  setStateSafely(state) {
+    if (!this.willComponentUnmount) {
+      this.setState(state);
+    }
+  }
+
+  async componentDidMount() {
+    await this.listenForChanges();
+  }
+  
+  async componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+
+  async listenForChanges() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+
+    this.timer = setInterval(async() => {
+      const items = await this.props.service.findAll();
+      const currentBlockNumber = await this.props.service.currentBlockNumber();
+      const minimumBlocksBeforeLiquidation = await this.props.service.minimumBlocksBeforeLiquidation();
+      this.setStateSafely({
+        items: transformAddressData(items, { currentBlockNumber, minimumBlocksBeforeLiquidation })
+      });
+    }, 1000);
   }
 
   render() {
-    return (
-      <BaseContainer
-        componentRef={AddressesComponent}
-        service={this.props.service}
-        transformer={transformAddressData}
-      />
-    );
+    if (!this.state.err) {
+      return (
+        <AddressesComponent items={this.state.items}/>
+      );
+    } else {
+      return (
+        <Text color="red">
+          {this.state.err}
+        </Text>
+      );
+    }
   }
 }
