@@ -16,7 +16,7 @@ interface IAddressesState {
 
 export class Addresses extends Component<IAddressesProps, IAddressesState> {
   private timer;
-  private willComponentUnmount;
+  private willComponentUnmount: boolean;
 
   constructor(props) {
     super(props);
@@ -36,6 +36,7 @@ export class Addresses extends Component<IAddressesProps, IAddressesState> {
   }
   
   async componentWillUnmount() {
+    this.willComponentUnmount = true;
     clearInterval(this.timer);
   }
 
@@ -45,6 +46,7 @@ export class Addresses extends Component<IAddressesProps, IAddressesState> {
     }
 
     this.timer = setInterval(async() => {
+      if (this.willComponentUnmount) return;
       const items = await this.props.service.findAll();
       const currentBlockNumber = await this.props.service.currentBlockNumber();
       const minimumBlocksBeforeLiquidation = await this.props.service.minimumBlocksBeforeLiquidation();

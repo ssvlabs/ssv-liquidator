@@ -17,7 +17,7 @@ interface IEarningsState {
 
 export class Earnings extends Component<IEarningsProps, IEarningsState> {
   private timer;
-  private willComponentUnmount;
+  private willComponentUnmount: boolean;
 
   constructor(props) {
     super(props);
@@ -37,6 +37,7 @@ export class Earnings extends Component<IEarningsProps, IEarningsState> {
   }
 
   async componentWillUnmount() {
+    this.willComponentUnmount = true;
     clearInterval(this.timer);
   }
 
@@ -46,6 +47,7 @@ export class Earnings extends Component<IEarningsProps, IEarningsState> {
     }
 
     this.timer = setInterval(async() => {
+      if (this.willComponentUnmount) return;
       const items = await this.props.service.findAll();
       this.setStateSafely({
         items: transformEarningData(items)
