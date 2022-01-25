@@ -31,8 +31,8 @@ export class LiquidationTask {
     const latestBlock = await this.web3.eth.getBlockNumber();
     const fromBlock = await this._systemService.get(SystemType.EARNINGS_LAST_BLOCK_NUMBER) || 0;
 
-    const ownerAddress = this.web3.eth.accounts.privateKeyToAccount(this._config.get('ACCOUNT_PRIVATE_KEY')).address;
-    const txsList = await this._httpService.get(`${apiUri}?module=account&action=txlist&address=${ownerAddress}&startblock=${fromBlock}&endblock=0&page=1&offset=10000&sort=asc&apikey=${this._config.get('ETHERSCAN_KEY')}`).toPromise();
+    const liquidatorAddress = this.web3.eth.accounts.privateKeyToAccount(this._config.get('ACCOUNT_PRIVATE_KEY')).address;
+    const txsList = await this._httpService.get(`${apiUri}?module=account&action=txlist&address=${liquidatorAddress}&startblock=${fromBlock}&endblock=${latestBlock}&endblock=0&page=1&offset=10000&sort=asc&apikey=${this._config.get('ETHERSCAN_KEY')}`).toPromise();
     const filteredTxs = txsList.data.result
       .filter(item => item.to.toLowerCase() === this._config.get('SSV_NETWORK_ADDRESS').toLowerCase() && item.isError === '0');
     for (const tx of filteredTxs) {
@@ -40,16 +40,19 @@ export class LiquidationTask {
       if (method === 'liquidate') {
         const txReceipt: any = await this._httpService.get(`${apiUri}?module=proxy&action=eth_getTransactionReceipt&txhash=${tx.hash}&apikey=${this._config.get('ETHERSCAN_KEY')}`).toPromise();
         const earnedData = {
+          hash: tx.hash,
+          liquidatorAddress,
           gasPrice: +tx.gasPrice / 1e18,
           gasUsed: tx.gasUsed,
-          earned: null
+          earned: null,
+          earnedAtBlock: tx.blockNumber,
         };
         if (txReceipt.data) {
           const { logs } = txReceipt.data.result;
           const transferData = logs.find(log => log.address === this._config.get('SSV_TOKEN_ADDRESS').toLowerCase());  
           earnedData.earned = transferData && +this.web3.utils.hexToNumberString(transferData.data) / 1e18;
         }
-        this._earningService.update({ ownerAddress, ...earnedData });
+        this._earningService.update(earnedData);
       }
     }
     await this._systemService.save(SystemType.EARNINGS_LAST_BLOCK_NUMBER, latestBlock);
@@ -83,7 +86,7 @@ export class LiquidationTask {
           value: 0,
           gas,
           gasPrice,
-          nonce: await this.web3.eth.getTransactionCount(this._config.get('ACCOUNT_ADDRESS'), 'latest'),
+          nonce: await this.web3.eth.getTransactionCount(this.web3.eth.accounts.privateKeyToAccount(this._config.get('ACCOUNT_PRIVATE_KEY')).address, 'latest'),
           data
         };
         const signedTx = await this.web3.eth.accounts.signTransaction(transaction, this._config.get('ACCOUNT_PRIVATE_KEY'));

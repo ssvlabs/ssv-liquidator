@@ -3,7 +3,10 @@ import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryColumn } fro
 @Entity()
 export class Earning {
   @PrimaryColumn()
-  ownerAddress: string;
+  hash: string;
+
+  @Column({ default: null })
+  liquidatorAddress: string;
 
   @Column({ default: null })
   gasPrice: number;

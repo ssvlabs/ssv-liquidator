@@ -9,11 +9,10 @@ export const transformEarningData = (items) => {
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
       earnings.push({
-        owner: { text: item.ownerAddress },
-        gasPrice: { text: `${item.gasPrice} ETH` },
-        gasUsed: { text: `${item.gasUsed}`},
+        fee: { text: `${(item.gasPrice*item.gasUsed).toFixed(18)} ETH` },
         earned: { text: `${item.earned} SSV`},
-        liquidateAtBlock: { text: item.earnedAtBlock }
+        liquidatedAtBlock: { text: item.earnedAtBlock },
+        txHash: { text: item.hash },
       });
     }
   } catch (e) {

@@ -23,34 +23,34 @@ export class EarningService {
     return await this._earningRepository.findOne(filters);
   }
 
-  async create(addresses: Earning[]): Promise<void> {
+  async create(items: Earning[]): Promise<void> {
     await getConnection()
       .createQueryBuilder()
       .insert()
       .into(Earning)
-      .values(addresses)
+      .values(items)
       .orIgnore(true)
       .execute();
   }
 
-  async update(address: any): Promise<void> {
-    const record = await this._earningRepository.findOne({ ownerAddress: address.ownerAddress });
+  async update(item: any): Promise<void> {
+    const record = await this._earningRepository.findOne({ hash: item.hash });
     if (record) {
-      const updates = Object.keys(address).reduce((aggr, key) => {
-        if (record[key] !== address[key]) {
-          aggr[key] = address[key];
+      const updates = Object.keys(item).reduce((aggr, key) => {
+        if (record[key] !== item[key]) {
+          aggr[key] = item[key];
         }
         return aggr;
       }, {});
       if (Object.keys(updates).length) {
         await this._earningRepository.save({
           ...record,
-          ...address,
+          ...item,
           updatedAt: new Date()
         });
       }  
     } else {
-      await this._earningRepository.save(address);
+      await this._earningRepository.save(item);
     }
   }
 
