@@ -6,10 +6,8 @@
   "scripts": {
     "build:prod": "tsc -p tsconfig.build.json",
     "postbuild:prod": "copyfiles --up 1 src/**/*.json dist",
-    "start:worker": "ts-node -r tsconfig-paths/register src/services/worker/worker.tsx",
-    "start:prod:worker": "node dist/services/worker/worker.js",
-    "watch:worker": "nodemon --config worker.nodemon.json",
-    "debug:dev": "nodemon --config nodemon-debug.json",
+    "start": "ts-node -r tsconfig-paths/register src/services/worker/worker.tsx",
+    "start:prod": "node dist/services/worker/worker.js",
     "webpack": "webpack --config webpack.config.js --progress",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint --fix . --ext .ts"

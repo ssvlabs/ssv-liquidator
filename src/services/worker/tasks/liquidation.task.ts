@@ -65,9 +65,9 @@ export class LiquidationTask {
     console.log("GAS NETWORK PRICE", gasPrice, this.web3.utils.toWei('10', 'ether'))
     const gas = (await this.web3.eth.getBlock('latest')).gasLimit;
     if (this._config.get('GAS_PRICE') === 'slow') {
-      gasPrice -= this.web3.utils.toWei('10', 'ether');
+      gasPrice -= gasPrice * 0.1;
     } else if (this._config.get('GAS_PRICE') === 'high') {
-      gasPrice += this.web3.utils.toWei('10', 'ether');
+      gasPrice += gasPrice * 0.2;
     }
     const contract = new this.web3.eth.Contract(CONTRACT_ABI, this._config.get('SSV_NETWORK_ADDRESS'));
     const minimumBlocksBeforeLiquidation = +await this._addressService.minimumBlocksBeforeLiquidation();
