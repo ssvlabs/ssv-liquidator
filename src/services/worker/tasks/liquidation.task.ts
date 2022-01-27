@@ -64,11 +64,15 @@ export class LiquidationTask {
     let gasPrice = +await this.web3.eth.getGasPrice();
     console.log("GAS NETWORK PRICE", gasPrice, this.web3.utils.toWei('10', 'ether'))
     const gas = (await this.web3.eth.getBlock('latest')).gasLimit;
+    console.log("INIT GAS PRICE AND GAS", gasPrice, gas);
     if (this._config.get('GAS_PRICE') === 'slow') {
+      console.log("minus 10 PERCENT GAS", gasPrice * 0.1);
       gasPrice -= gasPrice * 0.1;
     } else if (this._config.get('GAS_PRICE') === 'high') {
+      console.log("plus 20 PERCENT GAS", gasPrice * 0.1);
       gasPrice += gasPrice * 0.2;
     }
+    console.log("FINAL GAS PRICE", gasPrice);
     const contract = new this.web3.eth.Contract(CONTRACT_ABI, this._config.get('SSV_NETWORK_ADDRESS'));
     const minimumBlocksBeforeLiquidation = +await this._addressService.minimumBlocksBeforeLiquidation();
     const currentBlockNumber = +await this._addressService.currentBlockNumber();
