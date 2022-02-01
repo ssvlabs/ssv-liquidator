@@ -12,19 +12,15 @@ import importJsx from 'import-jsx';
 import path from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(WorkerModule, { logger: ['error', 'warn'], });
+  // const app = await NestFactory.create(WorkerModule, { logger: ['error', 'warn'], });
+
+  const app = await NestFactory.createApplicationContext(WorkerModule, { logger: ['error', 'warn'], });
   const configService = app.select(WorkerModule).get(ConfService);
   const addressService = app.select(WorkerModule).get(AddressService);
   const earningService = app.select(WorkerModule).get(EarningService);
 
   const { App } = importJsx(path.join(__dirname,'/../../shared/cli/app'));
   render(<App addressService={addressService} earningService={earningService} />);
-
-  const port = configService.getNumber('WORKER_PORT');
-  await app
-    .listen(port)
-    // eslint-disable-next-line no-console
-    .then(() => console.log()); // `Worker running on port ${port}`
 }
 
 void bootstrap();
