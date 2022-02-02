@@ -75,7 +75,6 @@ export class LiquidationTask {
     const currentBlockNumber = +await this._addressService.currentBlockNumber();
     const toLiquidateRecords = await this._addressService.findBy({
       where: { liquidateAtBlock: LessThanOrEqual(currentBlockNumber + minimumBlocksBeforeLiquidation) },
-      take: this._config.get('LIQUIDATE_BATCH_SIZE'),
     });
     let addressesToLiquidate = [];
     for (const { ownerAddress } of toLiquidateRecords) {
@@ -87,27 +86,30 @@ export class LiquidationTask {
         isLiquidated && this._addressService.update({ ownerAddress, burnRate: null, isLiquidated: true });
       }
     }
-    console.log('LIQUIDATE PARAMS', { gas, gasPrice});
-    const data = (await contract.methods.liquidate(addressesToLiquidate)).encodeABI();
-    const transaction = {
-      to: this._config.get('SSV_NETWORK_ADDRESS'),
-      value: 0,
-      gas,
-      gasPrice,
-      nonce: await this.web3.eth.getTransactionCount(this.web3.eth.accounts.privateKeyToAccount(this._config.get('ACCOUNT_PRIVATE_KEY')).address, 'latest'),
-      data
-    };
-    const signedTx = await this.web3.eth.accounts.signTransaction(transaction, this._config.get('ACCOUNT_PRIVATE_KEY'));
-    this.web3.eth.sendSignedTransaction(signedTx.rawTransaction, (error, hash) => {
-      if (!error) {
-        console.log(`🎉 The hash of liquidated transaction is: ${hash}`);
-      } else {
-        console.log('❗Something went wrong while submitting your transaction:', error);
-      }
-    })
-    .on('receipt', (data) => {
-      // gasPrice * data.gasUsed
-      console.log(data);
-    });
+    if (addressesToLiquidate.length > 0) {
+      console.log("TO LIQUIDATE", addressesToLiquidate);
+      console.log('LIQUIDATE PARAMS', { gas, gasPrice});
+      const data = (await contract.methods.liquidate(addressesToLiquidate)).encodeABI();
+      const transaction = {
+        to: this._config.get('SSV_NETWORK_ADDRESS'),
+        value: 0,
+        gas,
+        gasPrice,
+        nonce: await this.web3.eth.getTransactionCount(this.web3.eth.accounts.privateKeyToAccount(this._config.get('ACCOUNT_PRIVATE_KEY')).address, 'latest'),
+        data
+      };
+      const signedTx = await this.web3.eth.accounts.signTransaction(transaction, this._config.get('ACCOUNT_PRIVATE_KEY'));
+      this.web3.eth.sendSignedTransaction(signedTx.rawTransaction, (error, hash) => {
+        if (!error) {
+          console.log(`🎉 The hash of liquidated transaction is: ${hash}`);
+        } else {
+          console.log('❗Something went wrong while submitting your transaction:', error);
+        }
+      })
+      .on('receipt', (data) => {
+        // gasPrice * data.gasUsed
+        console.log(data);
+      });
+    }
   }
 }

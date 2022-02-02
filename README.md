@@ -24,11 +24,9 @@ yarn
 And add configuration settings into `.env` file, such as:
 
 ```sh
-WORKER_PORT=3030
 NODE_URL= # ETH node url
 SSV_NETWORK_ADDRESS= # ssv network contract address
 ACCOUNT_PRIVATE_KEY= # private key of your wallet
-LIQUIDATE_BATCH_SIZE=2
 GAS_PRICE=normal # slow/normal/high
 ```
 

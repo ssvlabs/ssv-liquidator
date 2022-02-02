@@ -10,16 +10,11 @@ services:
     command: sh -c "yarn start:prod:worker"
     volumes:
       - sqlite-data:/opt/app/data
-    ports:
-      - '$WORKER_PORT:$WORKER_PORT'
     environment:
-      - WORKER_PORT
-      - NODE_ENV
       - SSV_NETWORK_ADDRESS
       - NODE_URL
       - ACCOUNT_ADDRESS
       - ACCOUNT_PRIVATE_KEY
-      - LIQUIDATE_BATCH_SIZE
       - GAS_PRICE
     restart: on-failure
 

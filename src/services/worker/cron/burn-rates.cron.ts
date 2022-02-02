@@ -14,7 +14,7 @@ export class BurnRateCron {
     try {
       await this._burnRatesTask.syncBurnRates();
     } catch (e) {
-      console.log(e);
+      console.log('syncBurnRates', e);
     }
   }
 
@@ -23,7 +23,7 @@ export class BurnRateCron {
     try {
       await this._burnRatesTask.syncLiquidatedAddresses();
     } catch (e) {
-      console.log(e);
+      console.log('syncLiquidatedAddresses', e);
     }
   }
 
@@ -32,7 +32,7 @@ export class BurnRateCron {
     try {
       await this._burnRatesTask.syncFundsDeposited();
     } catch (e) {
-      console.log(e);
+      console.log('syncDeposits', e);
     }
   }
 
@@ -41,7 +41,7 @@ export class BurnRateCron {
     try {
       await this._burnRatesTask.syncFundsWithdrawn();
     } catch (e) {
-      console.log(e);
+      console.log('syncWithdraws', e);
     }
   }
 }
