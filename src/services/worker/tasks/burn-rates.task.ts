@@ -18,13 +18,16 @@ export class BurnRatesTask {
     // eslint-disable-next-line no-console
     console.log(`syncing burn rate updates...`);
     const web3 = new Web3(this._config.get('NODE_URL'));
-    const missedRecords = await this._addressService.findBy({ where: { burnRate: null }, take: 100, select: ['ownerAddress'] });
+    const missedRecords = await this._addressService.findBy({ take: 100, select: ['ownerAddress'] }); // where: { burnRate: null }, 
     const burnRates = await Promise.allSettled(missedRecords.map(({ ownerAddress }) => this._addressService.burnRate(ownerAddress)));
     const balances = await Promise.allSettled(missedRecords.map(({ ownerAddress }) => this._addressService.totalBalanceOf(ownerAddress)));
     const liquidated = await Promise.allSettled(missedRecords.map(({ ownerAddress }) => this._addressService.isLiquidated(ownerAddress)));
     for (const [index, record] of missedRecords.entries()) {
       const burnRate = +(burnRates[index] as any).value;
-      const balance = +(balances[index] as any).value;
+      const balanceObject = balances[index] as any;
+      const balance = balanceObject.status === 'rejected' && balanceObject.reason.toString().includes('negative balance')
+        ? 0
+        : +balanceObject.value;
       const isLiquidated = (liquidated[index] as any).value;
       record.burnRate = burnRate;
       record.liquidateAtBlock = burnRate > 0
