@@ -1,5 +1,4 @@
 require('dotenv').config();
-const { xor } = require('lodash');
 const Web3 = require('web3');
 
 const SSV_NETWORK_ADDRESS_ABI = require('../src/shared/abi-ssv-network.json');
@@ -74,18 +73,17 @@ async function registerOperators() {
 }
 
 async function registerValidators() {
-  const tokens = '280000000';
+  const tokens = '2800000000';
   let idx = 1;
   for (const privateKey of ownerValidators) {
     const address = web3.eth.accounts.privateKeyToAccount(privateKey).address;
-    // console.log(address, 'transfer eth for gas');
-    // await writeTx(address, process.env.ADMIN_PRIVATE_KEY, null, null, '500000000000000000');
-    // console.log(address, 'mint tokens for validators');
-    // await writeTx(process.env.SSV_TOKEN_ADDRESS, process.env.ADMIN_PRIVATE_KEY, 'mint', [address, tokens]);
+    console.log(address, 'transfer eth for gas');
+    await writeTx(address, process.env.ADMIN_PRIVATE_KEY, null, null, '500000000000000000');
+    console.log(address, 'mint tokens for validators');
+    await writeTx(process.env.SSV_TOKEN_ADDRESS, process.env.ADMIN_PRIVATE_KEY, 'mint', [address, tokens]);
     console.log(address, 'register validator', process.env.SSV_TOKEN_ADDRESS, privateKey, 'approve', [process.env.SSV_NETWORK_ADDRESS, tokens]);
     await writeTx(process.env.SSV_TOKEN_ADDRESS, privateKey, 'approve', [process.env.SSV_NETWORK_ADDRESS, tokens]);
-    await writeTx(process.env.SSV_NETWORK_ADDRESS, privateKey, 'deposit', [tokens]);
-    /*
+    // await writeTx(process.env.SSV_NETWORK_ADDRESS, privateKey, 'deposit', [tokens]);
     await writeTx(process.env.SSV_NETWORK_ADDRESS, privateKey, 'registerValidator', [
       validatorsPub[idx],
       operatorsPub.slice(0, 4),
@@ -93,9 +91,7 @@ async function registerValidators() {
       operatorsPub.slice(0, 4),
       tokens
     ]);
-
     idx++;
-    */
   }
 }
 
