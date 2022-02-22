@@ -7,7 +7,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: sh -c "yarn start:prod:worker"
+    command: sh -c "yarn start"
     volumes:
       - sqlite-data:/opt/app/data
     environment:

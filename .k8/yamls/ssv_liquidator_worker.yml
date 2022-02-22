@@ -41,7 +41,7 @@ spec:
         ports:
         - containerPort: 3030
         command: ["/bin/sh"]
-        args: ["-c", "yarn start:prod:worker"]
+        args: ["-c", "yarn start"]
         env:
         - name: WORKER_PORT
           value: "3030"
@@ -53,7 +53,7 @@ spec:
           value: "http://eth1.stage.bloxinfra.com/"
 
         - name: GAS_PRICE
-          value: "high"
+          value: "normal"
 
         - name: SSV_NETWORK_ADDRESS
           valueFrom:

@@ -22,7 +22,9 @@ const ownerValidators = [
   'f38f928f8f13079eedd50304b3ab571e83653ac22d7e215f154cf11fb6c52755',
   '85e9c9cca3ef301d646b175c21eff69722ca795cef246c69f16c57e9d36f7dc8',
   'a5db5d2529f66092fc0f22c88a0523354b14b600dd42b55e798f54108b20ce09',
-  '0ea43e660288594beae456303da92faa5ec5b82a67c42f8c417ef0ff8ffed12e'
+  '0ea43e660288594beae456303da92faa5ec5b82a67c42f8c417ef0ff8ffed12e',
+  'e68b5898dadf3dc8a3c11154257ea1d6e9e9cd6828d5ee601d5a70293ae9a46c',
+  '9cb53e0ce246dea2aaf8f97ca458e42a93a3cbc1a238a246ad6f6ad9f121e13e'
 ]
 
 async function writeTx(contractAddress, privateKey, methodName, payload, value = 0) {
@@ -73,8 +75,8 @@ async function registerOperators() {
 }
 
 async function registerValidators() {
-  const tokens = '2800000000';
-  let idx = 1;
+  const tokens = '18000000';
+  let idx = 8;
   for (const privateKey of ownerValidators) {
     const address = web3.eth.accounts.privateKeyToAccount(privateKey).address;
     console.log(address, 'transfer eth for gas');
@@ -98,29 +100,6 @@ async function registerValidators() {
 async function bootstrap() {
   // await registerOperators();
   await registerValidators();
-  /*
-  const data = (await contract.methods.liquidate(addressesToLiquidate)).encodeABI();
-  const transaction = {
-    to: process.env.SSV_NETWORK_ADDRESS,
-    value: 0,
-    gas,
-    gasPrice,
-    nonce: await this.web3.eth.getTransactionCount(web3.eth.accounts.privateKeyToAccount(process.env.ACCOUNT_PRIVATE_KEY).address, 'latest'),
-    data
-  };
-  const signedTx = await this.web3.eth.accounts.signTransaction(transaction, process.env.ACCOUNT_PRIVATE_KEY);
-  web3.eth.sendSignedTransaction(signedTx.rawTransaction, (error, hash) => {
-    if (!error) {
-      console.log(`🎉 The hash of liquidated transaction is: ${hash}`);
-    } else {
-      console.log('❗Something went wrong while submitting your transaction:', error);
-    }
-  })
-  .on('receipt', (data) => {
-    // gasPrice * data.gasUsed
-    console.log(data);
-  });
-  */
 }
 
 bootstrap();
