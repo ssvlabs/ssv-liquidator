@@ -4,7 +4,9 @@ import path from 'path';
 import { Text } from 'ink';
 
 import { transformEarningData } from './earning.transformer';
-const { EarningsComponent } = importJsx(path.join(__dirname,'/../../earnings/cli/earning.component'));
+const { EarningsComponent } = importJsx(
+  path.join(__dirname, '/../../earnings/cli/earning.component'),
+);
 
 interface IEarningsProps {
   service;
@@ -46,26 +48,20 @@ export class Earnings extends Component<IEarningsProps, IEarningsState> {
       clearInterval(this.timer);
     }
 
-    this.timer = setInterval(async() => {
+    this.timer = setInterval(async () => {
       if (this.willComponentUnmount) return;
       const items = await this.props.service.findAll();
       this.setStateSafely({
-        items: transformEarningData(items)
+        items: transformEarningData(items),
       });
     }, 1000);
   }
 
   render() {
     if (!this.state.err) {
-      return (
-        <EarningsComponent items={this.state.items}/>
-      );
+      return <EarningsComponent items={this.state.items} />;
     } else {
-      return (
-        <Text color="red">
-          {this.state.err}
-        </Text>
-      );
+      return <Text color="red">{this.state.err}</Text>;
     }
   }
 }

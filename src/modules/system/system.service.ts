@@ -5,31 +5,40 @@ import { Repository } from 'typeorm';
 import { System } from './system.entity';
 
 export enum SystemType {
-  NEW_VALIDATORS_LAST_BLOCK_NUMBER = 'NEW_VALIDATORS_LAST_BLOCK_NUMBER',
-  UPDATED_VALIDATORS_LAST_BLOCK_NUMBER = 'UPDATED_VALIDATORS_LAST_BLOCK_NUMBER',
-  BURN_RATES_LAST_BLOCK_NUMBER = 'BURN_RATES_LAST_BLOCK_NUMBER',
-  LIQUIDATED_LAST_BLOCK_NUMBER = 'LIQUIDATED_LAST_BLOCK_NUMBER',
-  DEPOSITED_LAST_BLOCK_NUMBER = 'DEPOSITED_LAST_BLOCK_NUMBER',
-  WITHDRAWN_LAST_BLOCK_NUMBER = 'WITHDRAWN_LAST_BLOCK_NUMBER',
+  GENERAL_LAST_BLOCK_NUMBER = 'GENERAL_LAST_BLOCK_NUMBER',
   EARNINGS_LAST_BLOCK_NUMBER = 'EARNINGS_LAST_BLOCK_NUMBER',
+  // event names
+  EVENT_OPERATOR_ADDED = 'OperatorAdded',
+  EVENT_OPERATOR_REMOVED = 'OperatorRemoved',
+  EVENT_OPERATOR_FEE_APPROVED = 'OperatorFeeApproved',
+  EVENT_VALIDATOR_ADDED = 'ValidatorAdded',
+  EVENT_VALIDATOR_REMOVED = 'ValidatorRemoved',
+  EVENT_ACCOUNT_LIQUIDATED = 'AccountLiquidated',
+  EVENT_FUNDS_DEPOSITED = 'FundsDeposited',
+  EVENT_FUNDS_WITHDRAWN = 'FundsWithdrawn',
 }
 
 @Injectable()
 export class SystemService {
-  constructor(@InjectRepository(System) private _systemRepository: Repository<System>) {}
+  constructor(
+    @InjectRepository(System) private _systemRepository: Repository<System>,
+  ) {}
 
   async get(type: SystemType): Promise<any> {
     const result = await this._systemRepository.findOne({ type });
-    return result && result.payload
-      ? JSON.parse(result.payload)
-      : null;
+    return result && result.payload ? JSON.parse(result.payload) : null;
   }
 
   async save(type: SystemType, payload: any): Promise<void> {
     if (await this.get(type)) {
-      await this._systemRepository.update(type, { payload: JSON.stringify(payload) });
+      await this._systemRepository.update(type, {
+        payload: JSON.stringify(payload),
+      });
     } else {
-      await this._systemRepository.save({ type, payload: JSON.stringify(payload) });
+      await this._systemRepository.save({
+        type,
+        payload: JSON.stringify(payload),
+      });
     }
   }
 }

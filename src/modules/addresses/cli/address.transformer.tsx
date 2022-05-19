@@ -9,7 +9,7 @@ const timeAgo = new TimeAgo('en-US');
  * @param {string} status pod phase status string obtained from the kube api
  * @returns object containing information on what should be the font color and background color
  */
-export const colorCodeStatus = (status) => {
+export const colorCodeStatus = status => {
   switch (status) {
     case 'Liquidated':
       return { bgColor: 'red', color: 'white' };
@@ -27,15 +27,15 @@ const textStatus = (item, extra: any) => {
   const blockDiff = item.liquidateAtBlock
     ? item.liquidateAtBlock - currentBlockNumber
     : null;
-  switch(true) {
+  switch (true) {
     case item.isLiquidated:
       return 'Liquidated';
-    case (blockDiff !== null && blockDiff < minimumBlocksBeforeLiquidation):
+    case blockDiff !== null && blockDiff < minimumBlocksBeforeLiquidation:
       return 'To liquidate';
     default:
       return 'Running';
   }
-}
+};
 
 /**
  * It transforms the items object from sqlite into a custom format
@@ -50,19 +50,21 @@ export const transformAddressData = (items, extra: any) => {
       const status = textStatus(item, extra);
       addresses.push({
         owner: { text: item.ownerAddress },
-        burnRate: { text: item.burnRate !== null ? `${item.burnRate / 1e18} SSV` : '' },
+        burnRate: {
+          text: item.burnRate !== null ? `${item.burnRate / 1e18} SSV` : '',
+        },
         status: {
           text: status,
           ...colorCodeStatus(status),
           padText: true,
-          extraPadding: 1
+          extraPadding: 1,
         },
         liquidateAtBlock: { text: item.liquidateAtBlock },
         updated: {
-          text: timeAgo.format(item.updatedAt, 'round-minute')
-        }
+          text: timeAgo.format(item.updatedAt, 'round-minute'),
+        },
       });
-    }  
+    }
   } catch (e) {
     console.log(e);
   }

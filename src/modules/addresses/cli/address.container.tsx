@@ -4,9 +4,12 @@ import path from 'path';
 import { Text } from 'ink';
 
 import { transformAddressData } from './address.transformer';
-const { AddressesComponent } = importJsx(path.join(__dirname,'/../../addresses/cli/address.component'));
+const { AddressesComponent } = importJsx(
+  path.join(__dirname, '/../../addresses/cli/address.component'),
+);
 interface IAddressesProps {
   service;
+  web3Provider;
 }
 
 interface IAddressesState {
@@ -34,7 +37,7 @@ export class Addresses extends Component<IAddressesProps, IAddressesState> {
   async componentDidMount() {
     await this.listenForChanges();
   }
-  
+
   async componentWillUnmount() {
     this.willComponentUnmount = true;
     clearInterval(this.timer);
@@ -45,28 +48,27 @@ export class Addresses extends Component<IAddressesProps, IAddressesState> {
       clearInterval(this.timer);
     }
 
-    this.timer = setInterval(async() => {
+    this.timer = setInterval(async () => {
       if (this.willComponentUnmount) return;
       const items = await this.props.service.findAll();
-      const currentBlockNumber = await this.props.service.currentBlockNumber();
-      const minimumBlocksBeforeLiquidation = await this.props.service.minimumBlocksBeforeLiquidation();
+      const currentBlockNumber =
+        await this.props.web3Provider.currentBlockNumber();
+      const minimumBlocksBeforeLiquidation =
+        await this.props.web3Provider.minimumBlocksBeforeLiquidation();
       this.setStateSafely({
-        items: transformAddressData(items, { currentBlockNumber, minimumBlocksBeforeLiquidation })
+        items: transformAddressData(items, {
+          currentBlockNumber,
+          minimumBlocksBeforeLiquidation,
+        }),
       });
     }, 1000);
   }
 
   render() {
     if (!this.state.err) {
-      return (
-        <AddressesComponent items={this.state.items}/>
-      );
+      return <AddressesComponent items={this.state.items} />;
     } else {
-      return (
-        <Text color="red">
-          {this.state.err}
-        </Text>
-      );
+      return <Text color="red">{this.state.err}</Text>;
     }
   }
 }

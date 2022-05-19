@@ -4,10 +4,10 @@ import { Tab, Tabs } from 'ink-tab';
 export const NamespacesComponent = ({ namespaces, onNamespaceChange }) => {
   return (
     <Tabs
-      onChange={(name) => onNamespaceChange(name)}
+      onChange={name => onNamespaceChange(name)}
       keyMap={{ useNumbers: true, useTab: true }}
     >
-      {namespaces.map((namespace) => (
+      {namespaces.map(namespace => (
         <Tab key={namespace} name={namespace}>
           {namespace}
         </Tab>
@@ -17,5 +17,5 @@ export const NamespacesComponent = ({ namespaces, onNamespaceChange }) => {
 };
 
 module.exports = {
-  NamespacesComponent
+  NamespacesComponent,
 };

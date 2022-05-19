@@ -11,7 +11,10 @@ interface IActionBarState {
   waitingForConfirmation;
 }
 
-export class ActionBarComponent extends React.Component<IActionBarProps, IActionBarState> {
+export class ActionBarComponent extends React.Component<
+  IActionBarProps,
+  IActionBarState
+> {
   private keyPressListeners;
 
   constructor(props) {
@@ -23,7 +26,7 @@ export class ActionBarComponent extends React.Component<IActionBarProps, IAction
   getAvailableActions() {
     let availableActions = '';
 
-    this.props.actions.forEach((action) => {
+    this.props.actions.forEach(action => {
       availableActions += `[${action.key.toUpperCase()}]: ${
         action.description
       } `;
@@ -38,8 +41,8 @@ export class ActionBarComponent extends React.Component<IActionBarProps, IAction
         this.setState({
           ...this.state,
           waitingForConfirmation: {
-            key
-          }
+            key,
+          },
         });
       } else if (key.name == action.key && !this.state.waitingForConfirmation) {
         this.props.onActionPerformed(key);
@@ -48,12 +51,12 @@ export class ActionBarComponent extends React.Component<IActionBarProps, IAction
           this.props.onActionPerformed(this.state.waitingForConfirmation.key);
           this.setState({
             ...this.state,
-            waitingForConfirmation: false
+            waitingForConfirmation: false,
           });
         } else if (key.name == 'n') {
           this.setState({
             ...this.state,
-            waitingForConfirmation: false
+            waitingForConfirmation: false,
           });
         }
       }
@@ -61,7 +64,7 @@ export class ActionBarComponent extends React.Component<IActionBarProps, IAction
   }
 
   componentDidMount() {
-    this.props.actions.forEach((action) => {
+    this.props.actions.forEach(action => {
       const keyPressListener = this.createKeyPressListener(action);
       this.keyPressListeners.push(keyPressListener);
       this.props.stdin.on('keypress', keyPressListener);
@@ -70,7 +73,7 @@ export class ActionBarComponent extends React.Component<IActionBarProps, IAction
 
   componentWillUnmount() {
     // Remove all listeners added by this component
-    this.keyPressListeners.forEach((keyPressListener) => {
+    this.keyPressListeners.forEach(keyPressListener => {
       this.props.stdin.removeListener('keypress', keyPressListener);
     });
   }
@@ -81,8 +84,8 @@ export class ActionBarComponent extends React.Component<IActionBarProps, IAction
         <Box marginTop={1} marginBottom={1}>
           <Text color="yellow">
             {this.state.waitingForConfirmation
-                ? 'Are you sure [Y/N]:'
-                : this.getAvailableActions()}
+              ? 'Are you sure [Y/N]:'
+              : this.getAvailableActions()}
           </Text>
         </Box>
       );
@@ -93,5 +96,5 @@ export class ActionBarComponent extends React.Component<IActionBarProps, IAction
 }
 
 module.exports = {
-  ActionBarComponent
+  ActionBarComponent,
 };
