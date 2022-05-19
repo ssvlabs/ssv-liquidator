@@ -1,8 +1,8 @@
 require('dotenv').config();
 const Web3 = require('web3');
 
-const SSV_NETWORK_ADDRESS_ABI = require('../src/shared/abi-ssv-network.json');
-const SSV_TOKEN_ADDRESS_ABI = require('../src/shared/abi-ssv-token.json');
+const SSV_NETWORK_ADDRESS_ABI = require('../src/shared/v2.abi.json');
+const SSV_TOKEN_ADDRESS_ABI = require('../src/shared/ssv-token.abi.json');
 
 const web3 = new Web3(process.env.NODE_URL);
 const contracts = {

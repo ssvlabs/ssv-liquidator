@@ -6,8 +6,8 @@ interface ITableProps {
   cellSpacing?: number;
 }
 
-interface ITableState {
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface ITableState {}
 
 export class TableComponent extends React.Component<ITableProps, ITableState> {
   constructor(props) {
@@ -31,7 +31,7 @@ export class TableComponent extends React.Component<ITableProps, ITableState> {
   findMaxLengthText(array, header) {
     let maxLength = header.length;
 
-    array.forEach((element) => {
+    array.forEach(element => {
       const text = new String(element[header].text);
       if (text.trim().length > maxLength) {
         maxLength = text.trim().length;
@@ -62,7 +62,7 @@ export class TableComponent extends React.Component<ITableProps, ITableState> {
     const remainingSpace = diff - spaceAtOneEnd * 2;
 
     const paddedText = `${this.emptySpaces(
-      spaceAtOneEnd + extraSpace
+      spaceAtOneEnd + extraSpace,
     )}${text}${this.emptySpaces(spaceAtOneEnd + remainingSpace + extraSpace)}`;
 
     return paddedText;
@@ -97,7 +97,7 @@ export class TableComponent extends React.Component<ITableProps, ITableState> {
     const tableHeaderTexts = this.getTableHeaderTexts(data);
     const maxLengthOfTextInHeader = {};
 
-    tableHeaderTexts.forEach((header) => {
+    tableHeaderTexts.forEach(header => {
       maxLengthOfTextInHeader[header] = this.findMaxLengthText(data, header);
     });
 
@@ -109,14 +109,14 @@ export class TableComponent extends React.Component<ITableProps, ITableState> {
     const tableHeaderTexts = this.getTableHeaderTexts(data);
 
     // Pad texts with spaces if needed
-    dataCopy.forEach((row) => {
-      tableHeaderTexts.forEach((header) => {
+    dataCopy.forEach(row => {
+      tableHeaderTexts.forEach(header => {
         // Pad text specifies extra space that is to the cell
         if (row[header].padText) {
           row[header].text = this.padAroundStringWithSpaces(
             row[header].text,
             maxLengthOfTextInHeader[header],
-            row[header].extraPadding
+            row[header].extraPadding,
           );
         }
       });
@@ -139,7 +139,7 @@ export class TableComponent extends React.Component<ITableProps, ITableState> {
             width={maxLengthOfTextInHeader[header] + cellSpacing}
           >
             <React.Fragment>{tableContentTextRef}</React.Fragment>
-          </Box>
+          </Box>,
         );
       });
       return <Box key={rowIndex}>{tableContent}</Box>;
@@ -154,7 +154,7 @@ export class TableComponent extends React.Component<ITableProps, ITableState> {
       tableHeader.push(
         <Box key={index} width={maxLengthOfTextInHeader[header] + cellSpacing}>
           <Text color="green">{header.toUpperCase()}</Text>
-        </Box>
+        </Box>,
       );
     });
 
@@ -173,12 +173,12 @@ export class TableComponent extends React.Component<ITableProps, ITableState> {
     const tableHeader = this.getTableHeader(
       data,
       maxLengthOfTextInHeader,
-      cellSpacing
+      cellSpacing,
     );
     const tableContent = this.getTableContent(
       data,
       maxLengthOfTextInHeader,
-      cellSpacing
+      cellSpacing,
     );
 
     return (
@@ -191,5 +191,5 @@ export class TableComponent extends React.Component<ITableProps, ITableState> {
 }
 
 module.exports = {
-  TableComponent
+  TableComponent,
 };

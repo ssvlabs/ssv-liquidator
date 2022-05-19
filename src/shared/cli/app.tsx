@@ -1,14 +1,21 @@
 import React from 'react';
 import importJsx from 'import-jsx';
 import path from 'path';
-const { Addresses } = importJsx(path.join(__dirname,'/../../modules/addresses/cli/address.container'));
-const { Earnings } = importJsx(path.join(__dirname,'/../../modules/earnings/cli/earning.container'));
-const { Namespaces } = importJsx(path.join(__dirname,'/../../shared/cli/namespaces.container'));
+const { Addresses } = importJsx(
+  path.join(__dirname, '/../../modules/addresses/cli/address.container'),
+);
+const { Earnings } = importJsx(
+  path.join(__dirname, '/../../modules/earnings/cli/earning.container'),
+);
+const { Namespaces } = importJsx(
+  path.join(__dirname, '/../../shared/cli/namespaces.container'),
+);
 
 interface IAppProps {
   resource: string;
   addressService;
   earningService;
+  web3Provider;
 }
 
 interface IAppState {
@@ -44,12 +51,15 @@ export class App extends React.Component<IAppProps, IAppState> {
         <React.Fragment>
           <Namespaces onNamespaceChange={this.onNamespaceChange} />
           <ResourceComponent
-            service={this.state.selectedNamespace === 'addresses'
-              ? this.props.addressService
-              : this.props.earningService}
+            web3Provider={this.props.web3Provider}
+            service={
+              this.state.selectedNamespace === 'addresses'
+                ? this.props.addressService
+                : this.props.earningService
+            }
           />
         </React.Fragment>
-      );  
+      );
     }
   }
 }

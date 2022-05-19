@@ -1,5 +1,5 @@
-import { ValidatorCron } from './cron/validators.cron';
 import { BurnRateCron } from './cron/burn-rates.cron';
+import { FetchCron } from './cron/fetch.cron';
 import { LiquidationCron } from './cron/liquidation.cron';
 
-export default [ValidatorCron, BurnRateCron, LiquidationCron];
+export default [BurnRateCron, FetchCron, LiquidationCron];
