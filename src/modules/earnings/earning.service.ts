@@ -6,7 +6,6 @@ import { Earning } from './earning.entity';
 
 @Injectable()
 export class EarningService {
-
   constructor(
     @InjectRepository(Earning) private _earningRepository: Repository<Earning>,
   ) {}
@@ -46,9 +45,9 @@ export class EarningService {
         await this._earningRepository.save({
           ...record,
           ...item,
-          updatedAt: new Date()
+          updatedAt: new Date(),
         });
-      }  
+      }
     } else {
       await this._earningRepository.save(item);
     }

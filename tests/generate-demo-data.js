@@ -76,19 +76,18 @@ async function registerOperators() {
 
 async function registerValidators() {
   const tokens = '18000000';
-  let idx = 8;
+  let idx = 1;
   for (const privateKey of ownerValidators) {
     const address = web3.eth.accounts.privateKeyToAccount(privateKey).address;
     console.log(address, 'transfer eth for gas');
-    await writeTx(address, process.env.ADMIN_PRIVATE_KEY, null, null, '500000000000000000');
+    await writeTx(address, process.env.ACCOUNT_PRIVATE_KEY, null, null, '500000000000000000');
     console.log(address, 'mint tokens for validators');
-    await writeTx(process.env.SSV_TOKEN_ADDRESS, process.env.ADMIN_PRIVATE_KEY, 'mint', [address, tokens]);
+    await writeTx(process.env.SSV_TOKEN_ADDRESS, process.env.ACCOUNT_PRIVATE_KEY, 'mint', [address, tokens]);
     console.log(address, 'register validator', process.env.SSV_TOKEN_ADDRESS, privateKey, 'approve', [process.env.SSV_NETWORK_ADDRESS, tokens]);
     await writeTx(process.env.SSV_TOKEN_ADDRESS, privateKey, 'approve', [process.env.SSV_NETWORK_ADDRESS, tokens]);
-    // await writeTx(process.env.SSV_NETWORK_ADDRESS, privateKey, 'deposit', [tokens]);
     await writeTx(process.env.SSV_NETWORK_ADDRESS, privateKey, 'registerValidator', [
       validatorsPub[idx],
-      operatorsPub.slice(0, 4),
+      [1,2,3,4],
       operatorsPub.slice(0, 4),
       operatorsPub.slice(0, 4),
       tokens

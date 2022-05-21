@@ -5,9 +5,7 @@ import { SystemService } from './system.service';
 import { System } from './system.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([System]),
-  ],
+  imports: [TypeOrmModule.forFeature([System])],
   controllers: [],
   exports: [SystemService],
   providers: [SystemService],

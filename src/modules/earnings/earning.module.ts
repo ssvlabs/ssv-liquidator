@@ -5,9 +5,7 @@ import { EarningService } from './earning.service';
 import { Earning } from './earning.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Earning]),
-  ],
+  imports: [TypeOrmModule.forFeature([Earning])],
   exports: [EarningService],
   providers: [EarningService],
 })
