@@ -21,22 +21,17 @@ NODE_URL= # ETH node url
 SSV_NETWORK_ADDRESS= # ssv network contract address
 ACCOUNT_PRIVATE_KEY= # private key of your wallet
 GAS_PRICE=normal # slow/normal/high
+ETHERSCAN_KEY= # EtherScan api key
 ```
 
 ## Running CLI
 
 Executable command:
-`yarn cli ...` or `yarn dev:cli ...`
+`yarn cli`
 
 ## Development
 
 ### Run CLI as TypeScript executable
-
-```bash
-yarn dev:cli ...
-```
-
-### Run CLI as JavaScript compiled executable
 
 ```bash
 yarn cli ...
@@ -51,26 +46,6 @@ yarn lint
 ### Testing
 
 * TODO
-
-### Building
-
-Build TypeScript into JavaScript
-
-```bash
-yarn build
-```
-
-Build for NodeJs using `esbuild`
-
-```bash
-yarn esbuild
-```
-
-Build everything
-
-```bash
-yarn build-all
-```
 
 ## TODO
 
