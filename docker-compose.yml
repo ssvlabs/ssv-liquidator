@@ -16,6 +16,7 @@ services:
       - ACCOUNT_ADDRESS
       - ACCOUNT_PRIVATE_KEY
       - GAS_PRICE
+      - ETHERSCAN_KEY
     restart: on-failure
 
 volumes:

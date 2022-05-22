@@ -66,6 +66,12 @@ spec:
             secretKeyRef:
               name: config-secrets
               key: account_private_key
+          
+        - name: ETHERSCAN_KEY
+          valueFrom:
+            secretKeyRef:
+              name: config-secrets
+              key: etherscan_key
 
         volumeMounts:
         - mountPath: "/data/"
