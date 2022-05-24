@@ -27,6 +27,8 @@ export class LiquidationTask {
       gasPrice -= gasPrice * 0.1;
     } else if (this._config.get('GAS_PRICE') === 'high') {
       gasPrice += gasPrice * 0.2;
+    } else if (this._config.get('GAS_PRICE') === 'highest') {
+      gasPrice += gasPrice * 0.4;
     }
 
     gasPrice = +gasPrice.toFixed(0);
