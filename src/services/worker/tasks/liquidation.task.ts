@@ -42,17 +42,21 @@ export class LiquidationTask {
     });
     const addressesToLiquidate = [];
     for (const { ownerAddress } of toLiquidateRecords) {
-      const liquidatable = await Web3Provider.liquidatable(ownerAddress);
-      if (liquidatable) {
-        addressesToLiquidate.push(ownerAddress);
-      } else {
-        const isLiquidated = await Web3Provider.isLiquidated(ownerAddress);
-        if (isLiquidated) {
-          await this._addressService.update(
-            { ownerAddress },
-            { burnRate: null, isLiquidated: true },
-          );
+      try {
+        const liquidatable = await Web3Provider.liquidatable(ownerAddress);
+        if (liquidatable) {
+          addressesToLiquidate.push(ownerAddress);
+        } else {
+          const isLiquidated = await Web3Provider.isLiquidated(ownerAddress);
+          if (isLiquidated) {
+            await this._addressService.update(
+              { ownerAddress },
+              { burnRate: null, isLiquidated: true },
+            );
+          }
         }
+      } catch (e) {
+        console.error(`address ${ownerAddress} not possible to liquidate`, e);
       }
     }
     if (addressesToLiquidate.length === 0) {
