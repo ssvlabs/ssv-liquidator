@@ -20,8 +20,7 @@ After installation add configuration settings into `.env` file, such as:
 NODE_URL= # ETH node url
 SSV_NETWORK_ADDRESS= # ssv network contract address
 ACCOUNT_PRIVATE_KEY= # private key of your wallet
-GAS_PRICE=normal # slow/normal/high
-ETHERSCAN_KEY= # EtherScan api key
+GAS_PRICE=normal # slow/normal/high/highest
 ```
 
 ## Running CLI
@@ -34,7 +33,7 @@ Executable command:
 ### Run CLI as TypeScript executable
 
 ```bash
-yarn cli ...
+yarn cli
 ```
 
 ### Lint
