@@ -12,9 +12,6 @@ export class Earning {
   hash: string;
 
   @Column({ default: null })
-  liquidatorAddress: string;
-
-  @Column({ default: null })
   gasPrice: number;
 
   @Column({ default: null })
