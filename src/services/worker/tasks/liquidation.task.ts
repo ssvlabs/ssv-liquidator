@@ -49,13 +49,6 @@ export class LiquidationTask {
       return;
     }
 
-    let gasPrice = +(await Web3Provider.web3.eth.getGasPrice());
-    console.log(
-      'GAS NETWORK PRICE',
-      gasPrice,
-      Web3Provider.web3.utils.toWei('10', 'ether'),
-    );
-
     const contract = new Web3Provider.web3.eth.Contract(
       Web3Provider.abi,
       this._config.get('SSV_NETWORK_ADDRESS'),
@@ -78,7 +71,7 @@ export class LiquidationTask {
       data,
     };
 
-    transaction.gas =
+    const gas =
       (await Web3Provider.web3.eth.estimateGas({
         ...transaction,
         from: Web3Provider.web3.eth.accounts.privateKeyToAccount(
@@ -86,8 +79,9 @@ export class LiquidationTask {
         ).address,
       })) * 1.2;
 
-    // transaction.gas = gas || 1500000;
+    transaction.gas = +gas.toFixed(0);
 
+    let gasPrice = +(await Web3Provider.web3.eth.getGasPrice());
     if (this._config.get('GAS_PRICE') === 'slow') {
       gasPrice -= gasPrice * 0.1;
     } else if (this._config.get('GAS_PRICE') === 'high') {

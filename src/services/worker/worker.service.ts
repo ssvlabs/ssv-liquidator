@@ -55,27 +55,6 @@ export class WorkerService {
           await this._addressService.create([dataItem]);
           break;
       }
-      /*
-      if (
-        item.event === SystemType.EVENT_ACCOUNT_LIQUIDATED ||
-        item.event === SystemType.EVENT_FUNDS_DEPOSITED ||
-        item.event === SystemType.EVENT_FUNDS_WITHDRAWN ||
-        item.event === SystemType.EVENT_OPERATOR_FEE_APPROVED ||
-        item.event === SystemType.EVENT_VALIDATOR_REMOVED
-      ) {
-        await this._addressService.update(
-          { ownerAddress: dataItem.ownerAddress },
-          { burnRate: null },
-        );
-      } else if (item.event === SystemType.EVENT_OPERATOR_FEE_APPROVED) {
-        await this._addressService.update(
-          { operatorIds: In(dataItem.operatorId) },
-          { burnRate: null },
-        );
-      } else if (item.event === SystemType.EVENT_VALIDATOR_ADDED) {
-        await this._addressService.create([dataItem]);
-      }
-      */
     }
   }
 }
