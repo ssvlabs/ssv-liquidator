@@ -15,21 +15,6 @@ export class LiquidationTask {
   ) {}
 
   async liquidate(): Promise<void> {
-    let gasPrice = +(await Web3Provider.web3.eth.getGasPrice());
-    console.log(
-      'GAS NETWORK PRICE',
-      gasPrice,
-      Web3Provider.web3.utils.toWei('10', 'ether'),
-    );
-
-    const gas = (await Web3Provider.web3.eth.getBlock('latest')).gasLimit;
-    if (this._config.get('GAS_PRICE') === 'slow') {
-      gasPrice -= gasPrice * 0.1;
-    } else if (this._config.get('GAS_PRICE') === 'high') {
-      gasPrice += gasPrice * 0.2;
-    }
-
-    gasPrice = +gasPrice.toFixed(0);
     const minimumBlocksBeforeLiquidation =
       +(await Web3Provider.minimumBlocksBeforeLiquidation());
     const currentBlockNumber = +(await Web3Provider.currentBlockNumber());
@@ -42,17 +27,21 @@ export class LiquidationTask {
     });
     const addressesToLiquidate = [];
     for (const { ownerAddress } of toLiquidateRecords) {
-      const liquidatable = await Web3Provider.liquidatable(ownerAddress);
-      if (liquidatable) {
-        addressesToLiquidate.push(ownerAddress);
-      } else {
-        const isLiquidated = await Web3Provider.isLiquidated(ownerAddress);
-        if (isLiquidated) {
-          await this._addressService.update(
-            { ownerAddress },
-            { burnRate: null, isLiquidated: true },
-          );
+      try {
+        const liquidatable = await Web3Provider.liquidatable(ownerAddress);
+        if (liquidatable) {
+          addressesToLiquidate.push(ownerAddress);
+        } else {
+          const isLiquidated = await Web3Provider.isLiquidated(ownerAddress);
+          if (isLiquidated) {
+            await this._addressService.update(
+              { ownerAddress },
+              { burnRate: null, isLiquidated: true },
+            );
+          }
         }
+      } catch (e) {
+        console.error(`address ${ownerAddress} not possible to liquidate`, e);
       }
     }
     if (addressesToLiquidate.length === 0) {
@@ -60,31 +49,50 @@ export class LiquidationTask {
       return;
     }
 
-    console.log('TO LIQUIDATE', addressesToLiquidate);
-    console.log('LIQUIDATE PARAMS', { gas, gasPrice });
-
     const contract = new Web3Provider.web3.eth.Contract(
       Web3Provider.abi,
       this._config.get('SSV_NETWORK_ADDRESS'),
     );
 
+    console.log('TO LIQUIDATE', addressesToLiquidate);
     const data = (
       await contract.methods.liquidate(addressesToLiquidate)
     ).encodeABI();
 
-    const transaction = {
+    const transaction: any = {
       to: this._config.get('SSV_NETWORK_ADDRESS'),
       value: 0,
-      gas,
-      gasPrice,
       nonce: await Web3Provider.web3.eth.getTransactionCount(
         Web3Provider.web3.eth.accounts.privateKeyToAccount(
           this._config.get('ACCOUNT_PRIVATE_KEY'),
         ).address,
-        'latest',
+        'pending',
       ),
       data,
     };
+
+    const gas =
+      (await Web3Provider.web3.eth.estimateGas({
+        ...transaction,
+        from: Web3Provider.web3.eth.accounts.privateKeyToAccount(
+          this._config.get('ACCOUNT_PRIVATE_KEY'),
+        ).address,
+      })) * 1.2;
+
+    transaction.gas = +gas.toFixed(0);
+
+    let gasPrice = +(await Web3Provider.web3.eth.getGasPrice());
+    if (this._config.get('GAS_PRICE') === 'slow') {
+      gasPrice -= gasPrice * 0.1;
+    } else if (this._config.get('GAS_PRICE') === 'high') {
+      gasPrice += gasPrice * 0.2;
+    } else if (this._config.get('GAS_PRICE') === 'highest') {
+      gasPrice += gasPrice * 0.4;
+    }
+
+    transaction.gasPrice = +gasPrice.toFixed(0);
+
+    console.log('liquidate tx request:', transaction);
 
     const signedTx = await Web3Provider.web3.eth.accounts.signTransaction(
       transaction,
