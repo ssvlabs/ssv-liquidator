@@ -1,6 +1,5 @@
 # SSV Network Liquidator
 ![GitHub](https://img.shields.io/github/license/bloxapp/ssv-liquidator)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/bloxapp/ssv-liquidator/Lint%20and%20test)
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/bloxapp/ssv-liquidator)
 
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/bloxapp/ssv-liquidator)
