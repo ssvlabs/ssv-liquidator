@@ -23,7 +23,6 @@
     "@nestjs/microservices": "^7.4.3",
     "@nestjs/platform-express": "^7.4.3",
     "@nestjs/schedule": "^0.4.2",
-    "@nestjs/swagger": "^4.6.0",
     "@nestjs/typeorm": "^7.1.1",
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",

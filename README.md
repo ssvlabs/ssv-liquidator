@@ -58,10 +58,6 @@ yarn lint
 
 * TODO
 
-## TODO
-
-* 
-
 ## Authors
 
 * [Wadym Chumak](https://github.com/vadiminc)
