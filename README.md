@@ -17,28 +17,35 @@ Use a private key to proceed account liquidation process.
 
 
 ## Installation
+This installation requires NodeJS on your machine.
+You can download it [here](https://nodejs.org/en/download/).
+
+Once you have installed NodeJS, follow instructions:
+
 
 ```sh
 git clone git@github.com:bloxapp/ssv-liquidator.git
 cd ssv-liquidator
-yarn
-```
-
-## Configuration
-
-After installation add configuration settings into `.env` file, such as:
-
-```sh
-NODE_URL= # ETH node url
-SSV_NETWORK_ADDRESS= # ssv network contract address
-ACCOUNT_PRIVATE_KEY= # private key of your wallet
-GAS_PRICE=normal # slow/normal/high/highest
+#install yarn
+npm install yarn
+yarn install
+yarn cli --help
 ```
 
 ## Running CLI
 
-Executable command:
-`yarn cli`
+### Running from repository
+
+- For regular CLI usage you will be running the command as: `yarn cli ...`
+- Follow [installation](#Installation) instructions.
+
+### Help
+
+Help on available actions:
+
+```sh
+yarn cli --help
+```
 
 ## Development
 
