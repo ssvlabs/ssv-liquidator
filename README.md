@@ -19,9 +19,12 @@ Use a private key to proceed account liquidation process.
 ## Installation
 
 ```sh
-git clone git@github.com:bloxapp/ssv-liquidator.git
+git clone https://github.com/bloxapp/ssv-liquidator.git
 cd ssv-liquidator
-yarn
+#install yarn
+npm install -g yarn
+yarn install
+yarn cli --help
 ```
 
 ## Configuration
