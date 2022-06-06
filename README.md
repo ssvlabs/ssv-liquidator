@@ -24,10 +24,10 @@ Once you have installed NodeJS, follow instructions:
 
 
 ```sh
-git clone git@github.com:bloxapp/ssv-liquidator.git
+git clone https://github.com/bloxapp/ssv-liquidator.git
 cd ssv-liquidator
 #install yarn
-npm install yarn
+npm install -g yarn
 yarn install
 yarn cli --help
 ```
