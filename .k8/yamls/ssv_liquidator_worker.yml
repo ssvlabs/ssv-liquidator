@@ -41,7 +41,7 @@ spec:
         ports:
         - containerPort: 3030
         command: ["/bin/sh"]
-        args: ["-c", "yarn start"]
+        args: ["-c", "yarn cli"]
         env:
         - name: WORKER_PORT
           value: "3030"
