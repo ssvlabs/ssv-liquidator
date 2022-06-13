@@ -67,12 +67,6 @@ spec:
               name: config-secrets
               key: account_private_key
 
-        - name: NODE_URL
-          valueFrom:
-            secretKeyRef:
-              name: config-secrets
-              key: node_url 
-
         volumeMounts:
         - mountPath: "/data/"
           name: ssv-liquidator-worker
