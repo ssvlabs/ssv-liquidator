@@ -71,7 +71,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: node_url              
+              key: node_url 
 
         volumeMounts:
         - mountPath: "/data/"
