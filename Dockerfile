@@ -8,5 +8,3 @@ WORKDIR $APP_WORKDIR
 RUN yarn install
 COPY . $APP_WORKDIR
 
-RUN yarn build:prod && yarn postbuild:prod
-

@@ -38,7 +38,6 @@ export class ConfService extends ConfigService {
       notFoundParam = 'SSV_TOKEN_ADDRESS';
     }
 
-
     if (notFoundParam) {
       console.log('\x1b[31m%s\x1b[0m', `Error: ${notFoundParam} is not found.`);
       console.log('Run cmd: "yarn cli --help" for more details');
