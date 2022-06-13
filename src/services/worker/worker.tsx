@@ -34,4 +34,4 @@ async function bootstrap() {
   );
 }
 
-// void bootstrap();
+void bootstrap();
