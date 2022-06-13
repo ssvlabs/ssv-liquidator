@@ -29,9 +29,14 @@ export class ConfService extends ConfigService {
     process.env.SSV_NETWORK_ADDRESS =
       args['contract_address'] || this.SSV_NETWORK_ADDRESS;
     process.env.GAS_PRICE = args['gas_price'] || this.GAS_PRICE;
-    process.env.ACCOUNT_PRIVATE_KEY =
-      args['private_key'] || process.env.ACCOUNT_PRIVATE_KEY;
-    process.env.NODE_URL = args['node_url'] || process.env.NODE_URL;
+
+    if (args['private_key']) {
+      process.env.ACCOUNT_PRIVATE_KEY = args['private_key'];
+    }
+
+    if (args['node_url']) {
+      process.env.NODE_URL = args['node_url'];
+    }
 
     let notFoundParam = null;
     if (!process.env.NODE_URL) {
