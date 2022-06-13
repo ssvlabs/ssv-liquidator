@@ -22,13 +22,28 @@ export class ConfService extends ConfigService {
 
     const args = parser.parse_args();
 
-
     process.env.SSV_TOKEN_ADDRESS = this.SSV_TOKEN_ADDRESS;
     process.env.SSV_NETWORK_ADDRESS =
       args['contract_address'] || this.SSV_NETWORK_ADDRESS;
     process.env.GAS_PRICE = args['gas_price'] || this.GAS_PRICE;
     process.env.ACCOUNT_PRIVATE_KEY = args['private_key'];
     process.env.NODE_URL = args['node_url'];
+
+    let notFoundParam = null;
+    if (!!process.env.NODE_URL) {
+      notFoundParam = 'NODE_URL';
+    } else if (!!process.env.ACCOUNT_PRIVATE_KEY) {
+      notFoundParam = 'ACCOUNT_PRIVATE_KEY';
+    } else if (!!process.env.SSV_TOKEN_ADDRESS) {
+      notFoundParam = 'SSV_TOKEN_ADDRESS';
+    }
+
+
+    if (notFoundParam) {
+      console.log('\x1b[31m%s\x1b[0m', `Error: ${notFoundParam} is not found.`);
+      console.log('Run cmd: "yarn cli --help" for more details');
+      process.exit(1);
+    }
   }
 
   public getNumber(key: string): number {
