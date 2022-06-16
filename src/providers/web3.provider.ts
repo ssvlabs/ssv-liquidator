@@ -24,13 +24,11 @@ export default class Web3Provider {
   }
 
   static async minimumBlocksBeforeLiquidation(): Promise<number> {
-    return Web3Provider.contract.methods
-      .minimumBlocksBeforeLiquidation()
-      .call();
+    return Web3Provider.contract.methods.getLiquidationThresholdPeriod().call();
   }
 
   static async liquidatable(ownerAddress): Promise<boolean> {
-    return Web3Provider.contract.methods.liquidatable(ownerAddress).call();
+    return Web3Provider.contract.methods.isLiquidatable(ownerAddress).call();
   }
 
   static async isLiquidated(ownerAddress): Promise<boolean> {
@@ -40,10 +38,12 @@ export default class Web3Provider {
   }
 
   static async burnRate(ownerAddress): Promise<string> {
-    return Web3Provider.contract.methods.burnRate(ownerAddress).call();
+    return Web3Provider.contract.methods
+      .getAddressBurnRate(ownerAddress)
+      .call();
   }
 
   static async totalBalanceOf(ownerAddress): Promise<string> {
-    return Web3Provider.contract.methods.totalBalanceOf(ownerAddress).call();
+    return Web3Provider.contract.methods.getAddressBalance(ownerAddress).call();
   }
 }
