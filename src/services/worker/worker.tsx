@@ -8,17 +8,19 @@ import { render } from 'ink';
 import { NestFactory } from '@nestjs/core';
 
 import { AddressService } from '@cli/modules/addresses/address.service';
+import { ConfService } from '@cli/shared/services/conf.service';
 import { EarningService } from '@cli/modules/earnings/earning.service';
 
 import { WorkerModule } from './worker.module';
 
-
 async function bootstrap() {
-  // const app = await NestFactory.create(WorkerModule, { logger: ['error', 'warn'], });
-
   const app = await NestFactory.createApplicationContext(WorkerModule, {
     logger: ['error', 'warn'],
   });
+
+  const confService = app.select(WorkerModule).get(ConfService);
+  confService.init();
+
   const addressService = app.select(WorkerModule).get(AddressService);
   const earningService = app.select(WorkerModule).get(EarningService);
 

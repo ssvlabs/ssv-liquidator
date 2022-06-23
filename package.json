@@ -17,14 +17,15 @@
     "lint:fix": "eslint --fix . --ext .ts"
   },
   "dependencies": {
+    "@mapbox/node-pre-gyp": "^1.0.9",
     "@nestjs/common": "^7.4.3",
     "@nestjs/config": "^0.6.3",
     "@nestjs/core": "^7.4.3",
     "@nestjs/microservices": "^7.4.3",
     "@nestjs/platform-express": "^7.4.3",
     "@nestjs/schedule": "^0.4.2",
-    "@nestjs/swagger": "^4.6.0",
     "@nestjs/typeorm": "^7.1.1",
+    "argparse": "^2.0.1",
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
     "dotenv": "^8.2.0",
@@ -39,12 +40,13 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.6.2",
     "source-map-support": "^0.5.19",
-    "sqlite3": "^5.0.2",
+    "sqlite3": "^5.0.8",
     "typeorm": "^0.2.25",
     "typescript": "^3.9.3",
     "web3": "^1.5.1"
   },
   "devDependencies": {
+    "@types/argparse": "^2.0.10",
     "@types/cron": "^1.7.2",
     "@types/dotenv": "^8.2.0",
     "@types/lodash": "^4.14.161",

@@ -41,16 +41,22 @@ spec:
         ports:
         - containerPort: 3030
         command: ["/bin/sh"]
-        args: ["-c", "yarn start"]
+        args: ["-c", "yarn cli"]
         env:
         - name: WORKER_PORT
           value: "3030"
 
         - name: NODE_ENV
-          value: "stage"
-
+          valueFrom:
+            secretKeyRef:
+              name: config-secrets
+              key: node_env         
+              
         - name: NODE_URL
-          value: "http://eth1.stage.bloxinfra.com/"
+          valueFrom:
+            secretKeyRef:
+              name: config-secrets
+              key: node_url
 
         - name: GAS_PRICE
           value: "normal"

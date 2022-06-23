@@ -61,7 +61,7 @@ Build prod Docker image:
     - docker tag $IMAGE_NAME:$CI_BUILD_REF $DOCKER_REPO_INFRA_PROD:$CI_BUILD_REF
     - $DOCKER_LOGIN_TO_INFRA_PROD_REPO && docker push $DOCKER_REPO_INFRA_PROD:$CI_BUILD_REF
   only:
-    - master
+    - main
 
 Deploy to blox-infra-prod cluster:
   stage: deploy
@@ -75,4 +75,4 @@ Deploy to blox-infra-prod cluster:
     - export K8S_API_VERSION=$INFRA_PROD_K8_API_VERSION
     - .k8/scripts/deploy-yamls-on-k8s.sh $DOCKER_REPO_INFRA_PROD $CI_BUILD_REF liquidation $APP_REPLICAS_INFRA_PROD blox-infra-prod kubernetes-admin@blox-infra-prod bloxinfra.com $K8S_API_VERSION
   only:
-    - master
+    - main
