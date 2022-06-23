@@ -13,7 +13,6 @@ services:
     environment:
       - SSV_NETWORK_ADDRESS
       - NODE_URL
-      - ACCOUNT_ADDRESS
       - ACCOUNT_PRIVATE_KEY
       - GAS_PRICE
     restart: on-failure
