@@ -47,10 +47,16 @@ spec:
           value: "3030"
 
         - name: NODE_ENV
-          value: "stage"
-
+          valueFrom:
+            secretKeyRef:
+              name: config-secrets
+              key: node_env         
+              
         - name: NODE_URL
-          value: "http://eth1.stage.bloxinfra.com/"
+          valueFrom:
+            secretKeyRef:
+              name: config-secrets
+              key: node_url
 
         - name: GAS_PRICE
           value: "normal"
