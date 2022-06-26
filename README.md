@@ -12,9 +12,7 @@
 ![Discord](https://img.shields.io/discord/723834989506068561?style=for-the-badge&label=Ask%20for%20support&logo=discord&logoColor=white)
 
 ---
-CLI to work with SSV Network liquidation flow, liquidate and earn SSV tokens.
-Use a private key to proceed account liquidation process.
-
+CLI to run a liquidator and earn SSV tokens.
 
 ## Installation
 This installation requires NodeJS on your machine.
@@ -26,7 +24,6 @@ Once you have installed NodeJS, follow instructions:
 ```sh
 git clone https://github.com/bloxapp/ssv-liquidator.git
 cd ssv-liquidator
-#install yarn
 npm install -g yarn
 yarn install
 yarn cli --help
@@ -34,17 +31,32 @@ yarn cli --help
 
 ## Running CLI
 
-### Running from repository
+### Option 1: Running with CLI arguments
+Input parameters:  
+node-url (n) = ETH1 node url  
+private-key (pk) = Account private key  
+contract-address (c) = Contract Address  
+gas-price (g) = Gas price, default: slow  
 
-- For regular CLI usage you will be running the command as: `yarn cli ...`
-- Follow [installation](#Installation) instructions.
+```sh
+yarn cli --node-url=eth.infra.com --private-key=a70478942bf --contract-address=0x425890f2a5g --gas-price=slow
+```
 
-### Help
-
-Help on available actions:
+##### Help on available CLI actions:  
 
 ```sh
 yarn cli --help
+```
+
+### Option 2: Using an env file
+Update the .env.example file with your parameters and rename the file to .env
+Example content below:
+```sh
+NODE_URL=eth.infra.com
+SSV_NETWORK_ADDRESS=0x425890f2a5g
+SSV_TOKEN_ADDRESS=0x425890f2a5g84hw94
+ACCOUNT_PRIVATE_KEY=a70478942bf
+GAS_PRICE=slow
 ```
 
 ## Development
