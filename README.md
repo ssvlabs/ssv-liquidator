@@ -42,21 +42,21 @@ gas-price (g) = Gas price, default: slow
 yarn cli --node-url=eth.infra.com --private-key=a70478942bf --contract-address=0x425890f2a5g --gas-price=slow
 ```
 
+##### Help on available CLI actions:
+
+```sh
+yarn cli --help
+```
+
 ### Option 2: Using an env file
+Update the .env.example file with your parameters and rename the file to .env
+Example content below:
 ```sh
 NODE_URL=eth.infra.com
 SSV_NETWORK_ADDRESS=0x425890f2a5g
 SSV_TOKEN_ADDRESS=0x425890f2a5g84hw94
 ACCOUNT_PRIVATE_KEY=a70478942bf
 GAS_PRICE=slow
-```
-
-### Help
-
-Help on available actions:
-
-```sh
-yarn cli --help
 ```
 
 ## Development
