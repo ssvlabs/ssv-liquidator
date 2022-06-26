@@ -18,8 +18,6 @@ CLI to run a liquidator and earn SSV tokens.
 This installation requires NodeJS on your machine.
 You can download it [here](https://nodejs.org/en/download/).
 
-Once you have installed NodeJS, follow instructions:
-
 
 ```sh
 git clone https://github.com/bloxapp/ssv-liquidator.git
