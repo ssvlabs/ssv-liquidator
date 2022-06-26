@@ -32,17 +32,17 @@ yarn cli --help
 ## Running CLI
 
 ### Option 1: Running with CLI arguments
-Input parameters:
-node-url (n) = ETH1 node url
-private-key (pk) = Account private key
-contract-address (c) = Contract Address
-gas-price (g) = Gas price, default: slow
+Input parameters:  
+node-url (n) = ETH1 node url  
+private-key (pk) = Account private key  
+contract-address (c) = Contract Address  
+gas-price (g) = Gas price, default: slow  
 
 ```sh
 yarn cli --node-url=eth.infra.com --private-key=a70478942bf --contract-address=0x425890f2a5g --gas-price=slow
 ```
 
-##### Help on available CLI actions:
+##### Help on available CLI actions:  
 
 ```sh
 yarn cli --help
