@@ -6681,6 +6681,11 @@ typeorm@^0.2.25:
     yargs "^17.0.1"
     zen-observable-ts "^1.0.0"
 
+typescript-retry-decorator@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/typescript-retry-decorator/-/typescript-retry-decorator-2.0.5.tgz#24f33df76c4a711c96ba9e2a0e8a30dacf27569f"
+  integrity sha512-HvanMcvaVhxtDL9VBx9GkfAKm/dW5J7X73XlbfDI8rhoqzGSIjp0bIIingBBar3LvtJsiKPDqXRyV4E5pcz88Q==
+
 typescript@^3.9.3:
   version "3.9.10"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.10.tgz#70f3910ac7a51ed6bef79da7800690b19bf778b8"

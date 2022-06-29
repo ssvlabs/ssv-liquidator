@@ -1,11 +1,9 @@
-import Web3Provider from '@cli/providers/web3.provider';
-
-import { Injectable } from '@nestjs/common';
 import { LessThanOrEqual } from 'typeorm';
-
-import { AddressService } from '../../../modules/addresses/address.service';
-
-import { ConfService } from '../../../shared/services/conf.service';
+import { Injectable } from '@nestjs/common';
+import { BackOffPolicy, Retryable } from 'typescript-retry-decorator';
+import Web3Provider from '@cli/providers/web3.provider';
+import { ConfService } from '@cli/shared/services/conf.service';
+import { AddressService } from '@cli/modules/addresses/address.service';
 
 @Injectable()
 export class LiquidationTask {
@@ -14,6 +12,19 @@ export class LiquidationTask {
     private _addressService: AddressService,
   ) {}
 
+  @Retryable({
+    maxAttempts: 100,
+    backOffPolicy: BackOffPolicy.ExponentialBackOffPolicy,
+    backOff: 1000,
+    doRetry: (e: Error) => {
+      console.log('Error running LiquidationTask::liquidate: ', e);
+      return true;
+    },
+    exponentialOption: {
+      maxInterval: 1000 * 60,
+      multiplier: 2,
+    },
+  })
   async liquidate(): Promise<void> {
     const minimumBlocksBeforeLiquidation =
       +(await Web3Provider.minimumBlocksBeforeLiquidation());
