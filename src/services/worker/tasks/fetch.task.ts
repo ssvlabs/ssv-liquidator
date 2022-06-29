@@ -3,12 +3,17 @@ import { Retryable, BackOffPolicy } from 'typescript-retry-decorator';
 import Web3Provider from '@cli/providers/web3.provider';
 import { WorkerService } from '@cli/services/worker/worker.service';
 import { SystemService, SystemType } from '@cli/modules/system/system.service';
+import {
+  MetricsService,
+  cliFetchStatus,
+} from '@cli/modules/webapp/metrics/services/metrics.service';
 
 @Injectable()
 export class FetchTask {
   constructor(
     private _systemService: SystemService,
     private _workerService: WorkerService,
+    public readonly metricsService: MetricsService,
   ) {}
 
   @Retryable({
@@ -17,6 +22,7 @@ export class FetchTask {
     backOff: 1000,
     doRetry: (e: Error) => {
       console.log('Error running FetchTask::fetchAllEvents: ', e);
+      cliFetchStatus.set(0);
       return true;
     },
     exponentialOption: {
@@ -56,5 +62,6 @@ export class FetchTask {
     );
 
     console.log(`passed ${events.length} all events...`);
+    this.metricsService.cliFetchStatus.set(1);
   }
 }

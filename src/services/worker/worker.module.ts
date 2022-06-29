@@ -8,6 +8,8 @@ import { ConfService } from '@cli/shared/services/conf.service';
 import { EarningModule } from '@cli/modules/earnings/earning.module';
 import { SystemModule } from '@cli/modules/system/system.module';
 import { SharedModule } from '@cli/shared/shared.module';
+import { WebappModule } from '@cli/modules/webapp/webapp.module';
+import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
 
 // tasks list
 import TaskProviders from './tasks.provider';
@@ -31,7 +33,14 @@ import { WorkerService } from './worker.service';
     SystemModule,
     AddressModule,
     EarningModule,
+    WebappModule,
   ],
-  providers: [ConfService, ...TaskProviders, ...CronProviders, WorkerService],
+  providers: [
+    ConfService,
+    ...TaskProviders,
+    ...CronProviders,
+    WorkerService,
+    MetricsService,
+  ],
 })
 export class WorkerModule {}

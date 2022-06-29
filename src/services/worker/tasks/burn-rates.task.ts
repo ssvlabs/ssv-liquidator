@@ -2,10 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { BackOffPolicy, Retryable } from 'typescript-retry-decorator';
 import Web3Provider from '@cli/providers/web3.provider';
 import { AddressService } from '@cli/modules/addresses/address.service';
+import {
+  MetricsService,
+  cliBurnRatesStatus,
+} from '@cli/modules/webapp/metrics/services/metrics.service';
 
 @Injectable()
 export class BurnRatesTask {
-  constructor(private _addressService: AddressService) {}
+  constructor(
+    private _addressService: AddressService,
+    private _metricsService: MetricsService,
+  ) {}
 
   @Retryable({
     maxAttempts: 100,
@@ -13,6 +20,7 @@ export class BurnRatesTask {
     backOff: 1000,
     doRetry: (e: Error) => {
       console.log('Error running BurnRatesTask::syncBurnRates: ', e);
+      cliBurnRatesStatus.set(0);
       return true;
     },
     exponentialOption: {
@@ -65,5 +73,6 @@ export class BurnRatesTask {
         ),
       ),
     );
+    this._metricsService.cliBurnRatesStatus.set(1);
   }
 }
