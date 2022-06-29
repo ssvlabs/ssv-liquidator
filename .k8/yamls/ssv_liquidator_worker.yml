@@ -34,6 +34,15 @@ spec:
       labels:
         app: ssv-liquidator-worker
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/role
+                    operator: In
+                    values:
+                      - ssv-main      
       containers:
       - name: ssv-liquidator-worker
         image: REPLACE_DOCKER_REPO:REPLACE_IMAGETAG
@@ -47,10 +56,16 @@ spec:
           value: "3030"
 
         - name: NODE_ENV
-          value: "stage"
-
+          valueFrom:
+            secretKeyRef:
+              name: config-secrets
+              key: node_env         
+              
         - name: NODE_URL
-          value: "http://eth1.stage.bloxinfra.com/"
+          valueFrom:
+            secretKeyRef:
+              name: config-secrets
+              key: node_url
 
         - name: GAS_PRICE
           value: "normal"
@@ -73,4 +88,8 @@ spec:
       volumes:
       - persistentVolumeClaim:
           claimName: ssv-liquidator-worker            
-        name: ssv-liquidator-worker 
+        name: ssv-liquidator-worker
+      tolerations:
+        - effect: NoSchedule
+          key: kubernetes.io/role
+          operator: Exists
