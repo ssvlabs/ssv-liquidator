@@ -40,7 +40,7 @@ async function bootstrapWebApp() {
   const confService = app.select(WebappModule).get(ConfService);
   confService.init();
 
-  const port = confService.getNumber('PORT');
+  const port = confService.getNumber('PORT') || 3000;
   await app.listen(port);
 
   // eslint-disable-next-line no-console
