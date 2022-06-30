@@ -11,7 +11,7 @@ spec:
   ports:
     - port: 80 
       protocol: TCP
-      targetPort: 3030
+      targetPort: 3000
   selector:
     app: ssv-liquidator-worker
 ---
@@ -48,13 +48,10 @@ spec:
         image: REPLACE_DOCKER_REPO:REPLACE_IMAGETAG
         imagePullPolicy: Always
         ports:
-        - containerPort: 3030
+        - containerPort: 3000
         command: ["/bin/sh"]
         args: ["-c", "yarn cli"]
         env:
-        - name: WORKER_PORT
-          value: "3030"
-
         - name: NODE_ENV
           valueFrom:
             secretKeyRef:
