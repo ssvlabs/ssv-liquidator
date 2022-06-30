@@ -3,15 +3,15 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ssv-liquidator-worker-svc
-  namespace: REPLACE_NAMESPACE
+  namespace: REPLACE_NAMESPACE 
   labels:
     name: ssv-liquidator-worker-svc
 spec:
-  type: ClusterIP
+  type: ClusterIP 
   ports:
-    - port: 80
+    - port: 80 
       protocol: TCP
-      targetPort: 3030
+      targetPort: 3000
   selector:
     app: ssv-liquidator-worker
 ---
@@ -42,25 +42,22 @@ spec:
                   - key: kubernetes.io/role
                     operator: In
                     values:
-                      - ssv-main
+                      - ssv-main      
       containers:
       - name: ssv-liquidator-worker
         image: REPLACE_DOCKER_REPO:REPLACE_IMAGETAG
         imagePullPolicy: Always
         ports:
-        - containerPort: 3030
+        - containerPort: 3000
         command: ["/bin/sh"]
         args: ["-c", "yarn cli"]
         env:
-        - name: WORKER_PORT
-          value: "3030"
-
         - name: NODE_ENV
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: node_env
-
+              key: node_env         
+              
         - name: NODE_URL
           valueFrom:
             secretKeyRef:
@@ -87,7 +84,7 @@ spec:
           name: ssv-liquidator-worker
       volumes:
       - persistentVolumeClaim:
-          claimName: ssv-liquidator-worker
+          claimName: ssv-liquidator-worker            
         name: ssv-liquidator-worker
       tolerations:
         - effect: NoSchedule
