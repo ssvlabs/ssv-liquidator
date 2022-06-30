@@ -1,19 +1,53 @@
 import importJsx from 'import-jsx';
 import React from 'react';
 import path from 'path';
-
-import Web3Provider from '@cli/providers/web3.provider';
-
 import { render } from 'ink';
-import { NestFactory } from '@nestjs/core';
-
-import { AddressService } from '@cli/modules/addresses/address.service';
+import { NestFactory, Reflector } from '@nestjs/core';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import {
+  ExpressAdapter,
+  NestExpressApplication,
+} from '@nestjs/platform-express';
+import Web3Provider from '@cli/providers/web3.provider';
+import { WebappModule } from '@cli/modules/webapp/webapp.module';
 import { ConfService } from '@cli/shared/services/conf.service';
+import { WorkerModule } from '@cli/services/worker/worker.module';
 import { EarningService } from '@cli/modules/earnings/earning.service';
+import { AddressService } from '@cli/modules/addresses/address.service';
 
-import { WorkerModule } from './worker.module';
+async function bootstrapWebApp() {
+  const app = await NestFactory.create<NestExpressApplication>(
+    WebappModule,
+    new ExpressAdapter(),
+    { cors: true },
+  );
+  app.enable('trust proxy');
+  app.enableCors();
 
-async function bootstrap() {
+  const reflector = app.get(Reflector);
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      dismissDefaultMessages: true,
+      validationError: {
+        target: false,
+      },
+    }),
+  );
+
+  const confService = app.select(WebappModule).get(ConfService);
+  confService.init();
+
+  const port = confService.getNumber('PORT') || 3000;
+  await app.listen(port);
+
+  // eslint-disable-next-line no-console
+  console.info(`server running on port ${port}`);
+}
+
+async function bootstrapCli() {
   const app = await NestFactory.createApplicationContext(WorkerModule, {
     logger: ['error', 'warn'],
   });
@@ -32,6 +66,11 @@ async function bootstrap() {
       earningService={earningService}
     />,
   );
+}
+
+async function bootstrap() {
+  await bootstrapWebApp();
+  await bootstrapCli();
 }
 
 void bootstrap();
