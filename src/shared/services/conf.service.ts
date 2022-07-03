@@ -2,7 +2,7 @@ import { ArgumentParser } from 'argparse';
 import { ConfigService } from '@nestjs/config';
 
 export class ConfService extends ConfigService {
-  private SSV_NETWORK_ADDRESS = '0x87F7efc8C4c86cf30983f0793860B18A1fa8F127';
+  private SSV_NETWORK_ADDRESS = '0x5b46c3659f12D23049Dca9a4edec5E9B24f8948d';
   private SSV_TOKEN_ADDRESS = '0x3651c03a8546da82affaef8c644d4e3efdd37718';
   private GAS_PRICE = 'slow';
 
