@@ -61,6 +61,7 @@ export class LiquidationTask {
     }
     if (addressesToLiquidate.length === 0) {
       // nothing to liquidate
+      cliLiquidationStatus.set(1);
       return;
     }
 
