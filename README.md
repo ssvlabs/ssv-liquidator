@@ -13,22 +13,30 @@
 
 ---
 The SSV Liquidator node executes liquidations on accounts that do not hold enough balance to pay for their operational fees
+
 ##### The liquidator node performs 2 main processes:
 
 - Syncing network contract data Every minute the liquidator node pulls recent balance-determining events for the SSV networks contract and maps all of the network's accounts on the node level to calculate the potential block for liquidation for each account in the network
 - Liquidating accounts Once the potential liquidation block is reached the liquidator node will call the liquidate() function in the network contract, if the node was the first to successfully pass the transaction the account will be liquidated and its SSV collateral will be sent to the wallet address which performed the liquidation
+
 ## Requirements 
 
-### ETH1 Node
+### ETH1 Node and other parameters
+
 In order to be able to fetch all the operators and their status from the contract and react on different events
 you need to specify an ETH1 Node URI. If you want to work with a production environment then you must specify `eth.infra.com` as the `--node-url` parameter for the CLI. As alternative you can set it up in `.env` file as the `NODE_URL`. Examples below for both scenarios.
 
 If you want to play with the testnet you can register in `alchemyapi.io`.  Once registered the URL will look like: 
 `https://eth-goerli.alchemyapi.io/v2/<your-token-here>`
 
+Review `yarn cli --help` output and `.env.example` file for all of the parameters required for liquidator to work.
+
+
 ### Node JS
+
 This installation requires NodeJS on your machine.
 You can download it [here](https://nodejs.org/en/download/).
+
 ## Installation
 
 ```sh
