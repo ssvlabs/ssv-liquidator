@@ -9,32 +9,51 @@ registry.setDefaultLabels({
 /**
  * Collecting status for fetch task
  */
-export const cliFetchStatus = new prometheusClient.Gauge({
-  name: 'cli_fetch_status',
+export const fetchStatus = new prometheusClient.Gauge({
+  name: 'fetchStatus',
   help: 'Status of fetch part of CLI',
 });
-registry.registerMetric(cliFetchStatus);
-cliFetchStatus.set(1);
+registry.registerMetric(fetchStatus);
+fetchStatus.set(1);
 
 /**
  * Collecting status for liquidation task
  */
-export const cliLiquidationStatus = new prometheusClient.Gauge({
-  name: 'cli_liquidation_status',
+export const liquidationStatus = new prometheusClient.Gauge({
+  name: 'liquidationStatus',
   help: 'Status of liquidation part of CLI',
 });
-registry.registerMetric(cliLiquidationStatus);
-cliLiquidationStatus.set(1);
+registry.registerMetric(liquidationStatus);
+liquidationStatus.set(1);
 
 /**
  * Collecting status for burn rate task
  */
-export const cliBurnRatesStatus = new prometheusClient.Gauge({
-  name: 'cli_burn_rates_status',
+export const burnRatesStatus = new prometheusClient.Gauge({
+  name: 'burnRatesStatus',
   help: 'Status of burn rates part of CLI',
 });
-registry.registerMetric(cliBurnRatesStatus);
-cliBurnRatesStatus.set(1);
+registry.registerMetric(burnRatesStatus);
+burnRatesStatus.set(1);
+
+/**
+ * Critical status
+ */
+export const criticalStatus = new prometheusClient.Gauge({
+  name: 'criticalStatus',
+  help: 'Status of any part of liquidator which requires immediate attention',
+});
+registry.registerMetric(criticalStatus);
+criticalStatus.set(1);
+
+/**
+ * Critical status
+ */
+export const lastBlockNumberMetric = new prometheusClient.Gauge({
+  name: 'lastBlockNumberMetric',
+  help: 'Status of any part of liquidator which requires immediate attention',
+});
+registry.registerMetric(criticalStatus);
 
 @Injectable()
 export class MetricsService {
@@ -42,15 +61,23 @@ export class MetricsService {
     return registry;
   }
 
-  get cliFetchStatus() {
-    return cliFetchStatus;
+  get fetchStatus() {
+    return fetchStatus;
   }
 
-  get cliLiquidationStatus() {
-    return cliLiquidationStatus;
+  get liquidationStatus() {
+    return liquidationStatus;
   }
 
-  get cliBurnRatesStatus() {
-    return cliBurnRatesStatus;
+  get burnRatesStatus() {
+    return burnRatesStatus;
+  }
+
+  get criticalStatus() {
+    return criticalStatus;
+  }
+
+  get lastBlockNumberMetric() {
+    return lastBlockNumberMetric;
   }
 }

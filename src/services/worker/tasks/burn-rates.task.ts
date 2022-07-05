@@ -4,7 +4,8 @@ import Web3Provider from '@cli/providers/web3.provider';
 import { AddressService } from '@cli/modules/addresses/address.service';
 import {
   MetricsService,
-  cliBurnRatesStatus,
+  burnRatesStatus,
+  criticalStatus,
 } from '@cli/modules/webapp/metrics/services/metrics.service';
 
 @Injectable()
@@ -19,8 +20,12 @@ export class BurnRatesTask {
     backOffPolicy: BackOffPolicy.ExponentialBackOffPolicy,
     backOff: 1000,
     doRetry: (e: Error) => {
-      console.log('Error running BurnRatesTask::syncBurnRates: ', e);
-      cliBurnRatesStatus.set(0);
+      console.error(
+        '[CRITICAL] Error running BurnRatesTask :: syncBurnRates: ',
+        e,
+      );
+      burnRatesStatus.set(0);
+      criticalStatus.set(0);
       return true;
     },
     exponentialOption: {
@@ -73,6 +78,7 @@ export class BurnRatesTask {
         ),
       ),
     );
-    this._metricsService.cliBurnRatesStatus.set(1);
+    this._metricsService.burnRatesStatus.set(1);
+    this._metricsService.criticalStatus.set(1);
   }
 }

@@ -55,25 +55,39 @@ yarn cli --help
 ```
 
 Input parameters:  
-node-url (n) = ETH1 node url  
-private-key (pk) = Account private key  
-contract-address (c) = Contract Address  
-gas-price (g) = Gas price, default: slow  
+node-url (n) = ETH1 node url
+private-key (pk) = Account private key
+contract-address (c) = Contract Address
+gas-price (g) = Gas price, default: slow
 ssv-token-address = The contract address for the SSV token
 
 ```sh
-yarn cli --node-url=eth.infra.com --private-key=a70478942bf --contract-address=0x425890f2a5g --gas-price=slow
+yarn cli --node-url=eth.infra.com --private-key=a70478942bf... --contract-address=0x425890f2a5g... --gas-price=slow --ssv-token-address=0x425890f2a5g84hw94...
 ```
 
+Example of minimal configuration to run CLI:
+
+```sh
+yarn cli --private-key=a70478942bf...
+```
+
+If you saved all the parameters in `.env` file you can just run:
+
+```shell
+yarn cli
+```
 
 ### Option 2: Using an env file
-Update the .env.example file with your parameters and rename the file to .env
+
+Copy the `.env.example` file to `.env` and update `.env` with your parameters.
+
 Example content below:
+
 ```sh
 NODE_URL=eth.infra.com
-SSV_NETWORK_ADDRESS=0x425890f2a5g
-SSV_TOKEN_ADDRESS=0x425890f2a5g84hw94
-ACCOUNT_PRIVATE_KEY=a70478942bf
+SSV_NETWORK_ADDRESS=0x425890f2a5g...
+SSV_TOKEN_ADDRESS=0x425890f2a5g84hw94...
+ACCOUNT_PRIVATE_KEY=a70478942bf...
 GAS_PRICE=slow
 ```
 
