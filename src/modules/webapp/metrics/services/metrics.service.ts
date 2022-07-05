@@ -53,7 +53,7 @@ export const lastBlockNumberMetric = new prometheusClient.Gauge({
   name: 'lastBlockNumberMetric',
   help: 'Status of any part of liquidator which requires immediate attention',
 });
-registry.registerMetric(criticalStatus);
+registry.registerMetric(lastBlockNumberMetric);
 
 @Injectable()
 export class MetricsService {
