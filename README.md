@@ -65,13 +65,13 @@ ssv-token-address (t) = The contract address for the SSV token
 yarn cli --node-url=eth.infra.com --private-key=a70478942bf... --contract-address=0x425890f2a5g... --gas-price=slow --ssv-token-address=0x425890f2a5g84hw94...
 ```
 
-Example of minimal configuration to run CLI:
+Example of running the CLI with the minimum requirements:
 
 ```sh
 yarn cli --private-key=a70478942bf...
 ```
 
-If you saved all the parameters in `.env` file you can just run:
+If you saved all of the parameters in the `.env` file you can run:
 
 ```shell
 yarn cli
