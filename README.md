@@ -71,12 +71,6 @@ Example of running the CLI with the minimum requirements:
 yarn cli --private-key=a70478942bf...
 ```
 
-If you saved all of the parameters in the `.env` file you can run:
-
-```shell
-yarn cli
-```
-
 ### Option 2: Using an env file
 
 Copy the `.env.example` file to `.env` and update `.env` with your parameters.
@@ -89,6 +83,12 @@ SSV_NETWORK_ADDRESS=0x425890f2a5g...
 SSV_TOKEN_ADDRESS=0x425890f2a5g84hw94...  
 ACCOUNT_PRIVATE_KEY=a70478942bf...  
 GAS_PRICE=slow  
+```
+
+If you saved all of the parameters in the `.env` file you can run:
+
+```shell
+yarn cli
 ```
 
 ## Development
