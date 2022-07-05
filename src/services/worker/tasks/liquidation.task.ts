@@ -4,7 +4,10 @@ import { BackOffPolicy, Retryable } from 'typescript-retry-decorator';
 import Web3Provider from '@cli/providers/web3.provider';
 import { ConfService } from '@cli/shared/services/conf.service';
 import { AddressService } from '@cli/modules/addresses/address.service';
-import { cliLiquidationStatus } from '@cli/modules/webapp/metrics/services/metrics.service';
+import {
+  liquidationStatus,
+  criticalStatus,
+} from '@cli/modules/webapp/metrics/services/metrics.service';
 
 @Injectable()
 export class LiquidationTask {
@@ -18,8 +21,12 @@ export class LiquidationTask {
     backOffPolicy: BackOffPolicy.ExponentialBackOffPolicy,
     backOff: 1000,
     doRetry: (e: Error) => {
-      console.log('Error running LiquidationTask::liquidate: ', e);
-      cliLiquidationStatus.set(0);
+      console.error(
+        '[CRITICAL] Error running LiquidationTask :: liquidate: ',
+        e,
+      );
+      liquidationStatus.set(0);
+      criticalStatus.set(0);
       return true;
     },
     exponentialOption: {
@@ -53,15 +60,16 @@ export class LiquidationTask {
             );
           }
         }
-        cliLiquidationStatus.set(1);
+        liquidationStatus.set(1);
       } catch (e) {
         console.error(`address ${ownerAddress} not possible to liquidate`, e);
-        cliLiquidationStatus.set(0);
+        liquidationStatus.set(0);
       }
     }
     if (addressesToLiquidate.length === 0) {
       // nothing to liquidate
-      cliLiquidationStatus.set(1);
+      liquidationStatus.set(1);
+      criticalStatus.set(1);
       return;
     }
 
@@ -119,19 +127,21 @@ export class LiquidationTask {
       .sendSignedTransaction(signedTx.rawTransaction, (error, hash) => {
         if (!error) {
           console.log(`🎉 The hash of liquidated transaction is: ${hash}`);
-          cliLiquidationStatus.set(1);
+          liquidationStatus.set(1);
         } else {
-          console.log(
-            '❗Something went wrong while submitting your transaction:',
+          console.error(
+            '[CRITICAL] Something went wrong while submitting your transaction:',
             error,
           );
-          cliLiquidationStatus.set(0);
+          liquidationStatus.set(0);
+          criticalStatus.set(0);
         }
       })
       .on('receipt', data => {
         // gasPrice * data.gasUsed
         console.log(data);
-        cliLiquidationStatus.set(1);
+        liquidationStatus.set(1);
+        criticalStatus.set(1);
       });
   }
 }

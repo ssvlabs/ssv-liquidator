@@ -14,6 +14,7 @@ import { ConfService } from '@cli/shared/services/conf.service';
 import { WorkerModule } from '@cli/services/worker/worker.module';
 import { EarningService } from '@cli/modules/earnings/earning.service';
 import { AddressService } from '@cli/modules/addresses/address.service';
+import { criticalStatus } from '@cli/modules/webapp/metrics/services/metrics.service';
 
 async function bootstrapWebApp() {
   const app = await NestFactory.create<NestExpressApplication>(
@@ -69,6 +70,11 @@ async function bootstrapCli() {
 }
 
 async function bootstrap() {
+  process.on('unhandledRejection', error => {
+    console.error('[CRITICAL] unhandledRejection', error);
+    criticalStatus.set(1);
+  });
+
   await bootstrapWebApp();
   await bootstrapCli();
 }

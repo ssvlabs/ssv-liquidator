@@ -5,7 +5,8 @@ import { WorkerService } from '@cli/services/worker/worker.service';
 import { SystemService, SystemType } from '@cli/modules/system/system.service';
 import {
   MetricsService,
-  cliFetchStatus,
+  fetchStatus,
+  criticalStatus,
 } from '@cli/modules/webapp/metrics/services/metrics.service';
 
 @Injectable()
@@ -21,8 +22,12 @@ export class FetchTask {
     backOffPolicy: BackOffPolicy.ExponentialBackOffPolicy,
     backOff: 1000,
     doRetry: (e: Error) => {
-      console.log('Error running FetchTask::fetchAllEvents: ', e);
-      cliFetchStatus.set(0);
+      console.error(
+        '[CRITICAL] Error running FetchTask :: fetchAllEvents: ',
+        e,
+      );
+      fetchStatus.set(0);
+      criticalStatus.set(0);
       return true;
     },
     exponentialOption: {
@@ -62,6 +67,8 @@ export class FetchTask {
     );
 
     console.log(`passed ${events.length} all events...`);
-    this.metricsService.cliFetchStatus.set(1);
+    this.metricsService.fetchStatus.set(1);
+    this.metricsService.criticalStatus.set(1);
+    this.metricsService.lastBlockNumberMetric.set(filters.toBlock);
   }
 }

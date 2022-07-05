@@ -79,7 +79,8 @@ yarn cli
 
 ### Option 2: Using an env file
 
-Update the `.env.example` file with your parameters and rename the file to `.env`
+Copy the `.env.example` file to `.env` and update `.env` with your parameters.
+
 Example content below:
 
 ```sh
