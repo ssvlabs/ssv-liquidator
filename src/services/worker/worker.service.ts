@@ -25,7 +25,11 @@ export class WorkerService {
   }
 
   async processEvents(events: Array<any>): Promise<void> {
-    console.log(`going to process events...`, events.length);
+    if (!events.length) {
+      console.log(`There is no events in this block range`);
+      return;
+    }
+    console.log(`Going to process ${events.length} events`);
     for (const item of events) {
       const dataItem: any = this._convert(item.returnValues);
       dataItem.blockNumber = item.blockNumber;
