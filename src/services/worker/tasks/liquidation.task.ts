@@ -62,7 +62,7 @@ export class LiquidationTask {
         }
         liquidationStatus.set(1);
       } catch (e) {
-        console.error(`address ${ownerAddress} not possible to liquidate`, e);
+        console.error(`Address ${ownerAddress} not possible to liquidate`, e);
         liquidationStatus.set(0);
       }
     }
@@ -116,7 +116,7 @@ export class LiquidationTask {
 
     transaction.gasPrice = +gasPrice.toFixed(0);
 
-    console.log('liquidate tx request:', transaction);
+    console.log('Liquidate transaction payload to be send:', transaction);
 
     const signedTx = await Web3Provider.web3.eth.accounts.signTransaction(
       transaction,

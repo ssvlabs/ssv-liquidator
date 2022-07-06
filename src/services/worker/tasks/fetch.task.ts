@@ -53,7 +53,7 @@ export class FetchTask {
       toBlock,
     };
 
-    console.log(`fetching all events...`, filters);
+    console.log(`Syncing events in blocks range:`, filters);
     const events = await Web3Provider.contract.getPastEvents(
       'allEvents',
       filters,
@@ -66,7 +66,7 @@ export class FetchTask {
       filters.toBlock,
     );
 
-    console.log(`passed ${events.length} all events...`);
+    console.log(`Processed ${events.length} events`);
     this.metricsService.fetchStatus.set(1);
     this.metricsService.criticalStatus.set(1);
     this.metricsService.lastBlockNumberMetric.set(filters.toBlock);
