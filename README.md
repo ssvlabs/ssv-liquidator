@@ -105,6 +105,12 @@ yarn cli
 yarn lint
 ```
 
+### Restart syncer to sync blocks from the beginning (Clear the database file)
+
+```bash
+rm data/local.db
+```
+
 ### Testing
 
 * TODO
