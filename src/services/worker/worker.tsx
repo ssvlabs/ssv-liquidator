@@ -45,7 +45,7 @@ async function bootstrapWebApp() {
   await app.listen(port);
 
   // eslint-disable-next-line no-console
-  console.info(`server running on port ${port}`);
+  console.info(`WebApp is running on port: ${port}`);
 }
 
 async function bootstrapCli() {
@@ -75,7 +75,9 @@ async function bootstrap() {
     criticalStatus.set(1);
   });
 
+  console.info('Starting WebApp');
   await bootstrapWebApp();
+  console.info('Starting Liquidator worker');
   await bootstrapCli();
 }
 

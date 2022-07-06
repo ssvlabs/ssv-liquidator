@@ -11,19 +11,19 @@ export class ConfService extends ConfigService {
     const parser = new ArgumentParser();
 
     parser.add_argument('-n', '--node-url', {
-      help: `ETH1 node url, default: ${this.NODE_URL}`,
+      help: `The liquidator's execution layer node URL used for syncing contract events. Default: ${this.NODE_URL}`,
       required: false,
     });
     parser.add_argument('-pk', '--private-key', {
-      help: 'Account private key',
+      help: "The liquidator's recipient address private key, used for creating a liquidation transaction",
       required: false,
     });
     parser.add_argument('-c', '--contract-address', {
-      help: `Contract Address, default: ${this.SSV_NETWORK_ADDRESS}`,
+      help: `The SSV Contract address, used to listen to balance change events and to create a liquidation transaction. Default: ${this.SSV_NETWORK_ADDRESS}`,
       required: false,
     });
     parser.add_argument('-g', '--gas-price', {
-      help: `Gas price, default: ${this.GAS_PRICE}`,
+      help: `Preferred gas price for liquidate transaction (low , medium, high). Default: ${this.GAS_PRICE}`,
       required: false,
     });
     parser.add_argument('-t', '--ssv-token-address', {
@@ -54,8 +54,11 @@ export class ConfService extends ConfigService {
         this[envVarName];
 
       if (!process.env[envVarName]) {
-        console.log('\x1b[31m%s\x1b[0m', `Error: ${envVarName} is not found.`);
-        console.log('Run cmd: "yarn cli --help" for more details');
+        console.error(
+          '\x1b[31m%s\x1b[0m',
+          `Error: ${envVarName} is not found.`,
+        );
+        console.error('Run cmd: "yarn cli --help" for more details');
         process.exit(1);
       }
     }
