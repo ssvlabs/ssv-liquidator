@@ -54,8 +54,11 @@ export class ConfService extends ConfigService {
         this[envVarName];
 
       if (!process.env[envVarName]) {
-        console.log('\x1b[31m%s\x1b[0m', `Error: ${envVarName} is not found.`);
-        console.log('Run cmd: "yarn cli --help" for more details');
+        console.error(
+          '\x1b[31m%s\x1b[0m',
+          `Error: ${envVarName} is not found.`,
+        );
+        console.error('Run cmd: "yarn cli --help" for more details');
         process.exit(1);
       }
     }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Retryable, BackOffPolicy } from 'typescript-retry-decorator';
 import Web3Provider from '@cli/providers/web3.provider';
 import { WorkerService } from '@cli/services/worker/worker.service';
@@ -11,10 +11,12 @@ import {
 
 @Injectable()
 export class FetchTask {
+  private readonly _logger = new Logger(FetchTask.name);
+
   constructor(
     private _systemService: SystemService,
     private _workerService: WorkerService,
-    public readonly metricsService: MetricsService,
+    private readonly _metricsService: MetricsService,
   ) {}
 
   @Retryable({
@@ -53,7 +55,9 @@ export class FetchTask {
       toBlock,
     };
 
-    console.log(`Syncing events in blocks range:`, filters);
+    this._logger.log(
+      `Syncing events in blocks range: ${JSON.stringify(filters)}`,
+    );
     const events = await Web3Provider.contract.getPastEvents(
       'allEvents',
       filters,
@@ -67,12 +71,12 @@ export class FetchTask {
     );
 
     // Metrics
-    this.metricsService.fetchStatus.set(1);
-    this.metricsService.criticalStatus.set(1);
-    this.metricsService.lastBlockNumberMetric.set(filters.toBlock);
+    this._metricsService.fetchStatus.set(1);
+    this._metricsService.criticalStatus.set(1);
+    this._metricsService.lastBlockNumberMetric.set(filters.toBlock);
 
     if (events.length) {
-      console.log(`Processed ${events.length} events`);
+      this._logger.log(`Processed ${events.length} events`);
     }
   }
 }

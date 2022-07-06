@@ -1,15 +1,13 @@
 import { In } from 'typeorm';
-
-import { Injectable } from '@nestjs/common';
-
+import { Injectable, Logger } from '@nestjs/common';
 import { SystemType } from '@cli/modules/system/system.service';
-
 import { AddressService } from '@cli/modules/addresses/address.service';
 import { EarningService } from '@cli/modules/earnings/earning.service';
 
 @Injectable()
 export class WorkerService {
   protected _convert: any;
+  private readonly _logger = new Logger(WorkerService.name);
 
   constructor(
     private _addressService: AddressService,
@@ -26,10 +24,10 @@ export class WorkerService {
 
   async processEvents(events: Array<any>): Promise<void> {
     if (!events.length) {
-      console.log(`There is no events in this block range`);
+      this._logger.log(`There is no events in this block range`);
       return;
     }
-    console.log(`Going to process ${events.length} events`);
+    this._logger.log(`Going to process ${events.length} events`);
     for (const item of events) {
       const dataItem: any = this._convert(item.returnValues);
       dataItem.blockNumber = item.blockNumber;
