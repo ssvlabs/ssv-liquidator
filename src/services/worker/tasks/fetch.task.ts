@@ -66,9 +66,13 @@ export class FetchTask {
       filters.toBlock,
     );
 
-    console.log(`Processed ${events.length} events`);
+    // Metrics
     this.metricsService.fetchStatus.set(1);
     this.metricsService.criticalStatus.set(1);
     this.metricsService.lastBlockNumberMetric.set(filters.toBlock);
+
+    if (events.length) {
+      console.log(`Processed ${events.length} events`);
+    }
   }
 }
