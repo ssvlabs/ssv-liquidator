@@ -78,7 +78,7 @@ export class LiquidationTask {
       this._config.get('SSV_NETWORK_ADDRESS'),
     );
 
-    console.log('TO LIQUIDATE', addressesToLiquidate);
+    console.log('Going to liquidate owner address: ', addressesToLiquidate);
     const data = (
       await contract.methods.liquidate(addressesToLiquidate)
     ).encodeABI();
