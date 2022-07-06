@@ -85,7 +85,7 @@ export class LiquidationTask {
     );
 
     this._logger.log(
-      `Going to liquidate owner address: ${addressesToLiquidate}`
+      `Going to liquidate owner address: ${addressesToLiquidate}`,
     );
 
     const data = (
@@ -115,11 +115,11 @@ export class LiquidationTask {
     transaction.gas = +gas.toFixed(0);
 
     let gasPrice = +(await Web3Provider.web3.eth.getGasPrice());
-    if (this._config.get('GAS_PRICE') === 'slow') {
+    if (this._config.get('GAS_PRICE') === 'low') {
       gasPrice -= gasPrice * 0.1;
-    } else if (this._config.get('GAS_PRICE') === 'high') {
+    } else if (this._config.get('GAS_PRICE') === 'medium') {
       gasPrice += gasPrice * 0.2;
-    } else if (this._config.get('GAS_PRICE') === 'highest') {
+    } else if (this._config.get('GAS_PRICE') === 'high') {
       gasPrice += gasPrice * 0.4;
     }
 
