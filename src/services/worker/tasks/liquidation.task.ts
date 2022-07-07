@@ -1,5 +1,5 @@
 import { LessThanOrEqual } from 'typeorm';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { BackOffPolicy, Retryable } from 'typescript-retry-decorator';
 import Web3Provider from '@cli/providers/web3.provider';
 import { ConfService } from '@cli/shared/services/conf.service';
@@ -11,8 +11,6 @@ import {
 
 @Injectable()
 export class LiquidationTask {
-  private readonly _logger = new Logger(LiquidationTask.name);
-
   constructor(
     private _config: ConfService,
     private _addressService: AddressService,
@@ -42,7 +40,7 @@ export class LiquidationTask {
     const currentBlockNumber = +(await Web3Provider.currentBlockNumber());
     const toLiquidateRecords = await this._addressService.findBy({
       where: {
-        liquidateAtBlock: LessThanOrEqual(
+        liquidateLastBlock: LessThanOrEqual(
           currentBlockNumber + minimumBlocksBeforeLiquidation,
         ),
       },
@@ -64,7 +62,7 @@ export class LiquidationTask {
         }
         liquidationStatus.set(1);
       } catch (e) {
-        this._logger.error(
+        console.error(
           `Address ${ownerAddress} not possible to liquidate. Error: ${
             e.message || e
           }`,
@@ -84,9 +82,7 @@ export class LiquidationTask {
       this._config.get('SSV_NETWORK_ADDRESS'),
     );
 
-    this._logger.log(
-      `Going to liquidate owner address: ${addressesToLiquidate}`,
-    );
+    console.log(`Going to liquidate owner address: ${addressesToLiquidate}`);
 
     const data = (
       await contract.methods.liquidate(addressesToLiquidate)
@@ -125,9 +121,7 @@ export class LiquidationTask {
 
     transaction.gasPrice = +gasPrice.toFixed(0);
 
-    this._logger.log(
-      `Liquidate transaction payload to be send: ${transaction}`,
-    );
+    console.log(`Liquidate transaction payload to be send: ${transaction}`);
 
     const signedTx = await Web3Provider.web3.eth.accounts.signTransaction(
       transaction,
@@ -137,10 +131,10 @@ export class LiquidationTask {
     Web3Provider.web3.eth
       .sendSignedTransaction(signedTx.rawTransaction, (error, hash) => {
         if (!error) {
-          this._logger.log(`🎉 The hash of liquidated transaction is: ${hash}`);
+          console.log(`🎉 The hash of liquidated transaction is: ${hash}`);
           liquidationStatus.set(1);
         } else {
-          this._logger.error(
+          console.error(
             `[CRITICAL] Something went wrong while submitting your transaction: ${
               error.message || error
             }`,
@@ -151,7 +145,7 @@ export class LiquidationTask {
       })
       .on('receipt', data => {
         // gasPrice * data.gasUsed
-        this._logger.log(`Transaction receipt: ${JSON.stringify(data)}`);
+        console.log(`Transaction receipt: ${JSON.stringify(data)}`);
         liquidationStatus.set(1);
         criticalStatus.set(1);
       });

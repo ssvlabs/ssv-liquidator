@@ -24,8 +24,8 @@ export const colorCodeStatus = status => {
 
 const textStatus = (item, extra: any) => {
   const { currentBlockNumber, minimumBlocksBeforeLiquidation } = extra;
-  const blockDiff = item.liquidateAtBlock
-    ? item.liquidateAtBlock - currentBlockNumber
+  const blockDiff = item.liquidateLastBlock
+    ? item.liquidateLastBlock - currentBlockNumber
     : null;
   switch (true) {
     case item.isLiquidated:
@@ -50,6 +50,7 @@ export const transformAddressData = (items, extra: any) => {
       const status = textStatus(item, extra);
       addresses.push({
         owner: { text: item.ownerAddress },
+        balance: { text: item.balance },
         burnRate: {
           text: item.burnRate !== null ? `${item.burnRate / 1e18} SSV` : '',
         },
@@ -59,7 +60,8 @@ export const transformAddressData = (items, extra: any) => {
           padText: true,
           extraPadding: 1,
         },
-        liquidateAtBlock: { text: item.liquidateAtBlock },
+        liquidateFirstBlock: { text: item.liquidateFirstBlock },
+        liquidateLastBlock: { text: item.liquidateLastBlock },
         updated: {
           text: timeAgo.format(item.updatedAt, 'round-minute'),
         },

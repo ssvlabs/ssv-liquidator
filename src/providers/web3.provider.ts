@@ -23,6 +23,10 @@ export default class Web3Provider {
     return await Web3Provider.web3.eth.getBlockNumber();
   }
 
+  static async liquidationThresholdPeriod(): Promise<number> {
+    return Web3Provider.contract.methods.getLiquidationThresholdPeriod().call();
+  }
+
   static async minimumBlocksBeforeLiquidation(): Promise<number> {
     return Web3Provider.contract.methods.getLiquidationThresholdPeriod().call();
   }
