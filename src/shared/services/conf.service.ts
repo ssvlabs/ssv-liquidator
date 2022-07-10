@@ -18,7 +18,7 @@ export class ConfService extends ConfigService {
       help: "The liquidator's recipient address private key, used for creating a liquidation transaction",
       required: false,
     });
-    parser.add_argument('-c', '--contract-address', {
+    parser.add_argument('-c', '--ssv-contract-address', {
       help: `The SSV Contract address, used to listen to balance change events and to create a liquidation transaction. Default: ${this.SSV_NETWORK_ADDRESS}`,
       required: false,
     });

@@ -54,15 +54,15 @@ yarn install
 yarn cli --help
 ```
 
-Input parameters:  
-node-url (n) = ETH1 node url  
-private-key (pk) = Account private key  
-contract-address (c) = Contract Address  
-gas-price (g) = Gas price, default: slow  
-ssv-token-address (t) = The contract address for the SSV token  
+Input parameters:
+node-url (n) = ETH1 node url
+private-key (pk) = Account private key
+ssv-contract-address (c) = Contract Address
+gas-price (g) = Gas price, default: low
+ssv-token-address = The contract address for the SSV token
 
 ```sh
-yarn cli --node-url=eth.infra.com --private-key=a70478942bf... --contract-address=0x425890f2a5g... --gas-price=slow --ssv-token-address=0x425890f2a5g84hw94...
+yarn cli --node-url=eth.infra.com --private-key=a70478942bf... --ssv-contract-address=0x425890f2a5g... --gas-price=slow --ssv-token-address=0x425890f2a5g84hw94...
 ```
 
 Example of running the CLI with the minimum requirements:
