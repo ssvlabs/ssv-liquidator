@@ -53,6 +53,10 @@ export class BurnRatesTask {
         Web3Provider.isLiquidated(ownerAddress),
       ),
     );
+    const currentBlockNumber = await Web3Provider.currentBlockNumber();
+    const liquidationThresholdPeriod =
+      await Web3Provider.liquidationThresholdPeriod();
+
     for (const [index, record] of missedRecords.entries()) {
       const burnRate = +(burnRates[index] as any).value;
       const balanceObject = balances[index] as any;
@@ -63,11 +67,14 @@ export class BurnRatesTask {
           : +balanceObject.value;
       const isLiquidated = (liquidated[index] as any).value;
       record.burnRate = burnRate;
-      record.liquidateAtBlock =
+      record.liquidateLastBlock =
         burnRate > 0
-          ? (await Web3Provider.currentBlockNumber()) +
-            +(balance / burnRate).toFixed(0)
+          ? currentBlockNumber + +(balance / burnRate).toFixed(0)
           : null;
+      record.liquidateFirstBlock = record.liquidateLastBlock
+        ? record.liquidateLastBlock - liquidationThresholdPeriod
+        : null;
+      record.balance = balance;
       record.isLiquidated = isLiquidated;
     }
     await Promise.all(

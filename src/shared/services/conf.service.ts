@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 export class ConfService extends ConfigService {
   private SSV_NETWORK_ADDRESS = '0x5b46c3659f12D23049Dca9a4edec5E9B24f8948d';
   private SSV_TOKEN_ADDRESS = '0x3651c03a8546da82affaef8c644d4e3efdd37718';
-  private GAS_PRICE = 'slow';
+  private GAS_PRICE = 'low';
   private NODE_URL = 'eth.infra.com';
 
   public init() {

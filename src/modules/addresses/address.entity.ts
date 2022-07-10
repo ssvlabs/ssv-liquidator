@@ -17,11 +17,17 @@ export class Address {
   @Column({ default: null })
   burnRate: number;
 
+  @Column({ default: null })
+  balance: number;
+
   @Column({ default: false })
   isLiquidated: boolean;
 
   @Column({ default: null })
-  liquidateAtBlock: number;
+  liquidateLastBlock: number;
+
+  @Column({ default: null })
+  liquidateFirstBlock: number;
 
   @CreateDateColumn()
   createdAt: Date;
