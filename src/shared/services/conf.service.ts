@@ -2,8 +2,6 @@ import { ArgumentParser } from 'argparse';
 import { ConfigService } from '@nestjs/config';
 
 export class ConfService extends ConfigService {
-  private SSV_NETWORK_ADDRESS = '0x5b46c3659f12D23049Dca9a4edec5E9B24f8948d';
-  private SSV_TOKEN_ADDRESS = '0x3651c03a8546da82affaef8c644d4e3efdd37718';
   private GAS_PRICE = 'low';
   private NODE_URL = 'eth.infra.com';
 
@@ -19,7 +17,9 @@ export class ConfService extends ConfigService {
       required: false,
     });
     parser.add_argument('-c', '--ssv-contract-address', {
-      help: `The SSV Contract address, used to listen to balance change events and to create a liquidation transaction. Default: ${this.SSV_NETWORK_ADDRESS}`,
+      help:
+        'The SSV Contract address, used to listen to balance change events and to create a liquidation transaction. ' +
+        'Refer to https://docs.ssv.network/developers/smart-contracts',
       required: false,
     });
     parser.add_argument('-g', '--gas-price', {
@@ -27,7 +27,9 @@ export class ConfService extends ConfigService {
       required: false,
     });
     parser.add_argument('-t', '--ssv-token-address', {
-      help: `SSV Token address, default: ${this.SSV_TOKEN_ADDRESS}`,
+      help:
+        'SSV Token address' +
+        'Refer to https://docs.ssv.network/developers/smart-contracts',
       required: false,
     });
 
