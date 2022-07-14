@@ -23,12 +23,12 @@ export class ConfService extends ConfigService {
       required: false,
     });
     parser.add_argument('-g', '--gas-price', {
-      help: `Preferred gas price for liquidate transaction (low , medium, high). Default: ${this.GAS_PRICE}`,
+      help: `Preferred gas price for the liquidate transaction (low , medium, high). Default: ${this.GAS_PRICE}`,
       required: false,
     });
     parser.add_argument('-t', '--ssv-token-address', {
       help:
-        'SSV Token address' +
+        'SSV Token address. ' +
         'Refer to https://docs.ssv.network/developers/smart-contracts',
       required: false,
     });
