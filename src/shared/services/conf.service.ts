@@ -41,7 +41,7 @@ export class ConfService extends ConfigService {
     const envVars = {
       // ENV name -> argparse name
       SSV_TOKEN_ADDRESS: 'ssv_token_address',
-      SSV_NETWORK_ADDRESS: 'contract_address',
+      SSV_NETWORK_ADDRESS: 'ssv_contract_address',
       GAS_PRICE: 'gas_price',
       ACCOUNT_PRIVATE_KEY: 'private_key',
       NODE_URL: 'node_url',
