@@ -79,6 +79,12 @@ spec:
               name: config-secrets
               key: account_private_key
 
+        - name: SSV_TOKEN_ADDRESS
+          valueFrom:
+            secretKeyRef:
+              name: config-secrets
+              key: ssv_token_address
+
         volumeMounts:
         - mountPath: "/data/"
           name: ssv-liquidator-worker
