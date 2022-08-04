@@ -796,55 +796,6 @@
   {
     "inputs": [
       {
-        "internalType": "bytes",
-        "name": "publicKey",
-        "type": "bytes"
-      }
-    ],
-    "name": "getOperatorByPublicKey",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint32",
         "name": "operatorId",
         "type": "uint32"
@@ -1156,7 +1107,8 @@
     "inputs": [
     ],
     "name": "renounceOwnership",
-    "outputs": [],
+    "outputs": [
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -1169,7 +1121,8 @@
       }
     ],
     "name": "transferOwnership",
-    "outputs": [],
+    "outputs": [
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -1182,7 +1135,8 @@
       }
     ],
     "name": "updateDeclareOperatorFeePeriod",
-    "outputs": [],
+    "outputs": [
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -1195,7 +1149,8 @@
       }
     ],
     "name": "updateExecuteOperatorFeePeriod",
-    "outputs": [],
+    "outputs": [
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -1208,7 +1163,8 @@
       }
     ],
     "name": "updateLiquidationThresholdPeriod",
-    "outputs": [],
+    "outputs": [
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -1221,7 +1177,8 @@
       }
     ],
     "name": "updateNetworkFee",
-    "outputs": [],
+    "outputs": [
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -1234,7 +1191,8 @@
       }
     ],
     "name": "updateOperatorFeeIncreaseLimit",
-    "outputs": [],
+    "outputs": [
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -1252,7 +1210,8 @@
       }
     ],
     "name": "updateOperatorScore",
-    "outputs": [],
+    "outputs": [
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -1285,7 +1244,8 @@
       }
     ],
     "name": "updateValidator",
-    "outputs": [],
+    "outputs": [
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -1331,14 +1291,17 @@
       }
     ],
     "name": "withdraw",
-    "outputs": [],
+    "outputs": [
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+    ],
     "name": "withdrawAll",
-    "outputs": [],
+    "outputs": [
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -1351,7 +1314,8 @@
       }
     ],
     "name": "withdrawNetworkEarnings",
-    "outputs": [],
+    "outputs": [
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   }
