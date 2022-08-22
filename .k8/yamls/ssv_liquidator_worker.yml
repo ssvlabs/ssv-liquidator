@@ -27,8 +27,6 @@ spec:
   selector:
     matchLabels:
       app: ssv-liquidator-worker
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:
