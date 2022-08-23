@@ -71,7 +71,7 @@ spec:
               name: config-secrets
               key: ssv_network_address
 
-        - name: ACCOUNT_PRIVATE_KEY_3
+        - name: ACCOUNT_PRIVATE_KEY
           valueFrom:
             secretKeyRef:
               name: config-secrets
