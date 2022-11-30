@@ -70,8 +70,6 @@ Helm deploy on stage:
       --wait
       ssv-liquidator
       .k8/helm3/ssv-liquidator/
-      --dry-run
-      --debug
   only:
     - stage
 
