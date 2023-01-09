@@ -2,7 +2,7 @@ import Web3 from 'web3';
 import ABI_V2 from '@cli/shared/v2.abi.json';
 
 export default class Web3Provider {
-  static BLOCK_RANGE_500K = 500000;
+  static BLOCK_RANGE_500K = 10000;
 
   static get web3() {
     return new Web3(process.env.NODE_URL);
