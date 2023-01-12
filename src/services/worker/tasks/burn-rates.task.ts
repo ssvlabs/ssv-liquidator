@@ -1,12 +1,38 @@
-import Web3Provider from '@cli/providers/web3.provider';
-
 import { Injectable } from '@nestjs/common';
+import { BackOffPolicy, Retryable } from 'typescript-retry-decorator';
+import Web3Provider from '@cli/providers/web3.provider';
 import { AddressService } from '@cli/modules/addresses/address.service';
+import {
+  MetricsService,
+  burnRatesStatus,
+  criticalStatus,
+} from '@cli/modules/webapp/metrics/services/metrics.service';
 
 @Injectable()
 export class BurnRatesTask {
-  constructor(private _addressService: AddressService) {}
+  constructor(
+    private _addressService: AddressService,
+    private _metricsService: MetricsService,
+  ) {}
 
+  @Retryable({
+    maxAttempts: 100,
+    backOffPolicy: BackOffPolicy.ExponentialBackOffPolicy,
+    backOff: 1000,
+    doRetry: (e: Error) => {
+      console.error(
+        '[CRITICAL] Error running BurnRatesTask :: syncBurnRates: ',
+        e,
+      );
+      burnRatesStatus.set(0);
+      criticalStatus.set(0);
+      return true;
+    },
+    exponentialOption: {
+      maxInterval: 1000 * 60,
+      multiplier: 2,
+    },
+  })
   async syncBurnRates(): Promise<void> {
     const missedRecords = await this._addressService.findBy({
       where: { burnRate: null },
@@ -27,6 +53,10 @@ export class BurnRatesTask {
         Web3Provider.isLiquidated(ownerAddress),
       ),
     );
+    const currentBlockNumber = await Web3Provider.currentBlockNumber();
+    const liquidationThresholdPeriod =
+      await Web3Provider.liquidationThresholdPeriod();
+
     for (const [index, record] of missedRecords.entries()) {
       const burnRate = +(burnRates[index] as any).value;
       const balanceObject = balances[index] as any;
@@ -37,11 +67,14 @@ export class BurnRatesTask {
           : +balanceObject.value;
       const isLiquidated = (liquidated[index] as any).value;
       record.burnRate = burnRate;
-      record.liquidateAtBlock =
+      record.liquidateLastBlock =
         burnRate > 0
-          ? (await Web3Provider.currentBlockNumber()) +
-            +(balance / burnRate).toFixed(0)
+          ? currentBlockNumber + +(balance / burnRate).toFixed(0)
           : null;
+      record.liquidateFirstBlock = record.liquidateLastBlock
+        ? record.liquidateLastBlock - liquidationThresholdPeriod
+        : null;
+      record.balance = balance;
       record.isLiquidated = isLiquidated;
     }
     await Promise.all(
@@ -52,5 +85,7 @@ export class BurnRatesTask {
         ),
       ),
     );
+    this._metricsService.burnRatesStatus.set(1);
+    this._metricsService.criticalStatus.set(1);
   }
 }

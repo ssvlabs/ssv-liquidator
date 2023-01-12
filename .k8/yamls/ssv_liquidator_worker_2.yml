@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ssv-liquidator-worker-svc
+  name: ssv-liquidator-worker-2-svc
   namespace: REPLACE_NAMESPACE 
   labels:
-    name: ssv-liquidator-worker-svc
+    name: ssv-liquidator-worker-2-svc
 spec:
   type: ClusterIP 
   ports:
@@ -13,26 +13,26 @@ spec:
       protocol: TCP
       targetPort: 3000
   selector:
-    app: ssv-liquidator-worker
+    app: ssv-liquidator-worker-2
 ---
 apiVersion: REPLACE_API_VERSION
 kind: Deployment
 metadata:
   labels:
-    app: ssv-liquidator-worker
-  name: ssv-liquidator-worker
+    app: ssv-liquidator-worker-2
+  name: ssv-liquidator-worker-2
   namespace: REPLACE_NAMESPACE
 spec:
   replicas: REPLACE_REPLICAS
   selector:
     matchLabels:
-      app: ssv-liquidator-worker
+      app: ssv-liquidator-worker-2
   strategy:
-    type: Recreate
+    type: Recreate      
   template:
     metadata:
       labels:
-        app: ssv-liquidator-worker
+        app: ssv-liquidator-worker-2
     spec:
       affinity:
         nodeAffinity:
@@ -44,7 +44,7 @@ spec:
                     values:
                       - ssv-main      
       containers:
-      - name: ssv-liquidator-worker
+      - name: ssv-liquidator-worker-2
         image: REPLACE_DOCKER_REPO:REPLACE_IMAGETAG
         imagePullPolicy: Always
         ports:
@@ -77,7 +77,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: account_private_key
+              key: account_private_key_2
 
         - name: SSV_TOKEN_ADDRESS
           valueFrom:
@@ -87,11 +87,11 @@ spec:
 
         volumeMounts:
         - mountPath: "/data/"
-          name: ssv-liquidator-worker
+          name: ssv-liquidator-worker-2
       volumes:
       - persistentVolumeClaim:
-          claimName: ssv-liquidator-worker            
-        name: ssv-liquidator-worker
+          claimName: ssv-liquidator-worker-2         
+        name: ssv-liquidator-worker-2
       tolerations:
         - effect: NoSchedule
           key: kubernetes.io/role

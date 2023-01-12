@@ -1,11 +1,13 @@
-import Web3Provider from '@cli/providers/web3.provider';
-
-import { Injectable } from '@nestjs/common';
 import { LessThanOrEqual } from 'typeorm';
-
-import { AddressService } from '../../../modules/addresses/address.service';
-
-import { ConfService } from '../../../shared/services/conf.service';
+import { Injectable } from '@nestjs/common';
+import { BackOffPolicy, Retryable } from 'typescript-retry-decorator';
+import Web3Provider from '@cli/providers/web3.provider';
+import { ConfService } from '@cli/shared/services/conf.service';
+import { AddressService } from '@cli/modules/addresses/address.service';
+import {
+  liquidationStatus,
+  criticalStatus,
+} from '@cli/modules/webapp/metrics/services/metrics.service';
 
 @Injectable()
 export class LiquidationTask {
@@ -14,13 +16,31 @@ export class LiquidationTask {
     private _addressService: AddressService,
   ) {}
 
+  @Retryable({
+    maxAttempts: 100,
+    backOffPolicy: BackOffPolicy.ExponentialBackOffPolicy,
+    backOff: 1000,
+    doRetry: (e: Error) => {
+      console.error(
+        '[CRITICAL] Error running LiquidationTask :: liquidate: ',
+        e,
+      );
+      liquidationStatus.set(0);
+      criticalStatus.set(0);
+      return true;
+    },
+    exponentialOption: {
+      maxInterval: 1000 * 60,
+      multiplier: 2,
+    },
+  })
   async liquidate(): Promise<void> {
     const minimumBlocksBeforeLiquidation =
       +(await Web3Provider.minimumBlocksBeforeLiquidation());
     const currentBlockNumber = +(await Web3Provider.currentBlockNumber());
     const toLiquidateRecords = await this._addressService.findBy({
       where: {
-        liquidateAtBlock: LessThanOrEqual(
+        liquidateLastBlock: LessThanOrEqual(
           currentBlockNumber + minimumBlocksBeforeLiquidation,
         ),
       },
@@ -40,12 +60,20 @@ export class LiquidationTask {
             );
           }
         }
+        liquidationStatus.set(1);
       } catch (e) {
-        console.error(`address ${ownerAddress} not possible to liquidate`, e);
+        console.error(
+          `Address ${ownerAddress} not possible to liquidate. Error: ${
+            e.message || e
+          }`,
+        );
+        liquidationStatus.set(0);
       }
     }
     if (addressesToLiquidate.length === 0) {
       // nothing to liquidate
+      liquidationStatus.set(1);
+      criticalStatus.set(1);
       return;
     }
 
@@ -54,7 +82,8 @@ export class LiquidationTask {
       this._config.get('SSV_NETWORK_ADDRESS'),
     );
 
-    console.log('TO LIQUIDATE', addressesToLiquidate);
+    console.log(`Going to liquidate owner address: ${addressesToLiquidate}`);
+
     const data = (
       await contract.methods.liquidate(addressesToLiquidate)
     ).encodeABI();
@@ -82,17 +111,17 @@ export class LiquidationTask {
     transaction.gas = +gas.toFixed(0);
 
     let gasPrice = +(await Web3Provider.web3.eth.getGasPrice());
-    if (this._config.get('GAS_PRICE') === 'slow') {
+    if (this._config.get('GAS_PRICE') === 'low') {
       gasPrice -= gasPrice * 0.1;
-    } else if (this._config.get('GAS_PRICE') === 'high') {
+    } else if (this._config.get('GAS_PRICE') === 'medium') {
       gasPrice += gasPrice * 0.2;
-    } else if (this._config.get('GAS_PRICE') === 'highest') {
+    } else if (this._config.get('GAS_PRICE') === 'high') {
       gasPrice += gasPrice * 0.4;
     }
 
     transaction.gasPrice = +gasPrice.toFixed(0);
 
-    console.log('liquidate tx request:', transaction);
+    console.log(`Liquidate transaction payload to be send: ${transaction}`);
 
     const signedTx = await Web3Provider.web3.eth.accounts.signTransaction(
       transaction,
@@ -103,16 +132,22 @@ export class LiquidationTask {
       .sendSignedTransaction(signedTx.rawTransaction, (error, hash) => {
         if (!error) {
           console.log(`🎉 The hash of liquidated transaction is: ${hash}`);
+          liquidationStatus.set(1);
         } else {
-          console.log(
-            '❗Something went wrong while submitting your transaction:',
-            error,
+          console.error(
+            `[CRITICAL] Something went wrong while submitting your transaction: ${
+              error.message || error
+            }`,
           );
+          liquidationStatus.set(0);
+          criticalStatus.set(0);
         }
       })
       .on('receipt', data => {
         // gasPrice * data.gasUsed
-        console.log(data);
+        console.log(`Transaction receipt: ${JSON.stringify(data)}`);
+        liquidationStatus.set(1);
+        criticalStatus.set(1);
       });
   }
 }

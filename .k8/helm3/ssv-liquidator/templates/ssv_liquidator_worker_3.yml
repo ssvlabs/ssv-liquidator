@@ -2,50 +2,41 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ssv-liquidator-worker-svc
-  namespace: REPLACE_NAMESPACE 
+  name: ssv-liquidator-worker-3-svc
+  namespace: {{ .Values.namespace }}
   labels:
-    name: ssv-liquidator-worker-svc
+    name: ssv-liquidator-worker-3-svc
 spec:
-  type: ClusterIP 
+  type: {{ .Values.service.type }}
   ports:
-    - port: 80 
+    - port: {{ .Values.service.port }}
       protocol: TCP
       targetPort: 3000
   selector:
-    app: ssv-liquidator-worker
+    app: ssv-liquidator-worker-3
 ---
-apiVersion: REPLACE_API_VERSION
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: ssv-liquidator-worker
-  name: ssv-liquidator-worker
-  namespace: REPLACE_NAMESPACE
+    app: ssv-liquidator-worker-3
+  name: ssv-liquidator-worker-3
+  namespace: {{ .Values.namespace }}
 spec:
-  replicas: REPLACE_REPLICAS
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: ssv-liquidator-worker
+      app: ssv-liquidator-worker-3
   strategy:
-    type: Recreate
+    type: Recreate      
   template:
     metadata:
       labels:
-        app: ssv-liquidator-worker
+        app: ssv-liquidator-worker-3
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: kubernetes.io/role
-                    operator: In
-                    values:
-                      - ssv-main      
       containers:
-      - name: ssv-liquidator-worker
-        image: REPLACE_DOCKER_REPO:REPLACE_IMAGETAG
+      - name: ssv-liquidator-worker-3
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
@@ -77,7 +68,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: account_private_key
+              key: account_private_key_3
 
         - name: SSV_TOKEN_ADDRESS
           valueFrom:
@@ -87,12 +78,18 @@ spec:
 
         volumeMounts:
         - mountPath: "/data/"
-          name: ssv-liquidator-worker
+          name: ssv-liquidator-worker-3
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
       volumes:
       - persistentVolumeClaim:
-          claimName: ssv-liquidator-worker            
-        name: ssv-liquidator-worker
+          claimName: ssv-liquidator-worker-3
+        name: ssv-liquidator-worker-3
+        {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
       tolerations:
-        - effect: NoSchedule
-          key: kubernetes.io/role
-          operator: Exists
+        {{- toYaml . | nindent 8 }}
+      {{- end }}            
