@@ -35,21 +35,6 @@ Build stage Docker image:
   only:
     - stage
 
-#Deploy to blox-infra-stage cluster:
-#  stage: deploy
-#  tags:
-#    - blox-infra-stage
-#  script:
-#    - apk add bash
-#    - curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.0/bin/linux/amd64/kubectl
-#    - chmod +x ./kubectl
-#    - mv ./kubectl /usr/bin/kubectl
-#    - export K8S_API_VERSION=$INFRA_STAGE_K8_API_VERSION
-#    - .k8/scripts/deploy-yamls-on-k8s.sh $DOCKER_REPO_INFRA_STAGE $CI_BUILD_REF liquidation $APP_REPLICAS_INFRA_STAGE blox-infra-stage kubernetes-admin@blox-infra stage.bloxinfra.com $K8S_API_VERSION
-#  only:
-#    - stage
-
-
 Helm deploy on stage:
   stage: deploy
   tags:
@@ -85,20 +70,6 @@ Build prod Docker image:
     - $DOCKER_LOGIN_TO_INFRA_PROD_REPO && docker push $DOCKER_REPO_INFRA_PROD:$CI_BUILD_REF
   only:
     - main
-
-#Deploy to blox-infra-prod cluster:
-#  stage: deploy
-#  tags:
-#    - blox-infra-prod
-#  script:
-#    - apk add bash
-#    - curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.0/bin/linux/amd64/kubectl
-#    - chmod +x ./kubectl
-#    - mv ./kubectl /usr/bin/kubectl
-#    - export K8S_API_VERSION=$INFRA_PROD_K8_API_VERSION
-#    - .k8/scripts/deploy-yamls-on-k8s.sh $DOCKER_REPO_INFRA_PROD $CI_BUILD_REF liquidation $APP_REPLICAS_INFRA_PROD blox-infra-prod kubernetes-admin@blox-infra-prod bloxinfra.com $K8S_API_VERSION
-#  only:
-#    - main
 
 Helm deploy on production:
   stage: deploy
