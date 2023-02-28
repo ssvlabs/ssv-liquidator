@@ -11,11 +11,15 @@ import {
 
 @Injectable()
 export class FetchTask {
+  private _isProcessLocked: boolean;
+
   constructor(
     private _systemService: SystemService,
     private _workerService: WorkerService,
     private readonly _metricsService: MetricsService,
-  ) {}
+  ) {
+    this._isProcessLocked = false;
+  }
 
   @Retryable({
     maxAttempts: 100,
@@ -36,43 +40,75 @@ export class FetchTask {
     },
   })
   async fetchAllEvents(): Promise<void> {
-    const latestBlock = await Web3Provider.web3.eth.getBlockNumber();
-    let fromBlock =
-      (await this._systemService.get(SystemType.GENERAL_LAST_BLOCK_NUMBER)) ||
-      0;
+    if (this._isProcessLocked) return;
 
-    fromBlock = fromBlock ? fromBlock + 1 : 0;
-
-    let toBlock = (fromBlock || 0) + Web3Provider.BLOCK_RANGE_500K;
-    if (toBlock > latestBlock) {
-      toBlock = latestBlock;
+    try {
+      this._isProcessLocked = true;
+      this._syncUpdates();
+      // Metrics
+      this._metricsService.fetchStatus.set(1);
+      this._metricsService.criticalStatus.set(1);
+    } catch (e) {
+      console.error(e);
     }
 
+    this._isProcessLocked = false;
+  }
+
+  private async _syncUpdates(): Promise<void> {
+    const DAY = 5_400;
+    const WEEK = DAY * 7;
+    const MONTH = DAY * 30;
+
+    let latestBlockNumber;
+    try {
+      latestBlockNumber = await Web3Provider.web3.eth.getBlockNumber();
+    } catch (err) {
+      throw new Error('Could not access the provided node endpoint.');
+    }
+    try {
+      await Web3Provider.minimumBlocksBeforeLiquidation();
+      // HERE we can validate the contract owner address
+    } catch (err) {
+      throw new Error('The provided contract address is not valid.');
+    }
+    let step = MONTH;
+
     const filters = {
-      fromBlock,
-      toBlock,
+      fromBlock: 7938000,
+      toBlock: 7938000 + step,
     };
 
-    console.log(`Syncing events in blocks range: ${JSON.stringify(filters)}`);
-    const events = await Web3Provider.contract.getPastEvents(
-      'allEvents',
-      filters,
-    );
+    while (filters.fromBlock < latestBlockNumber) {
+      console.log(`Syncing events in blocks range: ${JSON.stringify(filters)}`);
+      try {
+        const events = await Web3Provider.contractCore.getPastEvents(
+          'allEvents',
+          filters,
+        );
+        await this._workerService.processEvents(events);
 
-    await this._workerService.processEvents(events);
+        await this._systemService.save(
+          SystemType.GENERAL_LAST_BLOCK_NUMBER,
+          filters.toBlock,
+        );
 
-    await this._systemService.save(
-      SystemType.GENERAL_LAST_BLOCK_NUMBER,
-      filters.toBlock,
-    );
+        this._metricsService.lastBlockNumberMetric.set(filters.toBlock);
 
-    // Metrics
-    this._metricsService.fetchStatus.set(1);
-    this._metricsService.criticalStatus.set(1);
-    this._metricsService.lastBlockNumberMetric.set(filters.toBlock);
+        console.log(`Processed ${events.length} events`);
 
-    if (events.length) {
-      console.log(`Processed ${events.length} events`);
+        filters.fromBlock = filters.toBlock;
+      } catch (e) {
+        console.error(e);
+        if (step === MONTH) {
+          step = WEEK;
+        } else if (step === WEEK) {
+          step = DAY;
+        } else if (step === DAY) {
+          throw new Error(e);
+        }
+      }
+      filters.toBlock = filters.fromBlock + step;
     }
   }
 }

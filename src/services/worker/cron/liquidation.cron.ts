@@ -10,7 +10,7 @@ export class LiquidationCron {
   @Cron('0 * * * * *')
   async liquidate(): Promise<void> {
     try {
-      await this._liquidationTask.liquidate();
+      // await this._liquidationTask.liquidate();
     } catch (e) {
       console.log(e);
     }

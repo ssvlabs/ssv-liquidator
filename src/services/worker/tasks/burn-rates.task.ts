@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BackOffPolicy, Retryable } from 'typescript-retry-decorator';
 import Web3Provider from '@cli/providers/web3.provider';
-import { AddressService } from '@cli/modules/addresses/address.service';
+import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import {
   MetricsService,
   burnRatesStatus,
@@ -11,7 +11,7 @@ import {
 @Injectable()
 export class BurnRatesTask {
   constructor(
-    private _addressService: AddressService,
+    private _clusterService: ClusterService,
     private _metricsService: MetricsService,
   ) {}
 
@@ -34,28 +34,22 @@ export class BurnRatesTask {
     },
   })
   async syncBurnRates(): Promise<void> {
-    const missedRecords = await this._addressService.findBy({
+    const missedRecords = await this._clusterService.findBy({
       where: { burnRate: null },
-      select: ['ownerAddress'],
+      select: ['owner'],
     });
     const burnRates = await Promise.allSettled(
-      missedRecords.map(({ ownerAddress }) =>
-        Web3Provider.burnRate(ownerAddress),
-      ),
+      missedRecords.map(({ owner }) => Web3Provider.getClusterBurnRate(owner)),
     );
     const balances = await Promise.allSettled(
-      missedRecords.map(({ ownerAddress }) =>
-        Web3Provider.totalBalanceOf(ownerAddress),
-      ),
+      missedRecords.map(({ owner }) => Web3Provider.getBalance(owner)),
     );
     const liquidated = await Promise.allSettled(
-      missedRecords.map(({ ownerAddress }) =>
-        Web3Provider.isLiquidated(ownerAddress),
-      ),
+      missedRecords.map(({ owner }) => Web3Provider.isLiquidated(owner)),
     );
     const currentBlockNumber = await Web3Provider.currentBlockNumber();
-    const liquidationThresholdPeriod =
-      await Web3Provider.liquidationThresholdPeriod();
+    const minimumBlocksBeforeLiquidation =
+      await Web3Provider.minimumBlocksBeforeLiquidation();
 
     for (const [index, record] of missedRecords.entries()) {
       const burnRate = +(burnRates[index] as any).value;
@@ -72,15 +66,15 @@ export class BurnRatesTask {
           ? currentBlockNumber + +(balance / burnRate).toFixed(0)
           : null;
       record.liquidateFirstBlock = record.liquidateLastBlock
-        ? record.liquidateLastBlock - liquidationThresholdPeriod
+        ? record.liquidateLastBlock - minimumBlocksBeforeLiquidation
         : null;
       record.balance = balance;
       record.isLiquidated = isLiquidated;
     }
     await Promise.all(
       missedRecords.map(record =>
-        this._addressService.update(
-          { ownerAddress: record.ownerAddress },
+        this._clusterService.update(
+          { owner: record.owner, operatorIds: record.operatorIds },
           record,
         ),
       ),

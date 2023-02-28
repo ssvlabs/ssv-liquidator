@@ -1,6 +1,6 @@
 /**
  * It transforms the items object from sqlite into a custom format
- * @param {Array<>} items list of addresses object from the sqlite
+ * @param {Array<>} items list of clusters object from the sqlite
  * @returns List of custom formatted pod data
  */
 export const transformEarningData = items => {

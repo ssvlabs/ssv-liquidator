@@ -8,14 +8,14 @@ export enum SystemType {
   GENERAL_LAST_BLOCK_NUMBER = 'GENERAL_LAST_BLOCK_NUMBER',
   EARNINGS_LAST_BLOCK_NUMBER = 'EARNINGS_LAST_BLOCK_NUMBER',
   // event names
-  EVENT_OPERATOR_ADDED = 'OperatorRegistration',
-  EVENT_OPERATOR_REMOVED = 'OperatorRemoval',
-  EVENT_OPERATOR_FEE_APPROVED = 'OperatorFeeExecution',
-  EVENT_VALIDATOR_ADDED = 'ValidatorRegistration',
-  EVENT_VALIDATOR_REMOVED = 'ValidatorRemoval',
-  EVENT_ACCOUNT_LIQUIDATED = 'AccountLiquidation',
-  EVENT_FUNDS_DEPOSITED = 'FundsDeposit',
-  EVENT_FUNDS_WITHDRAWN = 'FundsWithdrawal',
+  EVENT_OPERATOR_ADDED = 'OperatorAdded',
+  EVENT_OPERATOR_REMOVED = 'OperatorRemoved',
+  EVENT_OPERATOR_FEE_APPROVED = 'OperatorFeeExecuted',
+  EVENT_VALIDATOR_ADDED = 'ValidatorAdded',
+  EVENT_VALIDATOR_REMOVED = 'ValidatorRemoved',
+  EVENT_CLUSTER_LIQUIDATED = 'ClusterLiquidated',
+  EVENT_CLUSTER_DEPOSITED = 'ClusterDeposited',
+  EVENT_CLUSTER_WITHDRAWN = 'ClusterWithdrawn',
 }
 
 @Injectable()
