@@ -41,25 +41,73 @@ export default class Web3Provider {
       .call();
   }
 
-  static async liquidatable(owner): Promise<boolean> {
+  static async liquidatable(
+    owner,
+    operatorIds,
+    clusterSnapshot,
+  ): Promise<boolean> {
     return Web3Provider.contractViews.methods
-      .isLiquidatable(owner)
+      .isLiquidatable(
+        owner,
+        Web3Provider.operatorIdsToArray(operatorIds),
+        Web3Provider.toClusterTuple(clusterSnapshot),
+      )
       .call();
   }
 
-  static async isLiquidated(owner): Promise<boolean> {
+  static async isLiquidated(
+    owner,
+    operatorIds,
+    clusterSnapshot,
+  ): Promise<boolean> {
     return Web3Provider.contractViews.methods
-      .isOwnerValidatorsDisabled(owner)
+      .isOwnerValidatorsDisabled(
+        owner,
+        Web3Provider.operatorIdsToArray(operatorIds),
+        Web3Provider.toClusterTuple(clusterSnapshot),
+      )
       .call();
   }
 
-  static async getClusterBurnRate(owner): Promise<string> {
+  static async getClusterBurnRate(
+    owner,
+    operatorIds,
+    clusterSnapshot,
+  ): Promise<string> {
     return Web3Provider.contractViews.methods
-      .getAddressBurnRate(owner)
+      .getClusterBurnRate(
+        owner,
+        Web3Provider.operatorIdsToArray(operatorIds),
+        clusterSnapshot,
+      )
       .call();
   }
 
-  static async getBalance(owner): Promise<string> {
-    return Web3Provider.contractViews.methods.getBalance(owner).call();
+  static async getBalance(
+    owner,
+    operatorIds,
+    clusterSnapshot,
+  ): Promise<string> {
+    return Web3Provider.contractViews.methods
+      .getBalance(
+        owner,
+        Web3Provider.operatorIdsToArray(operatorIds),
+        Web3Provider.toClusterTuple(clusterSnapshot),
+      )
+      .call();
+  }
+
+  static toClusterTuple(obj) {
+    return [
+      obj.validatorCount,
+      obj.networkFeeIndex,
+      obj.index,
+      obj.balance,
+      obj.active,
+    ];
+  }
+
+  static operatorIdsToArray(str) {
+    return str.split(',').map(Number);
   }
 }

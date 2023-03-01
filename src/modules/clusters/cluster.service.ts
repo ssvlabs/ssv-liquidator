@@ -11,7 +11,11 @@ export class ClusterService {
   ) {}
 
   async findAll(): Promise<Cluster[]> {
-    return await this._clusterRepository.find();
+    return await this._clusterRepository.find({
+      order: {
+        balanceToBlockNumber: 'ASC',
+      },
+    });
   }
 
   async findBy(options: any): Promise<Cluster[]> {
@@ -22,12 +26,26 @@ export class ClusterService {
     return await this._clusterRepository.findOne(filters);
   }
 
-  async create(clusters: Cluster[]): Promise<void> {
+  async create(cluster: Cluster): Promise<void> {
+    const records = await this.findBy({
+      owner: cluster.owner,
+      operatorIds: cluster.operatorIds,
+    });
+
+    if (records.length > 0) {
+      return this.update(
+        {
+          owner: cluster.owner,
+          operatorIds: cluster.operatorIds,
+        },
+        cluster,
+      );
+    }
     await getConnection()
       .createQueryBuilder()
       .insert()
       .into(Cluster)
-      .values(clusters)
+      .values([cluster])
       .orIgnore(true)
       .execute();
   }

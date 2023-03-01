@@ -40,47 +40,69 @@ export class LiquidationTask {
     const currentBlockNumber = +(await Web3Provider.currentBlockNumber());
     const toLiquidateRecords = await this._clusterService.findBy({
       where: {
-        liquidateLastBlock: LessThanOrEqual(
+        balanceToBlockNumber: LessThanOrEqual(
           currentBlockNumber + minimumBlocksBeforeLiquidation,
         ),
       },
     });
-    const addressesToLiquidate = [];
-    for (const { owner, operatorIds } of toLiquidateRecords) {
+    const clustersToLiquidate = [];
+    for (const item of toLiquidateRecords) {
+      item.cluster = JSON.parse(item.cluster);
       try {
-        const liquidatable = await Web3Provider.liquidatable(owner);
+        const liquidatable = await Web3Provider.liquidatable(
+          item.owner,
+          item.operatorIds,
+          item.cluster,
+        );
         if (liquidatable) {
-          addressesToLiquidate.push(owner);
+          clustersToLiquidate.push(item.owner);
         } else {
-          const isLiquidated = await Web3Provider.isLiquidated(owner);
+          const isLiquidated = await Web3Provider.isLiquidated(
+            item.owner,
+            item.operatorIds,
+            item.cluster,
+          );
           if (isLiquidated) {
             await this._clusterService.update(
-              { owner },
-              { burnRate: null, isLiquidated: true },
+              { owner: item.owner, operatorIds: item.operatorIds },
+              {
+                burnRate: null,
+                isLiquidated: true,
+              },
             );
           }
         }
         liquidationStatus.set(1);
       } catch (e) {
         console.error(
-          `Cluster ${owner}:[${operatorIds.join(
+          `Cluster ${item.owner}:[${item.operatorIds.join(
             ',',
           )}] not possible to liquidate. Error: ${e.message || e}`,
         );
         liquidationStatus.set(0);
       }
     }
-    if (addressesToLiquidate.length === 0) {
+    if (clustersToLiquidate.length === 0) {
       // nothing to liquidate
       liquidationStatus.set(1);
       criticalStatus.set(1);
       return;
     }
 
-    console.log(`Going to liquidate clusters: ${addressesToLiquidate}`);
+    console.log(`Going to liquidate clusters: ${clustersToLiquidate}`);
 
+    for (const item of clustersToLiquidate) {
+      await this.doLiquidation(item.owner, item.operatorIds, item.cluster);
+    }
+  }
+
+  private async doLiquidation(owner, operatorIds, cluster) {
     const data = (
-      await Web3Provider.contractCore.methods.liquidate(addressesToLiquidate)
+      await Web3Provider.contractCore.methods.liquidate(
+        owner,
+        operatorIds,
+        cluster,
+      )
     ).encodeABI();
 
     const transaction: any = {

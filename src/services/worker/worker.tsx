@@ -59,6 +59,10 @@ async function bootstrapCli() {
   const clusterService = app.select(WorkerModule).get(ClusterService);
   const earningService = app.select(WorkerModule).get(EarningService);
 
+  if (confService.get('HIDE_TABLE') === '1') {
+    return;
+  }
+
   const { App } = importJsx(path.join(__dirname, '/../../shared/cli/app'));
   render(
     <App

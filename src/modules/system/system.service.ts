@@ -16,6 +16,7 @@ export enum SystemType {
   EVENT_CLUSTER_LIQUIDATED = 'ClusterLiquidated',
   EVENT_CLUSTER_DEPOSITED = 'ClusterDeposited',
   EVENT_CLUSTER_WITHDRAWN = 'ClusterWithdrawn',
+  EVENT_CLUSTER_REACTIVATED = 'ClusterReactivated',
 }
 
 @Injectable()

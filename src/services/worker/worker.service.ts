@@ -21,7 +21,9 @@ export class WorkerService {
     for (const item of events) {
       if (!Object.values(SystemType).includes(item.event)) continue;
       const dataItem: any = this.convert(item.returnValues);
+      dataItem.cluster = JSON.stringify(dataItem.cluster);
       dataItem.blockNumber = item.blockNumber;
+
       switch (item.event) {
         case SystemType.EVENT_CLUSTER_LIQUIDATED:
           const earnedData = await this._earningService.fetch(
@@ -30,6 +32,7 @@ export class WorkerService {
           await this._earningService.update(earnedData);
         case SystemType.EVENT_CLUSTER_DEPOSITED:
         case SystemType.EVENT_CLUSTER_WITHDRAWN:
+        case SystemType.EVENT_CLUSTER_REACTIVATED:
         case SystemType.EVENT_OPERATOR_FEE_APPROVED:
         case SystemType.EVENT_VALIDATOR_REMOVED:
           await this._clusterService.update(
@@ -37,11 +40,11 @@ export class WorkerService {
               owner: dataItem.owner,
               operatorIds: dataItem.operatorIds,
             },
-            { burnRate: null },
+            { burnRate: null, cluster: dataItem.cluster },
           );
           break;
         case SystemType.EVENT_VALIDATOR_ADDED:
-          await this._clusterService.create([dataItem]);
+          await this._clusterService.create(dataItem);
           break;
       }
     }
@@ -50,7 +53,11 @@ export class WorkerService {
   private convert(values): any {
     return Object.keys(values).reduce((aggr, key) => {
       if (isNaN(key as any)) {
-        aggr[key] = values[key];
+        if (key === 'cluster') {
+          aggr[key] = this.convert(values[key]);
+        } else {
+          aggr[key] = values[key];
+        }
       }
       return aggr;
     }, {});

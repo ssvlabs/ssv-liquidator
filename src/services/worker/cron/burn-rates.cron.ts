@@ -10,7 +10,7 @@ export class BurnRateCron {
   @Cron('0 * * * * *')
   async syncBurnRates(): Promise<void> {
     try {
-      // await this._burnRatesTask.syncBurnRates();
+      await this._burnRatesTask.syncBurnRates();
     } catch (e) {
       console.log('syncBurnRates', e);
     }

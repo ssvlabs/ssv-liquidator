@@ -34,18 +34,28 @@ export class BurnRatesTask {
     },
   })
   async syncBurnRates(): Promise<void> {
-    const missedRecords = await this._clusterService.findBy({
-      where: { burnRate: null },
-      select: ['owner'],
+    const missedRecords = (
+      await this._clusterService.findBy({
+        where: { burnRate: null },
+      })
+    ).map(item => {
+      item.cluster = JSON.parse(item.cluster);
+      return item;
     });
     const burnRates = await Promise.allSettled(
-      missedRecords.map(({ owner }) => Web3Provider.getClusterBurnRate(owner)),
+      missedRecords.map(({ owner, operatorIds, cluster }) => {
+        return Web3Provider.getClusterBurnRate(owner, operatorIds, cluster);
+      }),
     );
     const balances = await Promise.allSettled(
-      missedRecords.map(({ owner }) => Web3Provider.getBalance(owner)),
+      missedRecords.map(({ owner, operatorIds, cluster }) =>
+        Web3Provider.getBalance(owner, operatorIds, cluster),
+      ),
     );
     const liquidated = await Promise.allSettled(
-      missedRecords.map(({ owner }) => Web3Provider.isLiquidated(owner)),
+      missedRecords.map(({ owner, operatorIds, cluster }) =>
+        Web3Provider.isLiquidated(owner, operatorIds, cluster),
+      ),
     );
     const currentBlockNumber = await Web3Provider.currentBlockNumber();
     const minimumBlocksBeforeLiquidation =
@@ -56,17 +66,18 @@ export class BurnRatesTask {
       const balanceObject = balances[index] as any;
       const balance =
         balanceObject.status === 'rejected' &&
-        balanceObject.reason.toString().includes('negative balance')
+        balanceObject.reason.toString().includes('InsufficientFunds')
           ? 0
           : +balanceObject.value;
       const isLiquidated = (liquidated[index] as any).value;
       record.burnRate = burnRate;
-      record.liquidateLastBlock =
+      record.cluster = JSON.stringify(record.cluster);
+      record.balanceToBlockNumber =
         burnRate > 0
           ? currentBlockNumber + +(balance / burnRate).toFixed(0)
           : null;
-      record.liquidateFirstBlock = record.liquidateLastBlock
-        ? record.liquidateLastBlock - minimumBlocksBeforeLiquidation
+      record.liquidationBlockNumber = record.balanceToBlockNumber
+        ? record.balanceToBlockNumber - minimumBlocksBeforeLiquidation
         : null;
       record.balance = balance;
       record.isLiquidated = isLiquidated;

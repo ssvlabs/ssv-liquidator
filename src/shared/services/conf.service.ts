@@ -8,6 +8,12 @@ export class ConfService extends ConfigService {
   public init() {
     const parser = new ArgumentParser();
 
+    parser.add_argument('-ht', '--hide-table', {
+      type: 'int',
+      help: `Hide the summary table. Default is 0 (show)`,
+      required: false,
+    });
+
     parser.add_argument('-n', '--node-url', {
       help: `The liquidator's execution layer node URL used for syncing contract events. Default: ${this.NODE_URL}`,
       required: false,
@@ -45,6 +51,7 @@ export class ConfService extends ConfigService {
       GAS_PRICE: 'gas_price',
       ACCOUNT_PRIVATE_KEY: 'private_key',
       NODE_URL: 'node_url',
+      HIDE_TABLE: 'hide_table',
     };
     for (const envVarName of Object.keys(envVars)) {
       process.env[envVarName] =
