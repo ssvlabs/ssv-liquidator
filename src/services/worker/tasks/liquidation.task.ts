@@ -55,7 +55,7 @@ export class LiquidationTask {
           item.cluster,
         );
         if (liquidatable) {
-          clustersToLiquidate.push(item.owner);
+          clustersToLiquidate.push(item);
         } else {
           const isLiquidated = await Web3Provider.isLiquidated(
             item.owner,
@@ -68,6 +68,8 @@ export class LiquidationTask {
               {
                 burnRate: null,
                 isLiquidated: true,
+                balanceToBlockNumber: null,
+                liquidationBlockNumber: null,
               },
             );
           }
@@ -75,9 +77,9 @@ export class LiquidationTask {
         liquidationStatus.set(1);
       } catch (e) {
         console.error(
-          `Cluster ${item.owner}:[${item.operatorIds.join(
-            ',',
-          )}] not possible to liquidate. Error: ${e.message || e}`,
+          `Cluster ${item.owner}:[${
+            item.operatorIds
+          }] not possible to liquidate. Error: ${e.message || e}`,
         );
         liquidationStatus.set(0);
       }
@@ -89,18 +91,17 @@ export class LiquidationTask {
       return;
     }
 
-    console.log(`Going to liquidate clusters: ${clustersToLiquidate}`);
-
     for (const item of clustersToLiquidate) {
       await this.doLiquidation(item.owner, item.operatorIds, item.cluster);
     }
   }
 
   private async doLiquidation(owner, operatorIds, cluster) {
+    console.log(`trying to liquidate cluster ${owner}:[${operatorIds}]`);
     const data = (
       await Web3Provider.contractCore.methods.liquidate(
         owner,
-        operatorIds,
+        Web3Provider.operatorIdsToArray(operatorIds),
         cluster,
       )
     ).encodeABI();
@@ -137,8 +138,6 @@ export class LiquidationTask {
     }
 
     transaction.gasPrice = +gasPrice.toFixed(0);
-
-    console.log(`Liquidate transaction payload to be send: ${transaction}`);
 
     const signedTx = await Web3Provider.web3.eth.accounts.signTransaction(
       transaction,

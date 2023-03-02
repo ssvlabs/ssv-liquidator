@@ -50,7 +50,7 @@ export default class Web3Provider {
       .isLiquidatable(
         owner,
         Web3Provider.operatorIdsToArray(operatorIds),
-        Web3Provider.toClusterTuple(clusterSnapshot),
+        clusterSnapshot,
       )
       .call();
   }
@@ -61,10 +61,10 @@ export default class Web3Provider {
     clusterSnapshot,
   ): Promise<boolean> {
     return Web3Provider.contractViews.methods
-      .isOwnerValidatorsDisabled(
+      .isLiquidated(
         owner,
         Web3Provider.operatorIdsToArray(operatorIds),
-        Web3Provider.toClusterTuple(clusterSnapshot),
+        clusterSnapshot,
       )
       .call();
   }
@@ -92,7 +92,7 @@ export default class Web3Provider {
       .getBalance(
         owner,
         Web3Provider.operatorIdsToArray(operatorIds),
-        Web3Provider.toClusterTuple(clusterSnapshot),
+        clusterSnapshot,
       )
       .call();
   }
