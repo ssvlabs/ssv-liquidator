@@ -91,7 +91,10 @@ export class FetchTask {
 
     const filters = {
       fromBlock,
-      toBlock: fromBlock + step,
+      toBlock:
+        fromBlock + step > latestBlockNumber
+          ? latestBlockNumber
+          : fromBlock + step,
     };
 
     while (filters.fromBlock < latestBlockNumber) {
