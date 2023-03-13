@@ -16,25 +16,19 @@ export class EarningService {
   ) {}
 
   async findAll(): Promise<Earning[]> {
-    return await this._earningRepository.find();
+    return this._earningRepository.find();
   }
 
   async findBy(options: any): Promise<Earning[]> {
-    return await this._earningRepository.find(options);
+    return this._earningRepository.find(options);
   }
 
   async get(filters: any): Promise<Earning> {
-    return await this._earningRepository.findOne(filters);
+    return this._earningRepository.findOne(filters);
   }
 
   async create(items: Earning[]): Promise<void> {
-    await getConnection()
-      .createQueryBuilder()
-      .insert()
-      .into(Earning)
-      .values(items)
-      .orIgnore(true)
-      .execute();
+    await this._earningRepository.insert(items);
   }
 
   async fetch(transactionHash: string): Promise<any> {
@@ -75,6 +69,6 @@ export class EarningService {
   }
 
   async delete(id): Promise<DeleteResult> {
-    return await this._earningRepository.delete(id);
+    return this._earningRepository.delete(id);
   }
 }

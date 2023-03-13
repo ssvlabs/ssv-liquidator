@@ -26,7 +26,7 @@ export class SystemService {
   ) {}
 
   async get(type: SystemType): Promise<any> {
-    const result = await this._systemRepository.findOne({ type });
+    const result = await this._systemRepository.findOne({ where: { type } });
     return result && result.payload ? JSON.parse(result.payload) : null;
   }
 

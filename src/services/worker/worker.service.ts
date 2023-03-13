@@ -20,7 +20,7 @@ export class WorkerService {
     this._logger.log(`Going to process ${events.length} events`);
     for (const item of events) {
       if (!Object.values(SystemType).includes(item.event)) continue;
-      const dataItem: any = this.convert(item.returnValues);
+      const dataItem: any = this._convert(item.returnValues);
       dataItem.cluster = JSON.stringify(dataItem.cluster);
       dataItem.blockNumber = item.blockNumber;
 
@@ -50,11 +50,14 @@ export class WorkerService {
     }
   }
 
-  private convert(values): any {
+  /*
+    struct array of values into key -> value object format
+  */
+  private _convert(values): any {
     return Object.keys(values).reduce((aggr, key) => {
       if (isNaN(key as any)) {
         if (key === 'cluster') {
-          aggr[key] = this.convert(values[key]);
+          aggr[key] = this._convert(values[key]);
         } else {
           aggr[key] = values[key];
         }

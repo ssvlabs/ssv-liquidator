@@ -3,8 +3,6 @@ import ABI_SSV_NETWORK_CORE from '@cli/shared/abi.ssv-network.json';
 import ABI_SSV_NETWORK_VIEWS from '@cli/shared/abi.ssv-network-views.json';
 
 export default class Web3Provider {
-  static BLOCK_RANGE_500K = 500_000;
-
   static get web3() {
     return new Web3(process.env.NODE_URL);
   }

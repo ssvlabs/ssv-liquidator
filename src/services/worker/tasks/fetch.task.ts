@@ -21,6 +21,9 @@ export class FetchTask {
     this._isProcessLocked = false;
   }
 
+  /*
+    This task used to collect all contract events for specific period of time/blocks
+  */
   @Retryable({
     maxAttempts: 100,
     backOffPolicy: BackOffPolicy.ExponentialBackOffPolicy,
@@ -107,6 +110,7 @@ export class FetchTask {
         events.length &&
           console.log(`Going to process ${events.length} events`);
 
+        // parse new events
         await this._workerService.processEvents(events);
 
         await this._systemService.save(
@@ -121,6 +125,7 @@ export class FetchTask {
         filters.fromBlock = filters.toBlock;
       } catch (e) {
         console.error(e);
+        // try to make the blocks range smaller if it fails for big amount of data
         if (step === MONTH) {
           step = WEEK;
         } else if (step === WEEK) {
