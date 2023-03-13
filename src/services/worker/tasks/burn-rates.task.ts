@@ -34,6 +34,7 @@ export class BurnRatesTask {
     },
   })
   async syncBurnRates(): Promise<void> {
+    // if cluster has been updated in worker.service it gets the fresh metrics and generate updated cluster profile
     const missedRecords = (
       await this._clusterService.findBy({
         where: { burnRate: null },
@@ -42,16 +43,20 @@ export class BurnRatesTask {
       item.cluster = JSON.parse(item.cluster);
       return item;
     });
+
+    // get clusters burn rates
     const burnRates = await Promise.allSettled(
       missedRecords.map(({ owner, operatorIds, cluster }) => {
         return Web3Provider.getClusterBurnRate(owner, operatorIds, cluster);
       }),
     );
+    // get balances for each cluster
     const balances = await Promise.allSettled(
       missedRecords.map(({ owner, operatorIds, cluster }) =>
         Web3Provider.getBalance(owner, operatorIds, cluster),
       ),
     );
+    // get is liquidated status for each cluster
     const liquidated = await Promise.allSettled(
       missedRecords.map(({ owner, operatorIds, cluster }) =>
         Web3Provider.isLiquidated(owner, operatorIds, cluster),
@@ -61,6 +66,7 @@ export class BurnRatesTask {
     const minimumBlocksBeforeLiquidation =
       await Web3Provider.minimumBlocksBeforeLiquidation();
 
+    // generate cluster metrics and status
     for (const [index, record] of missedRecords.entries()) {
       const burnRate = +(burnRates[index] as any).value;
       const balanceObject = balances[index] as any;

@@ -35,6 +35,7 @@ export class WorkerService {
         case SystemType.EVENT_CLUSTER_REACTIVATED:
         case SystemType.EVENT_OPERATOR_FEE_APPROVED:
         case SystemType.EVENT_VALIDATOR_REMOVED:
+          // mark as cluster was updated and need to get it's fresh metrics in burn-rates task
           await this._clusterService.update(
             {
               owner: dataItem.owner,
