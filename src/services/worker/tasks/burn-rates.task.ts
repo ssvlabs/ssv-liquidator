@@ -131,7 +131,7 @@ export class BurnRatesTask {
               record.operatorIds,
               record.cluster,
             ),
-          async (result: any) => {
+          async (result: boolean) => {
             if (typeof result !== 'boolean') {
               throw new Error('Failed to fetch liquidated status');
             }
