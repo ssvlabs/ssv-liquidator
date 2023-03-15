@@ -123,6 +123,16 @@ rm data/local.db
 * [Wadym Chumak](https://github.com/vadiminc)
 * [Dmitri Meshin](https://github.com/meshin-blox)
 
+## Troubleshooting
+
+1. Getting `ERR_OSSL_EVP_UNSUPPORTED` error.
+   Solution is to run is as follows:
+   ```bash
+   NODE_OPTIONS=--openssl-legacy-provider yarn cli ...
+   ```
+   Or as alternative you can save this line: `export NODE_OPTIONS=--openssl-legacy-provider` in your `~/.bashrc` or `~/.zshrc`, and then run `source ~/.bashrc` or `source ~/.zshrc`.
+   Then you will be able to run `yarn cli ...` as usual.
+
 ## License
 
 MIT License
