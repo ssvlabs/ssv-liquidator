@@ -123,11 +123,11 @@ export class FetchTask {
 
         // Change block range for next fetch
         this._metricsService.lastBlockNumberMetric.set(filters.toBlock);
+
+        // Move fromBlock pointer forward only in case if flow was successful!
+        // Otherwise, if error happened and fromBlock will be moved forward,
+        // the sync for failed ranges won't happen
         filters.fromBlock = filters.toBlock;
-        filters.toBlock =
-          filters.fromBlock + step > latestBlockNumber
-            ? latestBlockNumber
-            : filters.fromBlock + step;
       } catch (e) {
         console.error(`FetchTask::_syncUpdates: Error: ${e}`);
         // try to make the blocks range smaller if it fails for big amount of data
@@ -140,6 +140,12 @@ export class FetchTask {
             `FetchTask::_syncUpdates: already using 1 day period for syncing and still getting error!`,
           );
         }
+      } finally {
+        // Re-assign toBlock in any case with old/new fromBlock after step possible changes
+        filters.toBlock =
+          filters.fromBlock + step > latestBlockNumber
+            ? latestBlockNumber
+            : filters.fromBlock + step;
       }
     }
   }
