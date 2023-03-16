@@ -43,6 +43,7 @@ export class FetchTask {
   async fetchAllEvents(): Promise<void> {
     if (FetchTask.isProcessLocked) {
       console.debug(`FetchTask process is already locked.`);
+      return;
     }
 
     try {
