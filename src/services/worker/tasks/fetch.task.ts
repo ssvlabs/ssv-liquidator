@@ -136,8 +136,8 @@ export class FetchTask {
         } else if (step === WEEK) {
           step = DAY;
         } else if (step === DAY) {
-          console.error(
-            `FetchTask::_syncUpdates: already using 1 day period for syncing and still getting error!`,
+          throw new Error(
+            `FetchTask::_syncUpdates: already using 1 day period for syncing and still getting error: ${e}`,
           );
         }
       } finally {
