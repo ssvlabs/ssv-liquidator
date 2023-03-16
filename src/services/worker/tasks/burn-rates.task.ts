@@ -48,6 +48,7 @@ export class BurnRatesTask {
   async syncBurnRates(): Promise<void> {
     if (BurnRatesTask.isProcessLocked) {
       console.debug(`BurnRatesTask process is already locked.`);
+      return;
     }
 
     BurnRatesTask.isProcessLocked = true;
