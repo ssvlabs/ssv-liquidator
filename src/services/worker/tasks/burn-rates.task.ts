@@ -7,9 +7,14 @@ import {
   burnRatesStatus,
   criticalStatus,
 } from '@cli/modules/webapp/metrics/services/metrics.service';
+import {
+  SolidityError,
+  SolidityErrorsService,
+} from '@cli/shared/services/solidity-errors.service';
 
 type AtomicRetryFailedResult = {
   error: any;
+  solidityError: SolidityError | null;
   retry: number;
   maxRetries: number;
 };
@@ -21,6 +26,7 @@ export class BurnRatesTask {
   constructor(
     private _clusterService: ClusterService,
     private _metricsService: MetricsService,
+    private _solidityErrorsService: SolidityErrorsService,
   ) {}
 
   /**
@@ -56,7 +62,7 @@ export class BurnRatesTask {
     try {
       const missedRecords = (
         await this._clusterService.findBy({
-          where: { burnRate: null },
+          where: { burnRate: null, isLiquidated: false },
         })
       )
         .map(item => {
@@ -91,7 +97,7 @@ export class BurnRatesTask {
           },
           async (result: AtomicRetryFailedResult) => {
             throw new Error(
-              `BurnRatesTask::syncBurnRates: Error: ${JSON.stringify({
+              `Web3Provider.getClusterBurnRate failed: ${JSON.stringify({
                 result,
                 record,
               })}`,
@@ -115,8 +121,35 @@ export class BurnRatesTask {
             record.balance = balance;
           },
           async (result: AtomicRetryFailedResult) => {
+            if (
+              result.solidityError &&
+              this._solidityErrorsService.isError(
+                result.solidityError,
+                'ClusterIsLiquidated',
+              )
+            ) {
+              await this._clusterService.update(
+                {
+                  owner: record.owner,
+                  operatorIds: record.operatorIds,
+                },
+                {
+                  isLiquidated: true,
+                },
+              );
+              console.error(
+                `Marked cluster as liquidated and skipping it: ${JSON.stringify(
+                  { ...record, isLiquidated: false },
+                )}`,
+                `. Reason: ${JSON.stringify({
+                  result,
+                  record,
+                })}`,
+              );
+              return;
+            }
             throw new Error(
-              `BurnRatesTask::syncBurnRates: Error: ${JSON.stringify({
+              `Web3Provider.getBalance failed: ${JSON.stringify({
                 result,
                 record,
               })}`,
@@ -140,7 +173,7 @@ export class BurnRatesTask {
           },
           async (result: AtomicRetryFailedResult) => {
             throw new Error(
-              `BurnRatesTask::syncBurnRates: Error: ${JSON.stringify({
+              `Web3Provider.isLiquidated failed: ${JSON.stringify({
                 result,
                 record,
               })}`,
@@ -160,7 +193,7 @@ export class BurnRatesTask {
           },
           async (result: AtomicRetryFailedResult) => {
             throw new Error(
-              `BurnRatesTask::syncBurnRates: Error: ${JSON.stringify({
+              `Web3Provider.currentBlockNumber failed: ${JSON.stringify({
                 result,
                 record,
               })}`,
@@ -190,12 +223,10 @@ export class BurnRatesTask {
           null,
           async (result: AtomicRetryFailedResult) => {
             throw new Error(
-              `BurnRatesTask::syncBurnRates: Failed to update cluster db record: ${JSON.stringify(
-                {
-                  result,
-                  record,
-                },
-              )}`,
+              `Failed to update cluster db record: ${JSON.stringify({
+                result,
+                record,
+              })}`,
             );
           },
         );
@@ -239,8 +270,15 @@ export class BurnRatesTask {
         await asyncCallback(await asyncCall());
         break;
       } catch (error) {
+        let solidityError: SolidityError = null;
+        if (String(error.data).startsWith('0x')) {
+          solidityError = this._solidityErrorsService.getErrorByHash(
+            error.data,
+          );
+        }
         await asyncFailed({
           error,
+          solidityError,
           retry,
           maxRetries,
         });
