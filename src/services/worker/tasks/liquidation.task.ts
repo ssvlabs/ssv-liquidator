@@ -41,6 +41,8 @@ export class LiquidationTask {
     const toLiquidateRecords = await this._clusterService.findBy({
       where: {
         balanceToBlockNumber: LessThanOrEqual(
+          // Current block + Liquidation Threshold Period should higher
+          // than the block number when balance becomes zero if not liquidated
           currentBlockNumber + minimumBlocksBeforeLiquidation,
         ),
       },

@@ -93,6 +93,7 @@ export class BurnRatesTask {
             if (Number.isNaN(result)) {
               throw new Error(`Failed to fetch burn rate`);
             }
+            // How many SSV cluster burns in one block
             record.burnRate = result;
           },
           async (result: AtomicRetryFailedResult) => {
@@ -203,11 +204,14 @@ export class BurnRatesTask {
 
         // Prepare final data
         record.cluster = JSON.stringify(record.cluster);
+        // If cluster won't be liquidated, at which block number his balance becomes zero
         record.balanceToBlockNumber =
           record.burnRate > 0
             ? currentBlockNumber +
               +(record.balance / record.burnRate).toFixed(0)
             : null;
+        // Deduct from block number where cluster balance becomes zero,
+        // value of Liquidation Threshold Period
         record.liquidationBlockNumber = record.balanceToBlockNumber
           ? record.balanceToBlockNumber - minimumBlocksBeforeLiquidation
           : null;
