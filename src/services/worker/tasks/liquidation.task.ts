@@ -49,6 +49,9 @@ export class LiquidationTask {
     for (const item of toLiquidateRecords) {
       item.cluster = JSON.parse(item.cluster);
       try {
+        console.log(
+          `Checking if cluster liquidatable: ${JSON.stringify(item.cluster)}`,
+        );
         const liquidatable = await Web3Provider.liquidatable(
           item.owner,
           item.operatorIds,
@@ -57,12 +60,22 @@ export class LiquidationTask {
         if (liquidatable) {
           clustersToLiquidate.push(item);
         } else {
+          console.log(
+            `Checking if cluster already liquidated: ${JSON.stringify(
+              item.cluster,
+            )}`,
+          );
           const isLiquidated = await Web3Provider.isLiquidated(
             item.owner,
             item.operatorIds,
             item.cluster,
           );
           if (isLiquidated) {
+            console.log(
+              `Cluster is already liquidated. Skipping: ${JSON.stringify(
+                item.cluster,
+              )}`,
+            );
             await this._clusterService.update(
               { owner: item.owner, operatorIds: item.operatorIds },
               {
@@ -77,9 +90,7 @@ export class LiquidationTask {
         liquidationStatus.set(1);
       } catch (e) {
         console.error(
-          `Cluster ${item.owner}:[${
-            item.operatorIds
-          }] not possible to liquidate. Error: ${e.message || e}`,
+          `Cluster ${item.owner}: [${item.operatorIds}] not possible to liquidate. Error: ${e}`,
         );
         liquidationStatus.set(0);
       }
