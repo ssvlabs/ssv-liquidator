@@ -11,6 +11,11 @@
   },
   {
     "inputs": [],
+    "name": "CallerNotWhitelisted",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "ClusterAlreadyEnabled",
     "type": "error"
   },
@@ -41,6 +46,11 @@
   },
   {
     "inputs": [],
+    "name": "FeeIncreaseNotAllowed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "FeeTooLow",
     "type": "error"
   },
@@ -52,11 +62,6 @@
   {
     "inputs": [],
     "name": "InsufficientBalance",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "InsufficientFunds",
     "type": "error"
   },
   {
@@ -112,11 +117,6 @@
   {
     "inputs": [],
     "name": "ValidatorOwnedByOtherAddress",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "ZeroFeeIncreaseNotAllowed",
     "type": "error"
   },
   {
@@ -323,7 +323,7 @@
         "type": "tuple"
       }
     ],
-    "name": "getClusterBurnRate",
+    "name": "getBurnRate",
     "outputs": [
       {
         "internalType": "uint256",
@@ -368,6 +368,19 @@
         "internalType": "uint64",
         "name": "",
         "type": "uint64"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getMinimumLiquidationCollateral",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -423,6 +436,11 @@
         "internalType": "uint32",
         "name": "",
         "type": "uint32"
+      },
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       },
       {
         "internalType": "bool",
@@ -508,6 +526,30 @@
         "internalType": "uint64",
         "name": "",
         "type": "uint64"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "publicKey",
+        "type": "bytes"
+      }
+    ],
+    "name": "getValidator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",

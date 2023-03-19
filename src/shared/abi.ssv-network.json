@@ -11,6 +11,11 @@
   },
   {
     "inputs": [],
+    "name": "CallerNotWhitelisted",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "ClusterAlreadyEnabled",
     "type": "error"
   },
@@ -41,6 +46,11 @@
   },
   {
     "inputs": [],
+    "name": "FeeIncreaseNotAllowed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "FeeTooLow",
     "type": "error"
   },
@@ -52,11 +62,6 @@
   {
     "inputs": [],
     "name": "InsufficientBalance",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "InsufficientFunds",
     "type": "error"
   },
   {
@@ -112,11 +117,6 @@
   {
     "inputs": [],
     "name": "ValidatorOwnedByOtherAddress",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "ZeroFeeIncreaseNotAllowed",
     "type": "error"
   },
   {
@@ -450,6 +450,19 @@
         "internalType": "uint256",
         "name": "value",
         "type": "uint256"
+      }
+    ],
+    "name": "MinimumLiquidationCollateralUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
       },
       {
         "indexed": false,
@@ -486,7 +499,7 @@
       {
         "indexed": true,
         "internalType": "uint64",
-        "name": "id",
+        "name": "operatorId",
         "type": "uint64"
       },
       {
@@ -611,11 +624,30 @@
       {
         "indexed": true,
         "internalType": "uint64",
-        "name": "id",
+        "name": "operatorId",
         "type": "uint64"
       }
     ],
     "name": "OperatorRemoved",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint64",
+        "name": "operatorId",
+        "type": "uint64"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "whitelisted",
+        "type": "address"
+      }
+    ],
+    "name": "OperatorWhitelistUpdated",
     "type": "event"
   },
   {
@@ -1021,6 +1053,11 @@
         "internalType": "uint64",
         "name": "minimumBlocksBeforeLiquidation_",
         "type": "uint64"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minimumLiquidationCollateral_",
+        "type": "uint256"
       }
     ],
     "name": "initialize",
@@ -1081,6 +1118,19 @@
   {
     "inputs": [],
     "name": "minimumBlocksBeforeLiquidation",
+    "outputs": [
+      {
+        "internalType": "uint64",
+        "name": "",
+        "type": "uint64"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "minimumLiquidationCollateral",
     "outputs": [
       {
         "internalType": "uint64",
@@ -1208,6 +1258,25 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint64",
+        "name": "",
+        "type": "uint64"
+      }
+    ],
+    "name": "operatorsWhitelist",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "owner",
     "outputs": [
@@ -1292,6 +1361,24 @@
       }
     ],
     "name": "reactivate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint64",
+        "name": "operatorId",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint256",
+        "name": "fee",
+        "type": "uint256"
+      }
+    ],
+    "name": "reduceOperatorFee",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1466,6 +1553,24 @@
   {
     "inputs": [
       {
+        "internalType": "uint64",
+        "name": "operatorId",
+        "type": "uint64"
+      },
+      {
+        "internalType": "address",
+        "name": "whitelisted",
+        "type": "address"
+      }
+    ],
+    "name": "setOperatorWhitelist",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "newOwner",
         "type": "address"
@@ -1511,6 +1616,19 @@
       }
     ],
     "name": "updateLiquidationThresholdPeriod",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateMinimumLiquidationCollateral",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1570,6 +1688,30 @@
     "name": "upgradeToAndCall",
     "outputs": [],
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "validatorPKs",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "active",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
