@@ -1,26 +1,16 @@
-import { In } from 'typeorm';
 import { Injectable, Logger } from '@nestjs/common';
 import { SystemType } from '@cli/modules/system/system.service';
-import { AddressService } from '@cli/modules/addresses/address.service';
+import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { EarningService } from '@cli/modules/earnings/earning.service';
 
 @Injectable()
 export class WorkerService {
-  protected _convert: any;
   private readonly _logger = new Logger(WorkerService.name);
 
   constructor(
-    private _addressService: AddressService,
+    private _clusterService: ClusterService,
     private _earningService: EarningService,
-  ) {
-    this._convert = (values): any =>
-      Object.keys(values).reduce((aggr, key) => {
-        if (isNaN(key as any)) {
-          aggr[key] = values[key];
-        }
-        return aggr;
-      }, {});
-  }
+  ) {}
 
   async processEvents(events: Array<any>): Promise<void> {
     if (!events.length) {
@@ -29,34 +19,51 @@ export class WorkerService {
     }
     this._logger.log(`Going to process ${events.length} events`);
     for (const item of events) {
+      if (!Object.values(SystemType).includes(item.event)) continue;
       const dataItem: any = this._convert(item.returnValues);
+      dataItem.cluster = JSON.stringify(dataItem.cluster);
       dataItem.blockNumber = item.blockNumber;
 
       switch (item.event) {
-        case SystemType.EVENT_ACCOUNT_LIQUIDATED:
+        case SystemType.EVENT_CLUSTER_LIQUIDATED:
           const earnedData = await this._earningService.fetch(
             item.transactionHash,
           );
           await this._earningService.update(earnedData);
-        case SystemType.EVENT_FUNDS_DEPOSITED:
-        case SystemType.EVENT_FUNDS_WITHDRAWN:
+        case SystemType.EVENT_CLUSTER_DEPOSITED:
+        case SystemType.EVENT_CLUSTER_WITHDRAWN:
+        case SystemType.EVENT_CLUSTER_REACTIVATED:
         case SystemType.EVENT_OPERATOR_FEE_APPROVED:
         case SystemType.EVENT_VALIDATOR_REMOVED:
-          await this._addressService.update(
-            { ownerAddress: dataItem.ownerAddress },
-            { burnRate: null },
-          );
-          break;
-        case SystemType.EVENT_OPERATOR_FEE_APPROVED:
-          await this._addressService.update(
-            { operatorIds: In(dataItem.operatorId) },
-            { burnRate: null },
+          // mark as cluster was updated and need to get it's fresh metrics in burn-rates task
+          await this._clusterService.update(
+            {
+              owner: dataItem.owner,
+              operatorIds: dataItem.operatorIds,
+            },
+            { burnRate: null, cluster: dataItem.cluster },
           );
           break;
         case SystemType.EVENT_VALIDATOR_ADDED:
-          await this._addressService.create([dataItem]);
+          await this._clusterService.create(dataItem);
           break;
       }
     }
+  }
+
+  /*
+    struct array of values into key -> value object format
+  */
+  private _convert(values): any {
+    return Object.keys(values).reduce((aggr, key) => {
+      if (isNaN(key as any)) {
+        if (key === 'cluster') {
+          aggr[key] = this._convert(values[key]);
+        } else {
+          aggr[key] = values[key];
+        }
+      }
+      return aggr;
+    }, {});
   }
 }

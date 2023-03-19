@@ -24,8 +24,8 @@ export const colorCodeStatus = status => {
 
 const textStatus = (item, extra: any) => {
   const { currentBlockNumber, minimumBlocksBeforeLiquidation } = extra;
-  const blockDiff = item.liquidateLastBlock
-    ? item.liquidateLastBlock - currentBlockNumber
+  const blockDiff = item.balanceToBlockNumber
+    ? item.balanceToBlockNumber - currentBlockNumber
     : null;
   switch (true) {
     case item.isLiquidated:
@@ -39,17 +39,18 @@ const textStatus = (item, extra: any) => {
 
 /**
  * It transforms the items object from sqlite into a custom format
- * @param {Array<>} items list of addresses object from the sqlite
+ * @param {Array<>} items list of clusters object from the sqlite
  * @returns List of custom formatted pod data
  */
-export const transformAddressData = (items, extra: any) => {
-  const addresses = [];
+export const transformClusterData = (items, extra: any) => {
+  const clusters = [];
   try {
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
       const status = textStatus(item, extra);
-      addresses.push({
-        owner: { text: item.ownerAddress },
+      clusters.push({
+        owner: { text: item.owner },
+        operatorIds: { text: item.operatorIds },
         balance: { text: item.balance },
         burnRate: {
           text: item.burnRate !== null ? `${item.burnRate / 1e18} SSV` : '',
@@ -60,8 +61,8 @@ export const transformAddressData = (items, extra: any) => {
           padText: true,
           extraPadding: 1,
         },
-        liquidateFirstBlock: { text: item.liquidateFirstBlock },
-        liquidateLastBlock: { text: item.liquidateLastBlock },
+        liquidationBlockNumber: { text: item.liquidationBlockNumber },
+        balanceToBlockNumber: { text: item.balanceToBlockNumber },
         updated: {
           text: timeAgo.format(item.updatedAt, 'round-minute'),
         },
@@ -70,5 +71,5 @@ export const transformAddressData = (items, extra: any) => {
   } catch (e) {
     console.log(e);
   }
-  return addresses;
+  return clusters;
 };

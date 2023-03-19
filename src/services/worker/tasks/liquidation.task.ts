@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { BackOffPolicy, Retryable } from 'typescript-retry-decorator';
 import Web3Provider from '@cli/providers/web3.provider';
 import { ConfService } from '@cli/shared/services/conf.service';
-import { AddressService } from '@cli/modules/addresses/address.service';
+import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import {
   liquidationStatus,
   criticalStatus,
@@ -13,7 +13,7 @@ import {
 export class LiquidationTask {
   constructor(
     private _config: ConfService,
-    private _addressService: AddressService,
+    private _clusterService: ClusterService,
   ) {}
 
   @Retryable({
@@ -38,54 +38,85 @@ export class LiquidationTask {
     const minimumBlocksBeforeLiquidation =
       +(await Web3Provider.minimumBlocksBeforeLiquidation());
     const currentBlockNumber = +(await Web3Provider.currentBlockNumber());
-    const toLiquidateRecords = await this._addressService.findBy({
+    const toLiquidateRecords = await this._clusterService.findBy({
       where: {
-        liquidateLastBlock: LessThanOrEqual(
+        balanceToBlockNumber: LessThanOrEqual(
+          // Current block + Liquidation Threshold Period should higher
+          // than the block number when balance becomes zero if not liquidated
           currentBlockNumber + minimumBlocksBeforeLiquidation,
         ),
       },
     });
-    const addressesToLiquidate = [];
-    for (const { ownerAddress } of toLiquidateRecords) {
+    const clustersToLiquidate = [];
+    for (const item of toLiquidateRecords) {
+      item.cluster = JSON.parse(item.cluster);
       try {
-        const liquidatable = await Web3Provider.liquidatable(ownerAddress);
+        console.log(
+          `Checking if cluster liquidatable: ${JSON.stringify(item.cluster)}`,
+        );
+        const liquidatable = await Web3Provider.liquidatable(
+          item.owner,
+          item.operatorIds,
+          item.cluster,
+        );
         if (liquidatable) {
-          addressesToLiquidate.push(ownerAddress);
+          clustersToLiquidate.push(item);
         } else {
-          const isLiquidated = await Web3Provider.isLiquidated(ownerAddress);
+          console.log(
+            `Checking if cluster already liquidated: ${JSON.stringify(
+              item.cluster,
+            )}`,
+          );
+          const isLiquidated = await Web3Provider.isLiquidated(
+            item.owner,
+            item.operatorIds,
+            item.cluster,
+          );
           if (isLiquidated) {
-            await this._addressService.update(
-              { ownerAddress },
-              { burnRate: null, isLiquidated: true },
+            console.log(
+              `Cluster is already liquidated. Skipping: ${JSON.stringify(
+                item.cluster,
+              )}`,
+            );
+            await this._clusterService.update(
+              { owner: item.owner, operatorIds: item.operatorIds },
+              {
+                burnRate: null,
+                isLiquidated: true,
+                balanceToBlockNumber: null,
+                liquidationBlockNumber: null,
+              },
             );
           }
         }
         liquidationStatus.set(1);
       } catch (e) {
         console.error(
-          `Address ${ownerAddress} not possible to liquidate. Error: ${
-            e.message || e
-          }`,
+          `Cluster ${item.owner}: [${item.operatorIds}] not possible to liquidate. Error: ${e}`,
         );
         liquidationStatus.set(0);
       }
     }
-    if (addressesToLiquidate.length === 0) {
+    if (clustersToLiquidate.length === 0) {
       // nothing to liquidate
       liquidationStatus.set(1);
       criticalStatus.set(1);
       return;
     }
 
-    const contract = new Web3Provider.web3.eth.Contract(
-      Web3Provider.abi,
-      this._config.get('SSV_NETWORK_ADDRESS'),
-    );
+    for (const item of clustersToLiquidate) {
+      await this.doLiquidation(item.owner, item.operatorIds, item.cluster);
+    }
+  }
 
-    console.log(`Going to liquidate owner address: ${addressesToLiquidate}`);
-
+  private async doLiquidation(owner, operatorIds, cluster) {
+    console.log(`trying to liquidate cluster ${owner}:[${operatorIds}]`);
     const data = (
-      await contract.methods.liquidate(addressesToLiquidate)
+      await Web3Provider.contractCore.methods.liquidate(
+        owner,
+        Web3Provider.operatorIdsToArray(operatorIds),
+        cluster,
+      )
     ).encodeABI();
 
     const transaction: any = {
@@ -120,8 +151,6 @@ export class LiquidationTask {
     }
 
     transaction.gasPrice = +gasPrice.toFixed(0);
-
-    console.log(`Liquidate transaction payload to be send: ${transaction}`);
 
     const signedTx = await Web3Provider.web3.eth.accounts.signTransaction(
       transaction,

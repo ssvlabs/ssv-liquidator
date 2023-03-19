@@ -13,7 +13,7 @@ import { WebappModule } from '@cli/modules/webapp/webapp.module';
 import { ConfService } from '@cli/shared/services/conf.service';
 import { WorkerModule } from '@cli/services/worker/worker.module';
 import { EarningService } from '@cli/modules/earnings/earning.service';
-import { AddressService } from '@cli/modules/addresses/address.service';
+import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { criticalStatus } from '@cli/modules/webapp/metrics/services/metrics.service';
 
 async function bootstrapWebApp() {
@@ -56,13 +56,17 @@ async function bootstrapCli() {
   const confService = app.select(WorkerModule).get(ConfService);
   confService.init();
 
-  const addressService = app.select(WorkerModule).get(AddressService);
+  const clusterService = app.select(WorkerModule).get(ClusterService);
   const earningService = app.select(WorkerModule).get(EarningService);
+
+  if (confService.get('HIDE_TABLE') === '1') {
+    return;
+  }
 
   const { App } = importJsx(path.join(__dirname, '/../../shared/cli/app'));
   render(
     <App
-      addressService={addressService}
+      clusterService={clusterService}
       web3Provider={Web3Provider}
       earningService={earningService}
     />,

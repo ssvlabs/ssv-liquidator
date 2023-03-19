@@ -3,16 +3,24 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  PrimaryColumn,
+  Index,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity()
-export class Address {
-  @PrimaryColumn()
-  ownerAddress: string;
+@Index(['owner', 'operatorIds'], { unique: true })
+export class Cluster {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  owner: string;
 
   @Column('int', { array: true })
   operatorIds: number[];
+
+  @Column({ type: 'text' })
+  cluster: string;
 
   @Column({ default: null })
   burnRate: number;
@@ -24,10 +32,10 @@ export class Address {
   isLiquidated: boolean;
 
   @Column({ default: null })
-  liquidateLastBlock: number;
+  balanceToBlockNumber: number;
 
   @Column({ default: null })
-  liquidateFirstBlock: number;
+  liquidationBlockNumber: number;
 
   @CreateDateColumn()
   createdAt: Date;

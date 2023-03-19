@@ -57,12 +57,13 @@ yarn cli --help
 Input parameters:
 node-url (n) = ETH1 node url
 private-key (pk) = Account private key
-ssv-contract-address (c) = Contract Address
+ssv-network-address (c) = Contract Network Address
+ssv-network-views-address (c) = Contract Network Views Address
 gas-price (g) = Gas price, default: low
 ssv-token-address = The contract address for the SSV token
-
+hide-table = Hide/show realtime table
 ```sh
-yarn cli --node-url=eth.infra.com --private-key=a70478942bf... --ssv-contract-address=0x425890f2a5g... --gas-price=slow --ssv-token-address=0x425890f2a5g84hw94...
+yarn cli --node-url=eth.infra.com --private-key=a70478942bf... --ssv-network-address=0x425890f2a5g... --ssv-network-views-address=0x425890f2a5g... --gas-price=slow --ssv-token-address=0x425890f2a5g84hw94...
 ```
 
 Example of running the CLI with the minimum requirements:
@@ -80,12 +81,14 @@ Example content below:
 ```sh
 NODE_URL=eth.infra.com  
 SSV_NETWORK_ADDRESS=0x425890f2a5g...  
+SSV_NETWORK_VIEWS_ADDRESS=0x425890f2a5g...  
 SSV_TOKEN_ADDRESS=0x425890f2a5g84hw94...  
 ACCOUNT_PRIVATE_KEY=a70478942bf...  
-GAS_PRICE=slow  
+GAS_PRICE=medium  
+HIDE_TABLE=false
 ```
 
-If you saved all of the parameters in the `.env` file you can run:
+If you saved all the parameters in the `.env` file you can run:
 
 ```shell
 yarn cli
@@ -118,6 +121,19 @@ rm data/local.db
 ## Authors
 
 * [Wadym Chumak](https://github.com/vadiminc)
+* [Dmitri Meshin](https://github.com/meshin-blox)
+
+## Troubleshooting
+
+1. Getting `ERR_OSSL_EVP_UNSUPPORTED` error.
+   As a fast solution you can run liquidator as following:
+   ```bash
+   NODE_OPTIONS=--openssl-legacy-provider yarn cli ...
+   ```
+   Or as alternative you can save this line: `export NODE_OPTIONS=--openssl-legacy-provider` in your `~/.bashrc` or `~/.zshrc`, and then run `source ~/.bashrc` or `source ~/.zshrc`.
+   Then you will be able to run `yarn cli ...` as usual.
+
+   If you want to fix OpenSSL issue in common, follow recommendations: [NodeJS v17.0.0 OpenSSL Recommendations](https://nodejs.org/en/blog/release/v17.0.0#openssl-3-0)
 
 ## License
 

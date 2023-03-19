@@ -1,21 +1,31 @@
 import Web3 from 'web3';
-import ABI_V2 from '@cli/shared/v2.abi.json';
+import ABI_SSV_NETWORK_CORE from '@cli/shared/abi.ssv-network.json';
+import ABI_SSV_NETWORK_VIEWS from '@cli/shared/abi.ssv-network-views.json';
 
 export default class Web3Provider {
-  static BLOCK_RANGE_500K = 10000;
-
   static get web3() {
     return new Web3(process.env.NODE_URL);
   }
 
-  static get abi() {
-    return ABI_V2 as any;
+  static get abiCore() {
+    return ABI_SSV_NETWORK_CORE as any;
   }
 
-  static get contract() {
+  static get abiViews() {
+    return ABI_SSV_NETWORK_VIEWS as any;
+  }
+
+  static get contractCore() {
     return new Web3Provider.web3.eth.Contract(
-      Web3Provider.abi,
+      Web3Provider.abiCore,
       process.env.SSV_NETWORK_ADDRESS,
+    );
+  }
+
+  static get contractViews() {
+    return new Web3Provider.web3.eth.Contract(
+      Web3Provider.abiViews,
+      process.env.SSV_NETWORK_VIEWS_ADDRESS,
     );
   }
 
@@ -23,31 +33,79 @@ export default class Web3Provider {
     return await Web3Provider.web3.eth.getBlockNumber();
   }
 
-  static async liquidationThresholdPeriod(): Promise<number> {
-    return Web3Provider.contract.methods.getLiquidationThresholdPeriod().call();
-  }
-
   static async minimumBlocksBeforeLiquidation(): Promise<number> {
-    return Web3Provider.contract.methods.getLiquidationThresholdPeriod().call();
-  }
-
-  static async liquidatable(ownerAddress): Promise<boolean> {
-    return Web3Provider.contract.methods.isLiquidatable(ownerAddress).call();
-  }
-
-  static async isLiquidated(ownerAddress): Promise<boolean> {
-    return Web3Provider.contract.methods
-      .isOwnerValidatorsDisabled(ownerAddress)
+    return Web3Provider.contractViews.methods
+      .getLiquidationThresholdPeriod()
       .call();
   }
 
-  static async burnRate(ownerAddress): Promise<string> {
-    return Web3Provider.contract.methods
-      .getAddressBurnRate(ownerAddress)
+  static async liquidatable(
+    owner,
+    operatorIds,
+    clusterSnapshot,
+  ): Promise<boolean> {
+    return Web3Provider.contractViews.methods
+      .isLiquidatable(
+        owner,
+        Web3Provider.operatorIdsToArray(operatorIds),
+        clusterSnapshot,
+      )
       .call();
   }
 
-  static async totalBalanceOf(ownerAddress): Promise<string> {
-    return Web3Provider.contract.methods.getAddressBalance(ownerAddress).call();
+  static async isLiquidated(
+    owner,
+    operatorIds,
+    clusterSnapshot,
+  ): Promise<boolean> {
+    return Web3Provider.contractViews.methods
+      .isLiquidated(
+        owner,
+        Web3Provider.operatorIdsToArray(operatorIds),
+        clusterSnapshot,
+      )
+      .call();
+  }
+
+  static async getClusterBurnRate(
+    owner,
+    operatorIds,
+    clusterSnapshot,
+  ): Promise<string> {
+    return Web3Provider.contractViews.methods
+      .getClusterBurnRate(
+        owner,
+        Web3Provider.operatorIdsToArray(operatorIds),
+        clusterSnapshot,
+      )
+      .call();
+  }
+
+  static async getBalance(
+    owner,
+    operatorIds,
+    clusterSnapshot,
+  ): Promise<string> {
+    return Web3Provider.contractViews.methods
+      .getBalance(
+        owner,
+        Web3Provider.operatorIdsToArray(operatorIds),
+        clusterSnapshot,
+      )
+      .call();
+  }
+
+  static toClusterTuple(obj) {
+    return [
+      obj.validatorCount,
+      obj.networkFeeIndex,
+      obj.index,
+      obj.balance,
+      obj.active,
+    ];
+  }
+
+  static operatorIdsToArray(str) {
+    return str.split(',').map(Number);
   }
 }

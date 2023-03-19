@@ -19,7 +19,7 @@ export class Namespaces extends React.Component<
 > {
   constructor(props) {
     super(props);
-    this.state = { namespaces: ['addresses', 'earnings'] };
+    this.state = { namespaces: ['clusters', 'earnings'] };
   }
 
   componentDidMount() {

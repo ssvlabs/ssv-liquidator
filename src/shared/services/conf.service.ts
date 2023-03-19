@@ -8,6 +8,11 @@ export class ConfService extends ConfigService {
   public init() {
     const parser = new ArgumentParser();
 
+    parser.add_argument('-ht', '--hide-table', {
+      type: 'int',
+      help: `Hide the summary table. Default is 0 (show)`,
+      required: false,
+    });
     parser.add_argument('-n', '--node-url', {
       help: `The liquidator's execution layer node URL used for syncing contract events. Default: ${this.NODE_URL}`,
       required: false,
@@ -16,9 +21,15 @@ export class ConfService extends ConfigService {
       help: "The liquidator's recipient address private key, used for creating a liquidation transaction",
       required: false,
     });
-    parser.add_argument('-c', '--ssv-contract-address', {
+    parser.add_argument('-na', '--ssv-network-address', {
       help:
-        'The SSV Contract address, used to listen to balance change events and to create a liquidation transaction. ' +
+        'The SSV Contract Network address, used to listen to balance change events and to create a liquidation transaction. ' +
+        'Refer to https://docs.ssv.network/developers/smart-contracts',
+      required: false,
+    });
+    parser.add_argument('-nva', '--ssv-network-views-address', {
+      help:
+        'The SSV Contract Network Views address, used to listen to balance change events and to create a liquidation transaction. ' +
         'Refer to https://docs.ssv.network/developers/smart-contracts',
       required: false,
     });
@@ -41,10 +52,12 @@ export class ConfService extends ConfigService {
     const envVars = {
       // ENV name -> argparse name
       SSV_TOKEN_ADDRESS: 'ssv_token_address',
-      SSV_NETWORK_ADDRESS: 'ssv_contract_address',
+      SSV_NETWORK_ADDRESS: 'ssv_network_address',
+      SSV_NETWORK_VIEWS_ADDRESS: 'ssv_network_views_address',
       GAS_PRICE: 'gas_price',
       ACCOUNT_PRIVATE_KEY: 'private_key',
       NODE_URL: 'node_url',
+      HIDE_TABLE: 'hide_table',
     };
     for (const envVarName of Object.keys(envVars)) {
       process.env[envVarName] =
