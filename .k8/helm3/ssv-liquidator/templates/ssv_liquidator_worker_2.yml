@@ -28,7 +28,7 @@ spec:
     matchLabels:
       app: ssv-liquidator-worker-2
   strategy:
-    type: Recreate      
+    type: Recreate
   template:
     metadata:
       labels:
@@ -42,7 +42,7 @@ spec:
                   - key: kubernetes.io/role
                     operator: In
                     values:
-                      - ssv-main      
+                      - ssv-main
       containers:
       - name: ssv-liquidator-worker-2
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -56,8 +56,8 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: node_env         
-              
+              key: node_env
+
         - name: NODE_URL
           valueFrom:
             secretKeyRef:
@@ -65,7 +65,7 @@ spec:
               key: node_url
 
         - name: GAS_PRICE
-          value: "normal"
+          value: "medium"
 
         - name: SSV_NETWORK_ADDRESS
           valueFrom:
@@ -74,7 +74,7 @@ spec:
               key: ssv_network_address
 
         - name: HIDE_TABLE
-          value: "true"
+          value: 1
 
         - name: SSV_NETWORK_VIEWS_ADDRESS
           valueFrom:
@@ -110,4 +110,4 @@ spec:
       {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
-      {{- end }}            
+      {{- end }}
