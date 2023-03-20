@@ -65,7 +65,7 @@ spec:
               key: ssv_network_address
 
         - name: HIDE_TABLE
-          value: 1
+          value: "1"
 
         - name: SSV_NETWORK_VIEWS_ADDRESS
           valueFrom:
