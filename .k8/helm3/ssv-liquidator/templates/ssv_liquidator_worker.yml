@@ -48,7 +48,7 @@ spec:
             secretKeyRef:
               name: config-secrets
               key: node_env
-
+              
         - name: NODE_URL
           valueFrom:
             secretKeyRef:

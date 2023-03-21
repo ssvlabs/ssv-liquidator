@@ -57,7 +57,7 @@ spec:
 
         - name: GAS_PRICE
           value: "medium"
-
+          
         - name: SSV_NETWORK_ADDRESS
           valueFrom:
             secretKeyRef:
@@ -72,7 +72,7 @@ spec:
             secretKeyRef:
               name: config-secrets
               key: ssv_network_views_address
-
+              
         - name: ACCOUNT_PRIVATE_KEY
           valueFrom:
             secretKeyRef:
