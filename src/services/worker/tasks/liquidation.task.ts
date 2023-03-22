@@ -79,6 +79,7 @@ export class LiquidationTask {
             await this._clusterService.update(
               { owner: item.owner, operatorIds: item.operatorIds },
               {
+                balance: null,
                 burnRate: null,
                 isLiquidated: true,
                 liquidationBlockNumber: null,
