@@ -67,13 +67,13 @@ export default class Web3Provider {
       .call();
   }
 
-  static async getClusterBurnRate(
+  static async getBurnRate(
     owner,
     operatorIds,
     clusterSnapshot,
   ): Promise<string> {
     return Web3Provider.contractViews.methods
-      .getClusterBurnRate(
+      .getBurnRate(
         owner,
         Web3Provider.operatorIdsToArray(operatorIds),
         clusterSnapshot,
