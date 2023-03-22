@@ -28,7 +28,7 @@ spec:
     matchLabels:
       app: ssv-liquidator-worker-3
   strategy:
-    type: Recreate      
+    type: Recreate
   template:
     metadata:
       labels:
@@ -47,8 +47,8 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: node_env         
-              
+              key: node_env
+
         - name: NODE_URL
           valueFrom:
             secretKeyRef:
@@ -56,14 +56,23 @@ spec:
               key: node_url
 
         - name: GAS_PRICE
-          value: "normal"
-
+          value: "medium"
+          
         - name: SSV_NETWORK_ADDRESS
           valueFrom:
             secretKeyRef:
               name: config-secrets
               key: ssv_network_address
 
+        - name: HIDE_TABLE
+          value: "1"
+
+        - name: SSV_NETWORK_VIEWS_ADDRESS
+          valueFrom:
+            secretKeyRef:
+              name: config-secrets
+              key: ssv_network_views_address
+              
         - name: ACCOUNT_PRIVATE_KEY
           valueFrom:
             secretKeyRef:
@@ -92,4 +101,4 @@ spec:
       {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
-      {{- end }}            
+      {{- end }}

@@ -7,7 +7,7 @@ metadata:
   labels:
     name: ssv-liquidator-worker-svc
 spec:
-  type: {{ .Values.service.type }} 
+  type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
       protocol: TCP
@@ -47,7 +47,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: node_env         
+              key: node_env
               
         - name: NODE_URL
           valueFrom:
@@ -56,13 +56,22 @@ spec:
               key: node_url
 
         - name: GAS_PRICE
-          value: "normal"
+          value: "medium"
 
         - name: SSV_NETWORK_ADDRESS
           valueFrom:
             secretKeyRef:
               name: config-secrets
               key: ssv_network_address
+
+        - name: HIDE_TABLE
+          value: "1"
+
+        - name: SSV_NETWORK_VIEWS_ADDRESS
+          valueFrom:
+            secretKeyRef:
+              name: config-secrets
+              key: ssv_network_views_address
 
         - name: ACCOUNT_PRIVATE_KEY
           valueFrom:
