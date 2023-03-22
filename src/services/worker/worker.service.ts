@@ -1,5 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { SystemType } from '@cli/modules/system/system.service';
+
+import Web3Provider from '@cli/providers/web3.provider';
+
+import { SystemService, SystemType } from '@cli/modules/system/system.service';
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { EarningService } from '@cli/modules/earnings/earning.service';
 
@@ -10,6 +13,7 @@ export class WorkerService {
   constructor(
     private _clusterService: ClusterService,
     private _earningService: EarningService,
+    private _systemService: SystemService,
   ) {}
 
   async processEvents(events: Array<any>): Promise<void> {
@@ -46,6 +50,12 @@ export class WorkerService {
           break;
         case SystemType.EVENT_VALIDATOR_ADDED:
           await this._clusterService.create(dataItem);
+          break;
+        case SystemType.EVENT_COLLATERAL_UPDATED:
+          await this._systemService.save(
+            SystemType.MINIMUM_LIQUIDATION_COLLATERAL,
+            await Web3Provider.getMinimumLiquidationCollateral(),
+          );
           break;
       }
     }

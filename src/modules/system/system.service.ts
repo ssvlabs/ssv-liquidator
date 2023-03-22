@@ -7,9 +7,11 @@ import { System } from './system.entity';
 export enum SystemType {
   GENERAL_LAST_BLOCK_NUMBER = 'GENERAL_LAST_BLOCK_NUMBER',
   EARNINGS_LAST_BLOCK_NUMBER = 'EARNINGS_LAST_BLOCK_NUMBER',
+  MINIMUM_LIQUIDATION_COLLATERAL = 'MINIMUM_LIQUIDATION_COLLATERAL',
   // event names
   EVENT_OPERATOR_ADDED = 'OperatorAdded',
   EVENT_OPERATOR_REMOVED = 'OperatorRemoved',
+  EVENT_COLLATERAL_UPDATED = 'MinimumLiquidationCollateralUpdated',
   EVENT_OPERATOR_FEE_APPROVED = 'OperatorFeeExecuted',
   EVENT_VALIDATOR_ADDED = 'ValidatorAdded',
   EVENT_VALIDATOR_REMOVED = 'ValidatorRemoved',
