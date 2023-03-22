@@ -83,7 +83,7 @@ export class BurnRatesTask {
         // Cluster burn rate
         await this._atomicRetry(
           async () =>
-            Web3Provider.getClusterBurnRate(
+            Web3Provider.getBurnRate(
               record.owner,
               record.operatorIds,
               record.cluster,
@@ -98,7 +98,7 @@ export class BurnRatesTask {
           },
           async (result: AtomicRetryFailedResult) => {
             throw new Error(
-              `Web3Provider.getClusterBurnRate failed: ${JSON.stringify({
+              `Web3Provider.getBurnRate failed: ${JSON.stringify({
                 result,
                 record,
               })}`,
