@@ -205,26 +205,35 @@ export class BurnRatesTask {
         // Prepare final data
         record.cluster = JSON.stringify(record.cluster);
         // If cluster won't be liquidated, at which block number his balance becomes zero
+        // check if burnRate and balance are valid, > 0
         if (record.burnRate > 0 && record.balance > 0) {
+          // Calculate in which block the cluster will start to be ready for liquidation
           const liveUntilBlockByBalance =
             currentBlockNumber +
             record.balance / record.burnRate -
             minimumBlocksBeforeLiquidation;
 
+          // Calculate balance at the block when the cluster will start to be ready for liquidation
           const latestLiveBlockBalance =
             record.balance -
             (liveUntilBlockByBalance - currentBlockNumber) * record.burnRate;
 
+          // Get minimum collateral amount (in SSV)
           const collateralAmount =
             +(await Web3Provider.getMinimumLiquidationCollateral());
 
           if (record.balance <= collateralAmount) {
+            // If balance less than minimum collateral amount set a flag to liquidate asap
             record.liquidationBlockNumber = currentBlockNumber;
           } else if (latestLiveBlockBalance < collateralAmount) {
+            // If balance at the block when the cluster will start to be ready for liquidation
+            // less than minimum collateral amount, set the block when need to liquidate that to get at least minimum collateral amount
             record.liquidationBlockNumber =
               currentBlockNumber +
               (record.balance - collateralAmount) / record.burnRate;
           } else {
+            // If balance at the block when the cluster will start to be ready for liquidation
+            // more or equal than minimum collateral amount, set the block when need to liquidate by actual balance
             record.liquidationBlockNumber = liveUntilBlockByBalance;
           }
         } else {

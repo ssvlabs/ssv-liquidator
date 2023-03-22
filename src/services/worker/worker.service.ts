@@ -1,7 +1,6 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-
 import Web3Provider from '@cli/providers/web3.provider';
 
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { SystemService, SystemType } from '@cli/modules/system/system.service';
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { EarningService } from '@cli/modules/earnings/earning.service';
