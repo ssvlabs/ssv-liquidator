@@ -205,16 +205,31 @@ export class BurnRatesTask {
         // Prepare final data
         record.cluster = JSON.stringify(record.cluster);
         // If cluster won't be liquidated, at which block number his balance becomes zero
-        record.balanceToBlockNumber =
-          record.burnRate > 0
-            ? currentBlockNumber +
-              +(record.balance / record.burnRate).toFixed(0)
-            : null;
-        // Deduct from block number where cluster balance becomes zero,
-        // value of Liquidation Threshold Period
-        record.liquidationBlockNumber = record.balanceToBlockNumber
-          ? record.balanceToBlockNumber - minimumBlocksBeforeLiquidation
-          : null;
+        if (record.burnRate > 0 && record.balance > 0) {
+          const liveUntilBlockByBalance =
+            currentBlockNumber +
+            record.balance / record.burnRate -
+            minimumBlocksBeforeLiquidation;
+
+          const latestLiveBlockBalance =
+            record.balance -
+            (liveUntilBlockByBalance - currentBlockNumber) * record.burnRate;
+
+          const collateralAmount =
+            +(await Web3Provider.getMinimumLiquidationCollateral());
+
+          if (record.balance <= collateralAmount) {
+            record.liquidationBlockNumber = currentBlockNumber;
+          } else if (latestLiveBlockBalance < collateralAmount) {
+            record.liquidationBlockNumber =
+              currentBlockNumber +
+              (record.balance - collateralAmount) / record.burnRate;
+          } else {
+            record.liquidationBlockNumber = liveUntilBlockByBalance;
+          }
+        } else {
+          record.liquidationBlockNumber = null;
+        }
 
         // Save cluster updated data to database
         await this._atomicRetry(

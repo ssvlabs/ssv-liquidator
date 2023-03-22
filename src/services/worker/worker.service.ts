@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 
 import Web3Provider from '@cli/providers/web3.provider';
 
@@ -7,7 +7,7 @@ import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { EarningService } from '@cli/modules/earnings/earning.service';
 
 @Injectable()
-export class WorkerService {
+export class WorkerService implements OnModuleInit {
   private readonly _logger = new Logger(WorkerService.name);
 
   constructor(
@@ -15,6 +15,13 @@ export class WorkerService {
     private _earningService: EarningService,
     private _systemService: SystemService,
   ) {}
+
+  async onModuleInit() {
+    await this._systemService.save(
+      SystemType.MINIMUM_LIQUIDATION_COLLATERAL,
+      await Web3Provider.getMinimumLiquidationCollateral(),
+    );
+  }
 
   async processEvents(events: Array<any>): Promise<void> {
     if (!events.length) {
