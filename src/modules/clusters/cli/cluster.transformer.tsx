@@ -23,14 +23,12 @@ export const colorCodeStatus = status => {
 };
 
 const textStatus = (item, extra: any) => {
-  const { currentBlockNumber, minimumBlocksBeforeLiquidation } = extra;
-  const blockDiff = item.balanceToBlockNumber
-    ? item.balanceToBlockNumber - currentBlockNumber
-    : null;
+  const { currentBlockNumber } = extra;
   switch (true) {
     case item.isLiquidated:
       return 'Liquidated';
-    case blockDiff !== null && blockDiff < minimumBlocksBeforeLiquidation:
+    case item.liquidationBlockNumber !== null &&
+      item.liquidationBlockNumber <= currentBlockNumber:
       return 'To liquidate';
     default:
       return 'Running';
@@ -62,7 +60,6 @@ export const transformClusterData = (items, extra: any) => {
           extraPadding: 1,
         },
         liquidationBlockNumber: { text: item.liquidationBlockNumber },
-        balanceToBlockNumber: { text: item.balanceToBlockNumber },
         updated: {
           text: timeAgo.format(item.updatedAt, 'round-minute'),
         },

@@ -32,9 +32,6 @@ export class Cluster {
   isLiquidated: boolean;
 
   @Column({ default: null })
-  balanceToBlockNumber: number;
-
-  @Column({ default: null })
   liquidationBlockNumber: number;
 
   @CreateDateColumn()

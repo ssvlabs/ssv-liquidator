@@ -53,12 +53,9 @@ export class Clusters extends Component<IClustersProps, IClustersState> {
       const items = await this.props.service.findAll();
       const currentBlockNumber =
         await this.props.web3Provider.currentBlockNumber();
-      const minimumBlocksBeforeLiquidation =
-        await this.props.web3Provider.minimumBlocksBeforeLiquidation();
       this.setStateSafely({
         items: transformClusterData(items, {
           currentBlockNumber,
-          minimumBlocksBeforeLiquidation,
         }),
       });
     }, 1000);

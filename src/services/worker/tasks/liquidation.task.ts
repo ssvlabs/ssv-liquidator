@@ -35,15 +35,13 @@ export class LiquidationTask {
     },
   })
   async liquidate(): Promise<void> {
-    const minimumBlocksBeforeLiquidation =
-      +(await Web3Provider.minimumBlocksBeforeLiquidation());
     const currentBlockNumber = +(await Web3Provider.currentBlockNumber());
     const toLiquidateRecords = await this._clusterService.findBy({
       where: {
-        balanceToBlockNumber: LessThanOrEqual(
-          // Current block + Liquidation Threshold Period should higher
+        liquidationBlockNumber: LessThanOrEqual(
+          // Current block
           // than the block number when balance becomes zero if not liquidated
-          currentBlockNumber + minimumBlocksBeforeLiquidation,
+          currentBlockNumber,
         ),
       },
     });
@@ -81,9 +79,9 @@ export class LiquidationTask {
             await this._clusterService.update(
               { owner: item.owner, operatorIds: item.operatorIds },
               {
+                balance: null,
                 burnRate: null,
                 isLiquidated: true,
-                balanceToBlockNumber: null,
                 liquidationBlockNumber: null,
               },
             );

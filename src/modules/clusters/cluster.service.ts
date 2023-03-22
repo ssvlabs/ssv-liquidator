@@ -13,7 +13,7 @@ export class ClusterService {
   async findAll(): Promise<Cluster[]> {
     return this._clusterRepository.find({
       order: {
-        balanceToBlockNumber: 'ASC',
+        liquidationBlockNumber: 'ASC',
       },
     });
   }

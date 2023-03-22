@@ -95,6 +95,12 @@ export default class Web3Provider {
       .call();
   }
 
+  static async getMinimumLiquidationCollateral(): Promise<string> {
+    return Web3Provider.contractViews.methods
+      .getMinimumLiquidationCollateral()
+      .call();
+  }
+
   static toClusterTuple(obj) {
     return [
       obj.validatorCount,
