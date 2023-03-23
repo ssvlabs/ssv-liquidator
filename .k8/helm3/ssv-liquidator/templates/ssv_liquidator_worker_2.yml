@@ -94,15 +94,15 @@ spec:
               name: config-secrets
               key: ssv_token_address
 
-        volumeMounts:
-        - mountPath: "/data/"
-          name: ssv-liquidator-worker-2
+#        volumeMounts:
+#        - mountPath: "/data/"
+#          name: ssv-liquidator-worker-2
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
-      volumes:
-      - persistentVolumeClaim:
-          claimName: ssv-liquidator-worker-2
-        name: ssv-liquidator-worker-2
+#      volumes:
+#      - persistentVolumeClaim:
+#          claimName: ssv-liquidator-worker-2
+#        name: ssv-liquidator-worker-2
         {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}

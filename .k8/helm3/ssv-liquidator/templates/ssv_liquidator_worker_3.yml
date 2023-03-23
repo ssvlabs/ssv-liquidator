@@ -56,7 +56,7 @@ spec:
               key: node_url
 
         - name: GAS_PRICE
-          value: "medium"
+          value: "high"
           
         - name: SSV_NETWORK_ADDRESS
           valueFrom:
@@ -85,15 +85,15 @@ spec:
               name: config-secrets
               key: ssv_token_address
 
-        volumeMounts:
-        - mountPath: "/data/"
-          name: ssv-liquidator-worker-3
+#        volumeMounts:
+#        - mountPath: "/data/"
+#          name: ssv-liquidator-worker-3
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
-      volumes:
-      - persistentVolumeClaim:
-          claimName: ssv-liquidator-worker-3
-        name: ssv-liquidator-worker-3
+#      volumes:
+#      - persistentVolumeClaim:
+#          claimName: ssv-liquidator-worker-3
+#        name: ssv-liquidator-worker-3
         {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
