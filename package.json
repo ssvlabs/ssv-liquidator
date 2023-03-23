@@ -1,6 +1,6 @@
 {
   "name": "ssv-liquidator",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "CLI to work with SSV Network liquidation flow, liquidate and earn SSV tokens in SSV Network.",
   "author": "SSV.Network",
   "repository": "https://github.com/bloxapp/ssv-liquidator",
