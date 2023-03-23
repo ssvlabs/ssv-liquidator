@@ -62,7 +62,7 @@ export class BurnRatesTask {
     try {
       const missedRecords = (
         await this._clusterService.findBy({
-          where: { burnRate: null, isLiquidated: false },
+          where: { burnRate: null },
         })
       )
         .map(item => {
