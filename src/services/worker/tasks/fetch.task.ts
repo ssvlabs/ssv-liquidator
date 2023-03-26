@@ -103,7 +103,6 @@ export class FetchTask {
           ? latestBlockNumber
           : fromBlock + step,
     };
-
     while (filters.fromBlock < latestBlockNumber) {
       try {
         const events = await Web3Provider.contractCore.getPastEvents(

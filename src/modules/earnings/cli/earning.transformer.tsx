@@ -9,8 +9,8 @@ export const transformEarningData = items => {
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
       earnings.push({
-        fee: { text: `${(item.gasPrice * item.gasUsed).toFixed(18)} ETH` },
-        earned: { text: `${item.earned} SSV` },
+        fee: { text: `${(item.gasPrice * item.gasUsed) / 1e18} ETH` },
+        earned: { text: `${item.earned / 1e18} SSV` },
         liquidatedAtBlock: { text: item.earnedAtBlock },
         txHash: { text: item.hash },
       });

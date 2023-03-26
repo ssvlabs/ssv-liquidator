@@ -40,7 +40,7 @@ export class EarningService {
     const earnedData = {
       hash: transactionHash,
       from: txReceipt.from,
-      gasPrice: +tx.gasPrice / 1e18,
+      gasPrice: +tx.gasPrice,
       gasUsed: txReceipt.gasUsed,
       earned: null,
       earnedAtBlock: txReceipt.blockNumber,
@@ -53,7 +53,7 @@ export class EarningService {
     );
     earnedData.earned =
       transferData &&
-      +Web3Provider.web3.utils.hexToNumberString(transferData.data) / 1e18;
+      +Web3Provider.web3.utils.hexToNumberString(transferData.data);
 
     return earnedData;
   }
