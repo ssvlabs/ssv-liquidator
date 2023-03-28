@@ -24,9 +24,10 @@ The SSV Liquidator node executes liquidations on accounts that do not hold enoug
 ### ETH1 Node and other parameters
 
 In order to be able to fetch all the operators and their status from the contract and react on different events
-you need to specify an ETH1 Node URI. If you want to work with a production environment then you must specify `eth.infra.com` as the `--node-url` parameter for the CLI. Alternatively you can set it up in `.env` file as the `NODE_URL`. Examples below for both scenarios.
+you need to specify an ETH1 Node URI. If you want to work with a production environment then you must specify `eth.infra.com` as the `--node-url` parameter for the CLI. Alternatively you can set it up in `.env` file as the `NODE_URL`. 
 
-If you want to use the tool on testnet you can register in `alchemyapi.io`.  Once registered the URL will look like: 
+Example below for using alchemy api node:
+You can register in `alchemyapi.io`.  Once registered the URL will look like: 
 `https://eth-goerli.alchemyapi.io/v2/<your-token-here>`
 You can use any node of your choice, above is just an example of using alchemy api.
 
