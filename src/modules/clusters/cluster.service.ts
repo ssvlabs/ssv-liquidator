@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, getConnection } from 'typeorm';
+import { MoreThan, Repository, FindManyOptions } from 'typeorm';
 
 import { Cluster } from './cluster.entity';
 
@@ -12,13 +12,14 @@ export class ClusterService {
 
   async findAll(): Promise<Cluster[]> {
     return this._clusterRepository.find({
+      where: [{ burnRate: MoreThan(0) }, { isLiquidated: true }],
       order: {
         liquidationBlockNumber: 'ASC',
       },
     });
   }
 
-  async findBy(options: any): Promise<Cluster[]> {
+  async findBy(options: FindManyOptions): Promise<Cluster[]> {
     return this._clusterRepository.find(options);
   }
 

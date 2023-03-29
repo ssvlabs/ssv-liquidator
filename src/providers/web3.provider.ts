@@ -143,6 +143,21 @@ export default class Web3Provider {
       }
     }
   }
+
+  static async proceedWithConcurrencyLimit(promises, concurrencyLimit = 10) {
+    const toProceed = [];
+    let results = [];
+
+    for (let i = 0; i < promises.length; i++) {
+      toProceed.push(promises[i]);
+      if (toProceed.length >= concurrencyLimit || i === promises.length - 1) {
+        results = [...results, ...(await Promise.allSettled(toProceed))];
+        toProceed.length = 0;
+      }
+    }
+
+    return results;
+  }
 }
 
 function sleep(ms) {

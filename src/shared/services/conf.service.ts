@@ -43,6 +43,10 @@ export class ConfService extends ConfigService {
         'Refer to https://docs.ssv.network/developers/smart-contracts',
       required: false,
     });
+    parser.add_argument('-nrl', '--node-rate-limit', {
+      help: 'Node Rate Limit. Default value: 10',
+      required: false,
+    });
 
     const args = parser.parse_args();
     Object.keys(args).forEach(key => {
@@ -58,6 +62,7 @@ export class ConfService extends ConfigService {
       ACCOUNT_PRIVATE_KEY: 'private_key',
       NODE_URL: 'node_url',
       HIDE_TABLE: 'hide_table',
+      NODE_RATE_LIMIT: 'node_rate_limit',
     };
     for (const envVarName of Object.keys(envVars)) {
       process.env[envVarName] =
@@ -77,6 +82,10 @@ export class ConfService extends ConfigService {
         process.exit(1);
       }
     }
+  }
+
+  public rateLimit(): number {
+    return this.getNumber('NODE_RATE_LIMIT') || 1;
   }
 
   public getNumber(key: string): number {

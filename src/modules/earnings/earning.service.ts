@@ -2,7 +2,7 @@ import Web3Provider from '@cli/providers/web3.provider';
 
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DeleteResult, getConnection } from 'typeorm';
+import { Repository, DeleteResult } from 'typeorm';
 
 import { ConfService } from '@cli/shared/services/conf.service';
 
