@@ -85,7 +85,7 @@ export class ConfService extends ConfigService {
   }
 
   public rateLimit(): number {
-    return this.getNumber('NODE_RATE_LIMIT') || 1;
+    return this.getNumber('NODE_RATE_LIMIT') || 10;
   }
 
   public getNumber(key: string): number {
