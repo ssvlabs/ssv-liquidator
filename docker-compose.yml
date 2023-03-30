@@ -16,6 +16,7 @@ services:
       - ACCOUNT_PRIVATE_KEY
       - GAS_PRICE
       - HIDE_TABLE
+      - NODE_RATE_LIMIT
     restart: on-failure
 
 volumes:

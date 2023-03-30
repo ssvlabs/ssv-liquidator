@@ -62,6 +62,7 @@ ssv-network-views-address (c) = Contract Network Views Address
 gas-price (g) = Gas price, default: low
 ssv-token-address = The contract address for the SSV token
 hide-table = Hide/show realtime table
+node-rate-limit = concurrent requests limit (optional, by default: 10)
 ```sh
 yarn cli --node-url=eth.infra.com --private-key=a70478942bf... --ssv-network-address=0x425890f2a5g... --ssv-network-views-address=0x425890f2a5g... --gas-price=slow --ssv-token-address=0x425890f2a5g84hw94...
 ```
