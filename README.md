@@ -16,20 +16,18 @@ The SSV Liquidator node executes liquidations on accounts that do not hold enoug
 
 ##### The liquidator node performs 2 main processes:
 
-- Sync the network contract data every minute and find the most recent balance-determining events for the SSV networks contract.  After obtaining the latest data, map all of the network's accounts to calculate the block for liquidation for each cluster in the network.
-- Liquidate clusters once the potential liquidation block is reached. The liquidator node will call the liquidate() function in the network contract, if your node was the first to successfully pass the transaction, the account will be liquidated and its SSV collateral will be sent to the wallet address (defined in the cli or env file) that performeded the liquidation.
+- Syncing network contract data Every minute the liquidator node pulls recent balance-determining events for the SSV networks contract and maps all of the network's accounts on the node level to calculate the potential block for liquidation for each account in the network
+- Liquidating accounts Once the potential liquidation block is reached the liquidator node will call the liquidate() function in the network contract, if the node was the first to successfully pass the transaction the account will be liquidated and its SSV collateral will be sent to the wallet address which performed the liquidation
 
 ## Requirements 
 
 ### ETH1 Node and other parameters
 
 In order to be able to fetch all the operators and their status from the contract and react on different events
-you need to specify an ETH1 Node URI. If you want to work with a production environment then you must specify `eth.infra.com` as the `--node-url` parameter for the CLI. Alternatively you can set it up in `.env` file as the `NODE_URL`. 
+you need to specify an ETH1 Node URI. If you want to work with a production environment then you must specify `eth.infra.com` as the `--node-url` parameter for the CLI. As alternative you can set it up in `.env` file as the `NODE_URL`. Examples below for both scenarios.
 
-Example below for using alchemy api node:
-You can register in `alchemyapi.io`.  Once registered the URL will look like: 
+If you want to play with the testnet you can register in `alchemyapi.io`.  Once registered the URL will look like: 
 `https://eth-goerli.alchemyapi.io/v2/<your-token-here>`
-You can use any node of your choice, above is just an example of using alchemy api.
 
 Review `yarn cli --help` output and `.env.example` file for all of the parameters required for liquidator to work.
 
@@ -56,18 +54,23 @@ yarn install
 yarn cli --help
 ```
 
-#### Input parameters:  
-node-url (n) = ETH1 node url  
-private-key (pk) = Account private key  
-ssv-network-address (c) = Contract Network Address  
-ssv-network-views-address (c) = Contract Network Views Address  
-gas-price (g) = Gas price, default: low  
-ssv-token-address = The contract address for the SSV token  
-hide-table = Hide/show realtime table  
-
-#### Example of running with the CLI:
+Input parameters:
+node-url (n) = ETH1 node url
+private-key (pk) = Account private key
+ssv-network-address (c) = Contract Network Address
+ssv-network-views-address (c) = Contract Network Views Address
+gas-price (g) = Gas price, default: low
+ssv-token-address = The contract address for the SSV token
+hide-table = Hide/show realtime table
+node-rate-limit = concurrent requests limit (optional, by default: 10)
 ```sh
 yarn cli --node-url=eth.infra.com --private-key=a70478942bf... --ssv-network-address=0x425890f2a5g... --ssv-network-views-address=0x425890f2a5g... --gas-price=slow --ssv-token-address=0x425890f2a5g84hw94...
+```
+
+Example of running the CLI with the minimum requirements:
+
+```sh
+yarn cli --private-key=a70478942bf...
 ```
 
 ### Option 2: Using an env file

@@ -1,6 +1,5 @@
 import { LessThanOrEqual } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { BackOffPolicy, Retryable } from 'typescript-retry-decorator';
 import Web3Provider from '@cli/providers/web3.provider';
 import { ConfService } from '@cli/shared/services/conf.service';
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
@@ -16,24 +15,6 @@ export class LiquidationTask {
     private _clusterService: ClusterService,
   ) {}
 
-  @Retryable({
-    maxAttempts: 100,
-    backOffPolicy: BackOffPolicy.ExponentialBackOffPolicy,
-    backOff: 1000,
-    doRetry: (e: Error) => {
-      console.error(
-        '[CRITICAL] Error running LiquidationTask :: liquidate: ',
-        e,
-      );
-      liquidationStatus.set(0);
-      criticalStatus.set(0);
-      return true;
-    },
-    exponentialOption: {
-      maxInterval: 1000 * 60,
-      multiplier: 2,
-    },
-  })
   async liquidate(): Promise<void> {
     const currentBlockNumber = +(await Web3Provider.currentBlockNumber());
     const toLiquidateRecords = await this._clusterService.findBy({
