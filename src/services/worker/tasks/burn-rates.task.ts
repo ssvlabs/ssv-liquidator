@@ -109,11 +109,12 @@ export class BurnRatesTask {
     for (const [index, record] of missedRecords.entries()) {
       // Prepare final data
       record.cluster = JSON.stringify(record.cluster);
-      const clusterError =
-        !aggrs[index].burnRate ||
-        aggrs[index].burnRate.error ||
-        !aggrs[index].balance ||
-        aggrs[index].balance.error;
+      let clusterError = null;
+      for (const clusterField of ['burnRate', 'balance']) {
+        if (aggrs[index][clusterField] && aggrs[index][clusterField].error) {
+          clusterError = aggrs[index][clusterField].error;
+        }
+      }
       if (
         (clusterError &&
           SolidityErrors.isError(clusterError, 'ClusterIsLiquidated')) ||
