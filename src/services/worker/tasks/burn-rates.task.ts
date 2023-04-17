@@ -1,10 +1,10 @@
+import { IsNull } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import Web3Provider from '@cli/providers/web3.provider';
+import { ConfService } from '@cli/shared/services/conf.service';
 import SolidityErrors from '@cli/providers/solidity-errors.provider';
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
-import { ConfService } from '@cli/shared/services/conf.service';
-import { IsNull } from 'typeorm';
 
 @Injectable()
 export class BurnRatesTask {
