@@ -129,7 +129,20 @@ export default class Web3Provider {
     let retryDelay = Web3Provider.RETRY_DELAY;
     while (retries < maxRetries) {
       try {
-        return await contractMethod(...params);
+        const timeoutPromise = new Promise((resolve, reject) => {
+          setTimeout(() => {
+            reject(
+              new Error(
+                '[TIMEOUT] Web3Provider::getWithRetry: Timeout expired',
+              ),
+            );
+          }, Web3Provider.RETRY_DELAY);
+        });
+        return await Promise.race([timeoutPromise, contractMethod(...params)])
+          .then(result => result)
+          .catch(error => {
+            throw error;
+          });
       } catch (error) {
         if (error.data && String(error.data).startsWith('0x')) {
           return SolidityErrors.getErrorByHash(error.data);

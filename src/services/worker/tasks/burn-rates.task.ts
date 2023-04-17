@@ -110,11 +110,14 @@ export class BurnRatesTask {
       // Prepare final data
       record.cluster = JSON.stringify(record.cluster);
       const clusterError =
-        aggrs[index].burnRate.error || aggrs[index].balance.error;
+        !aggrs[index].burnRate ||
+        aggrs[index].burnRate.error ||
+        !aggrs[index].balance ||
+        aggrs[index].balance.error;
       if (
         (clusterError &&
           SolidityErrors.isError(clusterError, 'ClusterIsLiquidated')) ||
-        aggrs[index].isLiquidated.value
+        (aggrs[index].isLiquidated && aggrs[index].isLiquidated.value)
       ) {
         await this._clusterService.update(
           {
