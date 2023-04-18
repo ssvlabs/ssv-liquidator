@@ -12,12 +12,13 @@ import Web3Provider from '@cli/providers/web3.provider';
 import { WebappModule } from '@cli/modules/webapp/webapp.module';
 import { ConfService } from '@cli/shared/services/conf.service';
 import { WorkerModule } from '@cli/services/worker/worker.module';
+import { getAllowedLogLevels } from '@cli/shared/services/logging';
 import { CustomLogger } from '@cli/shared/services/logger.service';
 import { EarningService } from '@cli/modules/earnings/earning.service';
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { criticalStatus } from '@cli/modules/webapp/metrics/services/metrics.service';
 
-async function bootstrapWebApp() {
+async function bootstrapApi() {
   const app = await NestFactory.create<NestExpressApplication>(
     WebappModule,
     new ExpressAdapter(),
@@ -50,12 +51,8 @@ async function bootstrapWebApp() {
 }
 
 async function bootstrapCli() {
-  const logLevels: any = ['verbose', 'debug', 'log', 'warn', 'error'];
   const app = await NestFactory.createApplicationContext(WorkerModule, {
-    logger: logLevels.slice(
-      logLevels.indexOf(process.env.LOG_LEVEL || 'debug'),
-      logLevels.length,
-    ),
+    logger: getAllowedLogLevels(),
     autoFlushLogs: false,
     bufferLogs: false,
   });
@@ -88,11 +85,11 @@ async function bootstrap() {
     criticalStatus.set(1);
   });
 
+  console.info('Starting API');
+  await bootstrapApi();
+
   console.info('Starting Liquidator worker');
   await bootstrapCli();
-
-  console.info('Starting WebApp');
-  await bootstrapWebApp();
 }
 
 void bootstrap();

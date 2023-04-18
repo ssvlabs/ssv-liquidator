@@ -113,7 +113,7 @@ export class BurnRatesTask {
       await this._fetchCommonData();
 
     // Iterate over all clusters with missing parts and sync them one by one
-    for (const [index, record] of missedRecords.entries()) {
+    for (const record of missedRecords) {
       const burnRateTask = Web3Provider.getWithRetry(Web3Provider.getBurnRate, [
         record.owner,
         record.operatorIds,
@@ -134,6 +134,9 @@ export class BurnRatesTask {
       );
 
       // Wait for all the parts of cluster data
+      this._logger.verbose(
+        `Requesting cluster details from contract: ${JSON.stringify(record)}`,
+      );
       const clusterData: any = await Promise.allSettled([
         burnRateTask,
         balanceTask,
@@ -163,8 +166,14 @@ export class BurnRatesTask {
       // Prepare final data
       record.cluster = JSON.stringify(record.cluster);
 
+      this._logger.verbose(`Working with cluster: ${JSON.stringify(record)}`);
+      this._logger.verbose(
+        `Cluster fresh data from contract: ${JSON.stringify(fields)}`,
+      );
+
       // Check for errors
       let clusterError = null;
+      let isLiquidatedError = false;
       for (const clusterField of Object.keys(fields)) {
         if (fields[clusterField]) {
           if (
@@ -173,27 +182,37 @@ export class BurnRatesTask {
           ) {
             clusterError = `Error: Field ${clusterField} was not fetched from the contract`;
             this.decreaseBatchSize();
-            break;
           } else if (fields[clusterField].error) {
             clusterError = fields[clusterField].error;
-            break;
+            if (!isLiquidatedError) {
+              isLiquidatedError = SolidityErrors.isError(
+                clusterError,
+                SolidityErrors.ERROR_CLUSTER_LIQUIDATED,
+              );
+              this._logger.debug(
+                `Found error in one of cluster fields: ${JSON.stringify(
+                  fields[clusterField],
+                )}. Cluster: ${JSON.stringify(
+                  record,
+                )}. Cluster will be marked as liquidated if not yet.`,
+              );
+            } else {
+              this._logger.debug(
+                `Found error in one of cluster fields: ${JSON.stringify(
+                  fields[clusterField],
+                )}. Cluster: ${JSON.stringify(record)}.`,
+              );
+            }
           }
         }
       }
 
       // Check specific liquidated error
-      if (
-        (clusterError &&
-          SolidityErrors.isError(clusterError, 'ClusterIsLiquidated')) ||
-        fields.isLiquidated
-      ) {
+      if (isLiquidatedError || fields.isLiquidated) {
         // Update cluster to liquidated only if it has no this state before
         if (!record.isLiquidated) {
           const updated = await this._clusterService.update(
-            {
-              owner: record.owner,
-              operatorIds: record.operatorIds,
-            },
+            { owner: record.owner, operatorIds: record.operatorIds },
             {
               balance: null,
               burnRate: null,
@@ -205,7 +224,19 @@ export class BurnRatesTask {
             this._logger.debug(
               `Updated cluster to liquidated state: ${JSON.stringify(record)}`,
             );
+          } else {
+            this._logger.error(
+              `Could not update cluster to liquidated state: ${JSON.stringify(
+                record,
+              )}`,
+            );
           }
+        } else {
+          this._logger.verbose(
+            `Skipping liquidated cluster update because it already liquidated in database: ${JSON.stringify(
+              record,
+            )}`,
+          );
         }
         continue;
       } else if (clusterError) {
@@ -226,6 +257,7 @@ export class BurnRatesTask {
         !Number.isNaN(fields.balance) &&
         fields.burnRate > 0
       ) {
+        this._logger.verbose(`Calculating cluster: ${JSON.stringify(record)}`);
         this._calc(record, {
           burnRate: fields.burnRate,
           balance: fields.balance,
@@ -235,6 +267,7 @@ export class BurnRatesTask {
           collateralAmount,
         });
       } else {
+        this._logger.verbose(`Erasing cluster data: ${JSON.stringify(record)}`);
         record.burnRate = null;
         record.balance = null;
         record.liquidationBlockNumber = null;
@@ -244,7 +277,7 @@ export class BurnRatesTask {
         record,
       );
       if (updated) {
-        this._logger.debug(
+        this._logger.verbose(
           `Updated cluster burn rate: ${JSON.stringify(record)}`,
         );
       }

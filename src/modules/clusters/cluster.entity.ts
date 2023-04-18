@@ -10,7 +10,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-const DEFAULT_TIMEZONE = 'Israel/Jerusalem';
+const DEFAULT_TIMEZONE = 'Asia/Jerusalem';
 const DEFAULT_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
 @Entity()

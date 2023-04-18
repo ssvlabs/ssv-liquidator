@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThan, Repository, FindManyOptions } from 'typeorm';
-
-import { Cluster } from './cluster.entity';
+import { Cluster } from '@cli/modules/clusters/cluster.entity';
 
 @Injectable()
 export class ClusterService {
@@ -52,11 +51,11 @@ export class ClusterService {
     const records = await this.findBy({ where });
     let updated = false;
     for (const record of records) {
-      await this._clusterRepository.save({
-        ...record,
-        ...updates,
-      });
-      updated = true;
+      for (const record of records) {
+        const dto: any = this._clusterRepository.create(updates);
+        updated =
+          updated || !!(await this._clusterRepository.update(where, dto));
+      }
     }
     return updated;
   }

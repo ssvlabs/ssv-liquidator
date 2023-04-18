@@ -7,6 +7,8 @@ export type SolidityError = {
 };
 
 export default class SolidityErrors {
+  static ERROR_CLUSTER_LIQUIDATED = 'ClusterIsLiquidated';
+
   static _errors: SolidityError[] = [];
 
   /**
