@@ -34,7 +34,6 @@ Build stage Docker image:
     - $DOCKER_LOGIN_TO_INFRA_STAGE_REPO && docker push $DOCKER_REPO_INFRA_STAGE:$CI_BUILD_REF
   only:
     - stage
-    - merge_requests
 
 Helm deploy on stage:
   stage: deploy
@@ -58,7 +57,6 @@ Helm deploy on stage:
       .k8/helm3/ssv-liquidator/
   only:
     - stage
-    - merge_requests
 
 #blox-infra-prod
 Build prod Docker image:
