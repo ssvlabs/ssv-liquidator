@@ -189,7 +189,7 @@ export class BurnRatesTask {
       ) {
         // Update cluster to liquidated only if it has no this state before
         if (!record.isLiquidated) {
-          await this._clusterService.update(
+          const updated = await this._clusterService.update(
             {
               owner: record.owner,
               operatorIds: record.operatorIds,
@@ -201,6 +201,11 @@ export class BurnRatesTask {
               liquidationBlockNumber: null,
             },
           );
+          if (updated) {
+            this._logger.debug(
+              `Updated cluster to liquidated state: ${JSON.stringify(record)}`,
+            );
+          }
         }
         continue;
       } else if (clusterError) {
@@ -234,13 +239,15 @@ export class BurnRatesTask {
         record.balance = null;
         record.liquidationBlockNumber = null;
       }
-      await this._clusterService.update(
+      const updated = await this._clusterService.update(
         { owner: record.owner, operatorIds: record.operatorIds },
         record,
       );
-      this._logger.debug(
-        `Updated cluster burn rate: ${JSON.stringify(record)}`,
-      );
+      if (updated) {
+        this._logger.debug(
+          `Updated cluster burn rate: ${JSON.stringify(record)}`,
+        );
+      }
     }
   }
 

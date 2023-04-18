@@ -55,12 +55,7 @@ export class LiquidationTask {
             item.cluster,
           );
           if (isLiquidated) {
-            this._logger.log(
-              `Cluster is already liquidated. Skipping: ${JSON.stringify(
-                item.cluster,
-              )}`,
-            );
-            await this._clusterService.update(
+            const updated = await this._clusterService.update(
               { owner: item.owner, operatorIds: item.operatorIds },
               {
                 balance: null,
@@ -69,6 +64,11 @@ export class LiquidationTask {
                 liquidationBlockNumber: null,
               },
             );
+            if (updated) {
+              this._logger.log(
+                `Updated liquidated cluster: ${JSON.stringify(item.cluster)}`,
+              );
+            }
           }
         }
         liquidationStatus.set(1);

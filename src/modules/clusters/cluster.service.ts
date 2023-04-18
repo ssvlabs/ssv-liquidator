@@ -23,7 +23,7 @@ export class ClusterService {
     return this._clusterRepository.find(options);
   }
 
-  async create(cluster: Cluster): Promise<void> {
+  async create(cluster: Cluster): Promise<any> {
     const records = await this.findBy({
       where: {
         owner: cluster.owner,
@@ -40,18 +40,25 @@ export class ClusterService {
         cluster,
       );
     }
-    await this._clusterRepository.insert(cluster);
+    return this._clusterRepository.insert(cluster);
   }
 
-  async update(where: any, updates: any): Promise<void> {
+  /**
+   * Returns true if any entry has been saved in database.
+   * @param where
+   * @param updates
+   */
+  async update(where: any, updates: any): Promise<boolean> {
     const records = await this.findBy({ where });
+    let updated = false;
     for (const record of records) {
       await this._clusterRepository.save({
         ...record,
         ...updates,
-        updatedAt: new Date(),
       });
+      updated = true;
     }
+    return updated;
   }
 
   async remove(where: any): Promise<any> {

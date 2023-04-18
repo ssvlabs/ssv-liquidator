@@ -51,14 +51,16 @@ export class WorkerService implements OnModuleInit {
         case SystemType.EVENT_VALIDATOR_REMOVED:
           // /Mark as cluster was updated and need to get
           // its fresh metrics in burn-rates task
-          await this._clusterService.update(
+          const updated = await this._clusterService.update(
             {
               owner: dataItem.owner,
               operatorIds: dataItem.operatorIds,
             },
             { burnRate: null, cluster: dataItem.cluster },
           );
-          this._logger.debug(`Updated cluster: ${JSON.stringify(dataItem)}`);
+          if (updated) {
+            this._logger.debug(`Updated cluster: ${JSON.stringify(dataItem)}`);
+          }
           break;
         case SystemType.EVENT_VALIDATOR_ADDED:
           await this._clusterService.create(dataItem);
