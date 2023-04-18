@@ -17,6 +17,8 @@ services:
       - GAS_PRICE
       - HIDE_TABLE
       - NODE_RATE_LIMIT
+      - LOG_LEVEL
+      - NO_COLOR
     restart: on-failure
 
 volumes:
