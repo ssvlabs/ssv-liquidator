@@ -1,5 +1,5 @@
 import { LessThanOrEqual } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import Web3Provider from '@cli/providers/web3.provider';
 import { ConfService } from '@cli/shared/services/conf.service';
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
@@ -10,6 +10,7 @@ import {
 
 @Injectable()
 export class LiquidationTask {
+  private readonly _logger = new Logger(LiquidationTask.name);
   constructor(
     private _config: ConfService,
     private _clusterService: ClusterService,
@@ -30,8 +31,10 @@ export class LiquidationTask {
     for (const item of toLiquidateRecords) {
       item.cluster = JSON.parse(item.cluster);
       try {
-        console.log(
-          `Checking if cluster liquidatable: ${JSON.stringify(item.cluster)}`,
+        this._logger.log(
+          `Checking if cluster can be liquidated: ${JSON.stringify(
+            item.cluster,
+          )}`,
         );
         const liquidatable = await Web3Provider.liquidatable(
           item.owner,
@@ -41,7 +44,7 @@ export class LiquidationTask {
         if (liquidatable) {
           clustersToLiquidate.push(item);
         } else {
-          console.log(
+          this._logger.log(
             `Checking if cluster already liquidated: ${JSON.stringify(
               item.cluster,
             )}`,
@@ -52,7 +55,7 @@ export class LiquidationTask {
             item.cluster,
           );
           if (isLiquidated) {
-            console.log(
+            this._logger.log(
               `Cluster is already liquidated. Skipping: ${JSON.stringify(
                 item.cluster,
               )}`,
@@ -70,7 +73,7 @@ export class LiquidationTask {
         }
         liquidationStatus.set(1);
       } catch (e) {
-        console.error(
+        this._logger.error(
           `Cluster ${item.owner}: [${item.operatorIds}] not possible to liquidate. Error: ${e}`,
         );
         liquidationStatus.set(0);
@@ -89,7 +92,7 @@ export class LiquidationTask {
   }
 
   private async doLiquidation(owner, operatorIds, cluster) {
-    console.log(`trying to liquidate cluster ${owner}:[${operatorIds}]`);
+    this._logger.log(`trying to liquidate cluster ${owner}:[${operatorIds}]`);
     const data = (
       await Web3Provider.contractCore.methods.liquidate(
         owner,
@@ -139,10 +142,10 @@ export class LiquidationTask {
     Web3Provider.web3.eth
       .sendSignedTransaction(signedTx.rawTransaction, (error, hash) => {
         if (!error) {
-          console.log(`🎉 The hash of liquidated transaction is: ${hash}`);
+          this._logger.log(`🎉 The hash of liquidated transaction is: ${hash}`);
           liquidationStatus.set(1);
         } else {
-          console.error(
+          this._logger.error(
             `[CRITICAL] Something went wrong while submitting your transaction: ${
               error.message || error
             }`,
@@ -153,7 +156,7 @@ export class LiquidationTask {
       })
       .on('receipt', data => {
         // gasPrice * data.gasUsed
-        console.log(`Transaction receipt: ${JSON.stringify(data)}`);
+        this._logger.log(`Transaction receipt: ${JSON.stringify(data)}`);
         liquidationStatus.set(1);
         criticalStatus.set(1);
       });

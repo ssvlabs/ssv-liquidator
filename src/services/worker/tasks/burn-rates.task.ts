@@ -1,5 +1,5 @@
 import { IsNull } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import Web3Provider from '@cli/providers/web3.provider';
 import { ConfService } from '@cli/shared/services/conf.service';
 import SolidityErrors from '@cli/providers/solidity-errors.provider';
@@ -8,8 +8,11 @@ import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.ser
 
 @Injectable()
 export class BurnRatesTask {
-  private _ITEMS_TO_PROCEED = 10;
+  private static CURRENT_BATCH_SIZE = 100;
+  private static BATCH_SIZE_RATIO = 0.9;
+  private static MINIMUM_BATCH_SIZE = 10;
   private static isProcessLocked = false;
+  private readonly _logger = new Logger(BurnRatesTask.name);
 
   constructor(
     private _clusterService: ClusterService,
@@ -18,135 +21,212 @@ export class BurnRatesTask {
   ) {}
 
   /**
+   * How many records should be processed per one cron job
+   * @private
+   */
+  private get batchSize(): number {
+    return BurnRatesTask.CURRENT_BATCH_SIZE;
+  }
+
+  /**
+   * When data can not be fetched - decrease batch size
+   * @private
+   */
+  private decreaseBatchSize() {
+    // Don't decrease the batch size if it reaches minimum value
+    if (BurnRatesTask.CURRENT_BATCH_SIZE <= BurnRatesTask.MINIMUM_BATCH_SIZE) {
+      return;
+    }
+    const previousBatchSize = BurnRatesTask.CURRENT_BATCH_SIZE;
+    const previousBatchSizeRatio = BurnRatesTask.BATCH_SIZE_RATIO;
+
+    // Decrease the batch size by 10% every time when called
+    BurnRatesTask.CURRENT_BATCH_SIZE = Math.ceil(
+      BurnRatesTask.CURRENT_BATCH_SIZE * BurnRatesTask.BATCH_SIZE_RATIO,
+    );
+
+    // Increase speed of decreasing batch size every time
+    BurnRatesTask.BATCH_SIZE_RATIO = BurnRatesTask.BATCH_SIZE_RATIO * 0.9;
+
+    this._logger.debug(
+      `Batch size for burn rate task decreased from ${previousBatchSize} to ${BurnRatesTask.CURRENT_BATCH_SIZE}`,
+    );
+    this._logger.debug(
+      `Batch size ratio for burn rate task decreased from ${previousBatchSizeRatio} to ${BurnRatesTask.BATCH_SIZE_RATIO}`,
+    );
+  }
+
+  /**
    * If cluster has been updated in worker service it gets the fresh metrics
    * and generate updated cluster profile
    */
   async syncBurnRates(): Promise<void> {
     if (BurnRatesTask.isProcessLocked) {
-      console.debug(`BurnRatesTask process is already locked.`);
+      this._logger.log(`Process is already locked`);
       return;
     }
-    BurnRatesTask.isProcessLocked = true;
+
     try {
+      BurnRatesTask.isProcessLocked = true;
+
       this._metricsService.burnRatesStatus.set(0);
       this._metricsService.criticalStatus.set(0);
-      await this._proceed();
+
+      await this.processBurnRates();
+
       // Only after full cycle of updates set successful metrics
       this._metricsService.burnRatesStatus.set(1);
       this._metricsService.criticalStatus.set(1);
     } catch (e) {
-      console.log('ERROR: syncBurnRates', e);
+      this._logger.error(`Failed to sync burn rates. Error: ${e}`);
+    } finally {
+      BurnRatesTask.isProcessLocked = false;
     }
-    BurnRatesTask.isProcessLocked = false;
   }
 
-  private async _proceed(): Promise<void> {
+  private async processBurnRates(): Promise<void> {
     const missedRecords = (
       await this._clusterService.findBy({
         where: { burnRate: IsNull() },
-        take: this._ITEMS_TO_PROCEED,
+        take: this.batchSize,
       })
     ).map(item => {
       try {
         item.cluster = JSON.parse(item.cluster);
       } catch (e) {
-        console.error(`Can not json parse cluster data from DB! Skipping.`);
+        this._logger.error(
+          `Can not json parse cluster data from DB! Skipping. Cluster: ${JSON.stringify(
+            item,
+          )}. Skipping.`,
+        );
       }
       return item;
     });
 
+    // Nothing to process
     if (missedRecords.length === 0) {
-      return;
+      this._logger.debug('No clusters with empty burn rate. Done.');
     }
 
-    const burnRates = await Web3Provider.proceedWithConcurrencyLimit(
-      missedRecords.map(record =>
-        Web3Provider.getWithRetry(Web3Provider.getBurnRate, [
-          record.owner,
-          record.operatorIds,
-          record.cluster,
-        ]),
-      ),
-      this._config.rateLimit(),
-    );
+    // Common data for all clusters
+    const { collateralAmount, minimumBlocksBeforeLiquidation } =
+      await this._fetchCommonData();
 
-    const balances = await Web3Provider.proceedWithConcurrencyLimit(
-      missedRecords.map(record =>
-        Web3Provider.getWithRetry(Web3Provider.getBalance, [
-          record.owner,
-          record.operatorIds,
-          record.cluster,
-        ]),
-      ),
-      this._config.rateLimit(),
-    );
-
-    const liquidated = await Web3Provider.proceedWithConcurrencyLimit(
-      missedRecords.map(record =>
-        Web3Provider.getWithRetry(Web3Provider.isLiquidated, [
-          record.owner,
-          record.operatorIds,
-          record.cluster,
-        ]),
-      ),
-      this._config.rateLimit(),
-    );
-
-    const aggrs = missedRecords.map((item, index) => ({
-      burnRate: burnRates[index] as any,
-      balance: balances[index] as any,
-      isLiquidated: liquidated[index] as any,
-    }));
-
-    // get SSV Network params
-    const minimumBlocksBeforeLiquidation =
-      await Web3Provider.minimumBlocksBeforeLiquidation();
-    const currentBlockNumber = await Web3Provider.currentBlockNumber();
-    // Get minimum collateral amount (in SSV)
-    const collateralAmount =
-      +(await Web3Provider.getMinimumLiquidationCollateral());
-
+    // Iterate over all clusters with missing parts and sync them one by one
     for (const [index, record] of missedRecords.entries()) {
+      const burnRateTask = Web3Provider.getWithRetry(Web3Provider.getBurnRate, [
+        record.owner,
+        record.operatorIds,
+        record.cluster,
+      ]);
+      const balanceTask = Web3Provider.getWithRetry(Web3Provider.getBalance, [
+        record.owner,
+        record.operatorIds,
+        record.cluster,
+      ]);
+      const liquidatedTask = Web3Provider.getWithRetry(
+        Web3Provider.isLiquidated,
+        [record.owner, record.operatorIds, record.cluster],
+      );
+
+      const currentBlockNumberTask = Web3Provider.getWithRetry(
+        Web3Provider.currentBlockNumber,
+      );
+
+      // Wait for all the parts of cluster data
+      const clusterData: any = await Promise.allSettled([
+        burnRateTask,
+        balanceTask,
+        liquidatedTask,
+        currentBlockNumberTask,
+      ]).catch(error => {
+        this._logger.error(
+          `Error occurred during cluster resolution: ${error.message}. Skipping this cluster for now.`,
+        );
+        return false;
+      });
+
+      // Skip in incomplete cluster data
+      if (clusterData === false) continue;
+
+      // Extract final data
+      const [burnRate, balance, isLiquidated, currentBlockNumber] = clusterData;
+
+      // Build fields object
+      const fields = {
+        burnRate: burnRate.value,
+        balance: balance.value,
+        isLiquidated: isLiquidated.value,
+        currentBlockNumber: currentBlockNumber.value,
+      };
+
       // Prepare final data
       record.cluster = JSON.stringify(record.cluster);
+
+      // Check for errors
       let clusterError = null;
-      for (const clusterField of ['burnRate', 'balance']) {
-        if (aggrs[index][clusterField] && aggrs[index][clusterField].error) {
-          clusterError = aggrs[index][clusterField].error;
+      for (const clusterField of Object.keys(fields)) {
+        if (fields[clusterField]) {
+          if (
+            fields[clusterField] === undefined ||
+            fields[clusterField] === null
+          ) {
+            clusterError = `Error: Field ${clusterField} was not fetched from the contract`;
+            this.decreaseBatchSize();
+            break;
+          } else if (fields[clusterField].error) {
+            clusterError = fields[clusterField].error;
+            break;
+          }
         }
       }
+
+      // Check specific liquidated error
       if (
         (clusterError &&
           SolidityErrors.isError(clusterError, 'ClusterIsLiquidated')) ||
-        (aggrs[index].isLiquidated && aggrs[index].isLiquidated.value)
+        fields.isLiquidated
       ) {
-        await this._clusterService.update(
-          {
-            owner: record.owner,
-            operatorIds: record.operatorIds,
-          },
-          {
-            balance: null,
-            burnRate: null,
-            isLiquidated: true,
-            liquidationBlockNumber: null,
-          },
+        // Update cluster to liquidated only if it has no this state before
+        if (!record.isLiquidated) {
+          await this._clusterService.update(
+            {
+              owner: record.owner,
+              operatorIds: record.operatorIds,
+            },
+            {
+              balance: null,
+              burnRate: null,
+              isLiquidated: true,
+              liquidationBlockNumber: null,
+            },
+          );
+        }
+        continue;
+      } else if (clusterError) {
+        this._logger.error(
+          `${
+            clusterError.startsWith('Error:')
+              ? clusterError
+              : 'Some of the cluster data was not fetched from the contract.'
+          }. Skipping for now`,
         );
         continue;
       }
 
-      const burnRate = aggrs[index].burnRate.value;
-      const balance = aggrs[index].balance.value;
-      const isLiquidated = aggrs[index].isLiquidated.value;
       // If cluster won't be liquidated, at which block number his balance becomes zero
       // check if burnRate and balance are valid, > 0
-      if (!Number.isNaN(burnRate) && !Number.isNaN(balance) && burnRate > 0) {
+      if (
+        !Number.isNaN(fields.burnRate) &&
+        !Number.isNaN(fields.balance) &&
+        fields.burnRate > 0
+      ) {
         this._calc(record, {
-          burnRate,
-          balance,
-          isLiquidated,
+          burnRate: fields.burnRate,
+          balance: fields.balance,
+          isLiquidated: fields.isLiquidated,
           minimumBlocksBeforeLiquidation,
-          currentBlockNumber,
+          currentBlockNumber: fields.currentBlockNumber,
           collateralAmount,
         });
       } else {
@@ -158,7 +238,43 @@ export class BurnRatesTask {
         { owner: record.owner, operatorIds: record.operatorIds },
         record,
       );
+      this._logger.debug(
+        `Updated cluster burn rate: ${JSON.stringify(record)}`,
+      );
     }
+  }
+
+  /**
+   * Fetch some common data from the contract to use later for calculations
+   * @private
+   */
+  private async _fetchCommonData(): Promise<{
+    collateralAmount: number;
+    minimumBlocksBeforeLiquidation: number;
+  }> {
+    this._logger.log(
+      'Fetching from the contract minimum liquidation collateral..',
+    );
+    const collateralAmount = +(await Web3Provider.getWithRetry(
+      Web3Provider.getMinimumLiquidationCollateral,
+    ));
+    this._logger.log(
+      `Fetched from the contract minimum liquidation collateral: ${collateralAmount}`,
+    );
+
+    this._logger.log(
+      'Fetching from the contract minimum blocks before liquidation..',
+    );
+    const minimumBlocksBeforeLiquidation = await Web3Provider.getWithRetry(
+      Web3Provider.minimumBlocksBeforeLiquidation,
+    );
+    this._logger.log(
+      `Fetched from the contract minimum blocks before liquidation: ${minimumBlocksBeforeLiquidation}`,
+    );
+    return {
+      collateralAmount,
+      minimumBlocksBeforeLiquidation,
+    };
   }
 
   private _calc(

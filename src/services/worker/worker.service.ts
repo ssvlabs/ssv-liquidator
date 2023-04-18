@@ -24,7 +24,6 @@ export class WorkerService implements OnModuleInit {
 
   async processEvents(events: Array<any>): Promise<void> {
     if (!events.length) {
-      this._logger.log(`There is no events in this block range`);
       return;
     }
     this._logger.log(`Going to process ${events.length} events`);
@@ -40,12 +39,18 @@ export class WorkerService implements OnModuleInit {
             item.transactionHash,
           );
           await this._earningService.update(earnedData);
+          this._logger.debug(
+            `Updated earned data after cluster liquidation: ${JSON.stringify(
+              dataItem,
+            )}`,
+          );
         case SystemType.EVENT_CLUSTER_DEPOSITED:
         case SystemType.EVENT_CLUSTER_WITHDRAWN:
         case SystemType.EVENT_CLUSTER_REACTIVATED:
         case SystemType.EVENT_OPERATOR_FEE_APPROVED:
         case SystemType.EVENT_VALIDATOR_REMOVED:
-          // mark as cluster was updated and need to get it's fresh metrics in burn-rates task
+          // /Mark as cluster was updated and need to get
+          // its fresh metrics in burn-rates task
           await this._clusterService.update(
             {
               owner: dataItem.owner,
@@ -53,6 +58,7 @@ export class WorkerService implements OnModuleInit {
             },
             { burnRate: null, cluster: dataItem.cluster },
           );
+          this._logger.debug(`Updated cluster: ${JSON.stringify(dataItem)}`);
           break;
         case SystemType.EVENT_VALIDATOR_ADDED:
           await this._clusterService.create(dataItem);
@@ -61,6 +67,11 @@ export class WorkerService implements OnModuleInit {
           await this._systemService.save(
             SystemType.MINIMUM_LIQUIDATION_COLLATERAL,
             await Web3Provider.getMinimumLiquidationCollateral(),
+          );
+          this._logger.debug(
+            `Updated minimum liquidation collateral: ${JSON.stringify(
+              dataItem,
+            )}`,
           );
           break;
       }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import Web3Provider from '@cli/providers/web3.provider';
 import { WorkerService } from '@cli/services/worker/worker.service';
 import { SystemService, SystemType } from '@cli/modules/system/system.service';
@@ -7,6 +7,7 @@ import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.ser
 @Injectable()
 export class FetchTask {
   private static isProcessLocked = false;
+  private readonly _logger = new Logger(FetchTask.name);
 
   constructor(
     private _systemService: SystemService,
@@ -19,7 +20,7 @@ export class FetchTask {
   */
   async fetchAllEvents(): Promise<void> {
     if (FetchTask.isProcessLocked) {
-      console.debug(`FetchTask process is already locked.`);
+      this._logger.debug(`Fetching new events is already locked`);
       return;
     }
 
@@ -27,7 +28,7 @@ export class FetchTask {
     try {
       latestBlockNumber = await Web3Provider.web3.eth.getBlockNumber();
     } catch (err) {
-      throw new Error('Could not access the provided node endpoint.');
+      throw new Error('Could not access the provided node endpoint');
     }
 
     try {
@@ -39,25 +40,29 @@ export class FetchTask {
       );
     }
 
-    FetchTask.isProcessLocked = true;
+    try {
+      FetchTask.isProcessLocked = true;
 
-    const fromBlock =
-      (await this._systemService.get(SystemType.GENERAL_LAST_BLOCK_NUMBER)) ||
-      0;
+      const fromBlock =
+        (await this._systemService.get(SystemType.GENERAL_LAST_BLOCK_NUMBER)) ||
+        0;
 
-    console.log(
-      `Syncing events in a blocks range #${fromBlock}_${latestBlockNumber}`,
-    );
-    await this._syncUpdates(fromBlock, latestBlockNumber);
-    console.log(
-      `Synced completed for a blocks range #${fromBlock}_${latestBlockNumber}`,
-    );
+      this._logger.log(
+        `Syncing events in a blocks range: ${fromBlock} - ${latestBlockNumber}`,
+      );
 
-    // Metrics
-    this._metricsService.fetchStatus.set(1);
-    this._metricsService.criticalStatus.set(1);
+      await this._syncUpdates(fromBlock, latestBlockNumber);
 
-    FetchTask.isProcessLocked = false;
+      this._logger.log(
+        `Sync completed for a blocks range: ${fromBlock} - ${latestBlockNumber}`,
+      );
+
+      // Metrics
+      this._metricsService.fetchStatus.set(1);
+      this._metricsService.criticalStatus.set(1);
+    } finally {
+      FetchTask.isProcessLocked = false;
+    }
   }
 
   private async _syncUpdates(
@@ -84,7 +89,7 @@ export class FetchTask {
         );
 
         events.length &&
-          console.log(`Going to process ${events.length} events`);
+          this._logger.log(`Going to process ${events.length} events`);
 
         // parse new events
         await this._workerService.processEvents(events);
@@ -102,7 +107,7 @@ export class FetchTask {
         // the sync for failed ranges won't happen
         filters.fromBlock = filters.toBlock;
       } catch (e) {
-        console.error(`FetchTask::_syncUpdates: Error: ${e}`);
+        this._logger.error(`Sync updates error: ${e}`);
         // try to make the blocks range smaller if it fails for big amount of data
         if (step === MONTH) {
           step = WEEK;

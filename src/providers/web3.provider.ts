@@ -122,7 +122,7 @@ export default class Web3Provider {
 
   static async getWithRetry(
     contractMethod: any,
-    params: Array<any>,
+    params: Array<any> = null,
     maxRetries = 3,
   ) {
     let retries = 0;
@@ -136,9 +136,12 @@ export default class Web3Provider {
                 '[TIMEOUT] Web3Provider::getWithRetry: Timeout expired',
               ),
             );
-          }, Web3Provider.RETRY_DELAY);
+          }, Web3Provider.RETRY_DELAY * 2);
         });
-        return await Promise.race([timeoutPromise, contractMethod(...params)])
+        return await Promise.race([
+          timeoutPromise,
+          contractMethod(...(params || [])),
+        ])
           .then(result => result)
           .catch(error => {
             throw error;
@@ -165,74 +168,6 @@ export default class Web3Provider {
         retryDelay += Web3Provider.RETRY_DELAY;
       }
     }
-  }
-
-  /**
-   * Executes promises with a concurrency limit and a timeout for each batch of promises.
-   * The code assumes that all promises will settle within a reasonable amount of time.
-   * If a promise takes too long to settle, it could cause the function to hang.
-   * To avoid this, there is timeout for the Promise.allSettled call.
-   * If batch timed out or any of settled nested promises rejected - exception will be thrown.
-   *
-   * @param promises - An array of promises to execute.
-   * @param concurrencyLimit - The maximum number of promises to execute concurrently. Defaults to 10.
-   * @param batchTimeout - The maximum time (in milliseconds) to wait for each batch of promises to complete. Defaults to 5 times the retry delay.
-   * @returns - An array of results for each promise.
-   * @throws - An error indicating that one or more promises failed to resolve.
-   */
-  static async proceedWithConcurrencyLimit(
-    promises: Promise<any>[],
-    concurrencyLimit = 10,
-    batchTimeout = Web3Provider.RETRY_DELAY * 5,
-  ): Promise<PromiseSettledResult<any>[]> {
-    /**
-     * An array of promises that are currently being executed.
-     */
-    const toProceed: Promise<any>[] = [];
-
-    /**
-     * An array of results for all input promises.
-     */
-    let results: PromiseSettledResult<any>[] = [];
-
-    for (let i = 0; i < promises.length; i++) {
-      toProceed.push(promises[i]);
-
-      if (toProceed.length >= concurrencyLimit || i === promises.length - 1) {
-        const batchResults: any = await Promise.race([
-          Promise.allSettled(toProceed),
-          new Promise((_, reject) =>
-            setTimeout(
-              () =>
-                reject(
-                  new Error(
-                    `Web3Provider::proceedWithConcurrencyLimit: Batch timed out after ${batchTimeout}ms`,
-                  ),
-                ),
-              batchTimeout,
-            ),
-          ),
-        ]).catch(error => [error]);
-
-        const rejected = batchResults.filter(
-          result => result.status === 'rejected',
-        );
-
-        if (rejected.length > 0) {
-          const errors = rejected.map(result => result.reason);
-          throw new Error(
-            `Web3Provider::proceedWithConcurrencyLimit: One or more promises failed: ${errors.join(
-              ', ',
-            )}`,
-          );
-        }
-
-        results = [...results, ...batchResults];
-        toProceed.length = 0;
-      }
-    }
-
-    return results;
   }
 }
 

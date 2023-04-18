@@ -49,6 +49,12 @@ spec:
               name: config-secrets
               key: node_env
 
+        - name: LOG_LEVEL
+          value: {{ .Values.app.logLevel }}
+
+        - name: NO_COLOR
+          value: {{ .Values.app.noColor }}
+
         - name: NODE_URL
           valueFrom:
             secretKeyRef:
@@ -57,7 +63,7 @@ spec:
 
         - name: GAS_PRICE
           value: "high"
-          
+
         - name: SSV_NETWORK_ADDRESS
           valueFrom:
             secretKeyRef:
@@ -72,7 +78,7 @@ spec:
             secretKeyRef:
               name: config-secrets
               key: ssv_network_views_address
-              
+
         - name: ACCOUNT_PRIVATE_KEY
           valueFrom:
             secretKeyRef:
