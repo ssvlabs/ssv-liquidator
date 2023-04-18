@@ -48,6 +48,6 @@ export default class SolidityErrors {
   }
 
   static isError(solidityError: SolidityError, error: string): boolean {
-    return String(solidityError.error).startsWith(error);
+    return String(solidityError.error).indexOf(error) !== -1;
   }
 }

@@ -184,31 +184,26 @@ export class BurnRatesTask {
             this.decreaseBatchSize();
           } else if (fields[clusterField].error) {
             clusterError = fields[clusterField].error;
-            if (!isLiquidatedError) {
-              isLiquidatedError = SolidityErrors.isError(
-                clusterError,
-                SolidityErrors.ERROR_CLUSTER_LIQUIDATED,
-              );
-              this._logger.debug(
-                `Found error in one of cluster fields: ${JSON.stringify(
-                  fields[clusterField],
-                )}. Cluster: ${JSON.stringify(
-                  record,
-                )}. Cluster will be marked as liquidated if not yet.`,
-              );
-            } else {
-              this._logger.debug(
-                `Found error in one of cluster fields: ${JSON.stringify(
-                  fields[clusterField],
-                )}. Cluster: ${JSON.stringify(record)}.`,
-              );
-            }
+            const isLiquidated = SolidityErrors.isError(
+              clusterError,
+              SolidityErrors.ERROR_CLUSTER_LIQUIDATED,
+            );
+            this._logger.debug(
+              `Found error in one of cluster fields "${clusterField}": ${JSON.stringify(
+                fields[clusterField],
+              )}. Cluster: ${JSON.stringify(record)}. ${
+                isLiquidated
+                  ? 'Cluster will be marked as liquidated if not yet'
+                  : ''
+              }`,
+            );
+            isLiquidatedError = isLiquidatedError || isLiquidated;
           }
         }
       }
 
       // Check specific liquidated error
-      if (isLiquidatedError || fields.isLiquidated) {
+      if (isLiquidatedError || fields.isLiquidated === true) {
         // Update cluster to liquidated only if it has no this state before
         if (!record.isLiquidated) {
           const updated = await this._clusterService.update(
@@ -245,7 +240,7 @@ export class BurnRatesTask {
             clusterError.startsWith('Error:')
               ? clusterError
               : 'Some of the cluster data was not fetched from the contract.'
-          }. Skipping for now`,
+          }. Skipping for now. Cluster: ${JSON.stringify(record)}`,
         );
         continue;
       }
