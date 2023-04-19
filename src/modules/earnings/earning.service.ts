@@ -2,7 +2,7 @@ import Web3Provider from '@cli/providers/web3.provider';
 
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DeleteResult, getConnection } from 'typeorm';
+import { Repository, DeleteResult } from 'typeorm';
 
 import { ConfService } from '@cli/shared/services/conf.service';
 
@@ -16,25 +16,19 @@ export class EarningService {
   ) {}
 
   async findAll(): Promise<Earning[]> {
-    return await this._earningRepository.find();
+    return this._earningRepository.find();
   }
 
   async findBy(options: any): Promise<Earning[]> {
-    return await this._earningRepository.find(options);
+    return this._earningRepository.find(options);
   }
 
   async get(filters: any): Promise<Earning> {
-    return await this._earningRepository.findOne(filters);
+    return this._earningRepository.findOne(filters);
   }
 
   async create(items: Earning[]): Promise<void> {
-    await getConnection()
-      .createQueryBuilder()
-      .insert()
-      .into(Earning)
-      .values(items)
-      .orIgnore(true)
-      .execute();
+    await this._earningRepository.insert(items);
   }
 
   async fetch(transactionHash: string): Promise<any> {
@@ -46,7 +40,7 @@ export class EarningService {
     const earnedData = {
       hash: transactionHash,
       from: txReceipt.from,
-      gasPrice: +tx.gasPrice / 1e18,
+      gasPrice: +tx.gasPrice,
       gasUsed: txReceipt.gasUsed,
       earned: null,
       earnedAtBlock: txReceipt.blockNumber,
@@ -59,7 +53,7 @@ export class EarningService {
     );
     earnedData.earned =
       transferData &&
-      +Web3Provider.web3.utils.hexToNumberString(transferData.data) / 1e18;
+      +Web3Provider.web3.utils.hexToNumberString(transferData.data);
 
     return earnedData;
   }
@@ -75,6 +69,6 @@ export class EarningService {
   }
 
   async delete(id): Promise<DeleteResult> {
-    return await this._earningRepository.delete(id);
+    return this._earningRepository.delete(id);
   }
 }

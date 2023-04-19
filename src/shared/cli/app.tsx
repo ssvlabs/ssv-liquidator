@@ -1,8 +1,8 @@
 import React from 'react';
 import importJsx from 'import-jsx';
 import path from 'path';
-const { Addresses } = importJsx(
-  path.join(__dirname, '/../../modules/addresses/cli/address.container'),
+const { Clusters } = importJsx(
+  path.join(__dirname, '/../../modules/clusters/cli/cluster.container'),
 );
 const { Earnings } = importJsx(
   path.join(__dirname, '/../../modules/earnings/cli/earning.container'),
@@ -13,7 +13,7 @@ const { Namespaces } = importJsx(
 
 interface IAppProps {
   resource: string;
-  addressService;
+  clusterService;
   earningService;
   web3Provider;
 }
@@ -25,7 +25,7 @@ interface IAppState {
 export class App extends React.Component<IAppProps, IAppState> {
   constructor(props) {
     super(props);
-    this.state = { selectedNamespace: 'addresses' };
+    this.state = { selectedNamespace: 'clusters' };
     this.onNamespaceChange = this.onNamespaceChange.bind(this);
   }
 
@@ -35,8 +35,8 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   getResourceComponent() {
     switch (this.state.selectedNamespace) {
-      case 'addresses':
-        return Addresses;
+      case 'clusters':
+        return Clusters;
       case 'earnings':
         return Earnings;
       default:
@@ -53,8 +53,8 @@ export class App extends React.Component<IAppProps, IAppState> {
           <ResourceComponent
             web3Provider={this.props.web3Provider}
             service={
-              this.state.selectedNamespace === 'addresses'
-                ? this.props.addressService
+              this.state.selectedNamespace === 'clusters'
+                ? this.props.clusterService
                 : this.props.earningService
             }
           />

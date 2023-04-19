@@ -3,21 +3,21 @@ import importJsx from 'import-jsx';
 import path from 'path';
 import { Text } from 'ink';
 
-import { transformAddressData } from './address.transformer';
-const { AddressesComponent } = importJsx(
-  path.join(__dirname, '/../../addresses/cli/address.component'),
+import { transformClusterData } from './cluster.transformer';
+const { ClustersComponent } = importJsx(
+  path.join(__dirname, '/../../clusters/cli/cluster.component'),
 );
-interface IAddressesProps {
+interface IClustersProps {
   service;
   web3Provider;
 }
 
-interface IAddressesState {
+interface IClustersState {
   items?: any;
   err?: string;
 }
 
-export class Addresses extends Component<IAddressesProps, IAddressesState> {
+export class Clusters extends Component<IClustersProps, IClustersState> {
   private timer;
   private willComponentUnmount: boolean;
 
@@ -53,12 +53,9 @@ export class Addresses extends Component<IAddressesProps, IAddressesState> {
       const items = await this.props.service.findAll();
       const currentBlockNumber =
         await this.props.web3Provider.currentBlockNumber();
-      const minimumBlocksBeforeLiquidation =
-        await this.props.web3Provider.minimumBlocksBeforeLiquidation();
       this.setStateSafely({
-        items: transformAddressData(items, {
+        items: transformClusterData(items, {
           currentBlockNumber,
-          minimumBlocksBeforeLiquidation,
         }),
       });
     }, 1000);
@@ -66,7 +63,7 @@ export class Addresses extends Component<IAddressesProps, IAddressesState> {
 
   render() {
     if (!this.state.err) {
-      return <AddressesComponent items={this.state.items} />;
+      return <ClustersComponent items={this.state.items} />;
     } else {
       return <Text color="red">{this.state.err}</Text>;
     }

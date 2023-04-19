@@ -1,5 +1,4 @@
 import React from 'react';
-import { Text } from 'ink';
 import importJsx from 'import-jsx';
 import path from 'path';
 
@@ -7,16 +6,16 @@ const { TableComponent } = importJsx(
   path.join(__dirname, '/../../../shared/cli/table'),
 );
 
-interface IAddressesComponentProps {
+interface IClustersComponentProps {
   items?: any;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface IAddressesComponentState {}
+interface IClustersComponentState {}
 
-export class AddressesComponent extends React.Component<
-  IAddressesComponentProps,
-  IAddressesComponentState
+export class ClustersComponent extends React.Component<
+  IClustersComponentProps,
+  IClustersComponentState
 > {
   constructor(props) {
     super(props);

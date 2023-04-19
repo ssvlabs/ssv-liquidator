@@ -5,6 +5,10 @@
 replicaCount: 1
 namespace: liquidation
 
+app:
+  logLevel: 'debug'
+  noColor: 'true'
+
 image:
   repository: 764289642555.dkr.ecr.us-west-2.amazonaws.com/ssv-liquidator
   pullPolicy: IfNotPresent

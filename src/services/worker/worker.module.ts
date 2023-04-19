@@ -1,4 +1,5 @@
-import { HttpModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -10,7 +11,7 @@ import { SystemModule } from '@cli/modules/system/system.module';
 import { WebappModule } from '@cli/modules/webapp/webapp.module';
 import { WorkerService } from '@cli/services/worker/worker.service';
 import { EarningModule } from '@cli/modules/earnings/earning.module';
-import { AddressModule } from '@cli/modules/addresses/address.module';
+import { ClusterModule } from '@cli/modules/clusters/cluster.module';
 import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
 
 @Module({
@@ -27,7 +28,7 @@ import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.ser
     HttpModule,
     SharedModule,
     SystemModule,
-    AddressModule,
+    ClusterModule,
     EarningModule,
     WebappModule,
   ],

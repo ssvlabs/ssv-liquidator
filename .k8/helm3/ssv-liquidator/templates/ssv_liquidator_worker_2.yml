@@ -28,7 +28,7 @@ spec:
     matchLabels:
       app: ssv-liquidator-worker-2
   strategy:
-    type: Recreate      
+    type: Recreate
   template:
     metadata:
       labels:
@@ -42,7 +42,7 @@ spec:
                   - key: kubernetes.io/role
                     operator: In
                     values:
-                      - ssv-main      
+                      - ssv-main
       containers:
       - name: ssv-liquidator-worker-2
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -56,8 +56,14 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: node_env         
-              
+              key: node_env
+
+        - name: LOG_LEVEL
+          value: "{{ .Values.app.logLevel }}"
+
+        - name: NO_COLOR
+          value: "{{ .Values.app.noColor }}"
+
         - name: NODE_URL
           valueFrom:
             secretKeyRef:
@@ -65,13 +71,22 @@ spec:
               key: node_url
 
         - name: GAS_PRICE
-          value: "normal"
+          value: "medium"
 
         - name: SSV_NETWORK_ADDRESS
           valueFrom:
             secretKeyRef:
               name: config-secrets
               key: ssv_network_address
+
+        - name: HIDE_TABLE
+          value: "1"
+
+        - name: SSV_NETWORK_VIEWS_ADDRESS
+          valueFrom:
+            secretKeyRef:
+              name: config-secrets
+              key: ssv_network_views_address
 
         - name: ACCOUNT_PRIVATE_KEY
           valueFrom:
@@ -85,15 +100,15 @@ spec:
               name: config-secrets
               key: ssv_token_address
 
-        volumeMounts:
-        - mountPath: "/data/"
-          name: ssv-liquidator-worker-2
+#        volumeMounts:
+#        - mountPath: "/data/"
+#          name: ssv-liquidator-worker-2
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
-      volumes:
-      - persistentVolumeClaim:
-          claimName: ssv-liquidator-worker-2
-        name: ssv-liquidator-worker-2
+#      volumes:
+#      - persistentVolumeClaim:
+#          claimName: ssv-liquidator-worker-2
+#        name: ssv-liquidator-worker-2
         {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
@@ -101,4 +116,4 @@ spec:
       {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
-      {{- end }}            
+      {{- end }}

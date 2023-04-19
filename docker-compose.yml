@@ -13,9 +13,12 @@ services:
     environment:
       - SSV_NETWORK_ADDRESS
       - NODE_URL
-      - ACCOUNT_ADDRESS
       - ACCOUNT_PRIVATE_KEY
       - GAS_PRICE
+      - HIDE_TABLE
+      - NODE_RATE_LIMIT
+      - LOG_LEVEL
+      - NO_COLOR
     restart: on-failure
 
 volumes:
