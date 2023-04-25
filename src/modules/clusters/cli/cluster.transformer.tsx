@@ -30,12 +30,12 @@ const textStatus = (item, extra: any) => {
   const { currentBlockNumber } = extra;
   switch (true) {
     case item.isLiquidated:
-      return 'Liquidated';
+      return LABEL_CLUSTER_STATUS_LIQUIDATED;
     case item.liquidationBlockNumber !== null &&
       item.liquidationBlockNumber <= currentBlockNumber:
-      return 'To liquidate';
+      return LABEL_CLUSTER_STATUS_TO_LIQUIDATE;
     default:
-      return 'Running';
+      return LABEL_CLUSTER_STATUS_RUNNING;
   }
 };
 
