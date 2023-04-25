@@ -4,6 +4,10 @@ import en from 'javascript-time-ago/locale/en';
 TimeAgo.addLocale(en);
 const timeAgo = new TimeAgo('en-US');
 
+const LABEL_CLUSTER_STATUS_LIQUIDATED = 'Liquidated';
+const LABEL_CLUSTER_STATUS_TO_LIQUIDATE = 'To liquidate';
+const LABEL_CLUSTER_STATUS_RUNNING = 'Running';
+
 /**
  * It provides how to colorize the status text based on the status string
  * @param {string} status pod phase status string obtained from the kube api
@@ -11,11 +15,11 @@ const timeAgo = new TimeAgo('en-US');
  */
 export const colorCodeStatus = status => {
   switch (status) {
-    case 'Liquidated':
+    case LABEL_CLUSTER_STATUS_LIQUIDATED:
       return { bgColor: 'red', color: 'white' };
-    case 'To liquidate':
+    case LABEL_CLUSTER_STATUS_TO_LIQUIDATE:
       return { bgColor: 'yellow', color: 'black' };
-    case 'Running':
+    case LABEL_CLUSTER_STATUS_RUNNING:
       return { bgColor: 'green', color: 'white' };
     default:
       return {};
@@ -65,6 +69,16 @@ export const transformClusterData = (items, extra: any) => {
         },
       });
     }
+
+    // Properly sort all entries in a table
+    clusters.sort((a: any, b: any): number => {
+      const order: string[] = [
+        LABEL_CLUSTER_STATUS_TO_LIQUIDATE,
+        LABEL_CLUSTER_STATUS_LIQUIDATED,
+        LABEL_CLUSTER_STATUS_RUNNING,
+      ];
+      return order.indexOf(a.status.text) - order.indexOf(b.status.text);
+    });
   } catch (e) {
     console.log(e);
   }

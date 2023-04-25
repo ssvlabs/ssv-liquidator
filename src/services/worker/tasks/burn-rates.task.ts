@@ -88,10 +88,13 @@ export class BurnRatesTask {
 
   private async processBurnRates(): Promise<void> {
     const missedRecords = (
-      await this._clusterService.findBy({
-        where: { burnRate: IsNull() },
-        take: this.batchSize,
-      })
+      await this._clusterService
+        .getQueryBuilder()
+        .where('cluster.burnRate IS NULL OR cluster.burnRate = :zeroBurnRate', {
+          zeroBurnRate: 0,
+        })
+        .take(this.batchSize)
+        .getMany()
     ).map(item => {
       try {
         item.cluster = JSON.parse(item.cluster);
@@ -239,8 +242,8 @@ export class BurnRatesTask {
           })}`,
         );
       } else {
-        record.burnRate = null;
-        record.balance = null;
+        record.burnRate = fields.burnRate;
+        record.balance = fields.balance;
         record.liquidationBlockNumber = null;
         this._logger.verbose(
           `Erased cluster data: ${JSON.stringify({

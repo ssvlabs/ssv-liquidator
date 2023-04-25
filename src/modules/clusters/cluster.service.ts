@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThan, Repository, FindManyOptions } from 'typeorm';
+import { Repository, FindManyOptions } from 'typeorm';
 import { Cluster } from '@cli/modules/clusters/cluster.entity';
 
 @Injectable()
@@ -9,9 +9,12 @@ export class ClusterService {
     @InjectRepository(Cluster) private _clusterRepository: Repository<Cluster>,
   ) {}
 
+  getQueryBuilder() {
+    return this._clusterRepository.createQueryBuilder('cluster');
+  }
+
   async findAll(): Promise<Cluster[]> {
     return this._clusterRepository.find({
-      where: [{ burnRate: MoreThan(0) }, { isLiquidated: true }],
       order: {
         liquidationBlockNumber: 'ASC',
       },
