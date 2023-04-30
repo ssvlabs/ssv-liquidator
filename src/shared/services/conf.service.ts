@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 export class ConfService extends ConfigService {
   private GAS_PRICE = 'low';
   private NODE_URL = 'eth.infra.com';
+  private MAX_VISIBLE_BLOCKS = 50000;
 
   public init() {
     const parser = new ArgumentParser();
@@ -47,6 +48,10 @@ export class ConfService extends ConfigService {
       help: 'Node Rate Limit. Default value: 10',
       required: false,
     });
+    parser.add_argument('-mvb', '--max-visible-blocks', {
+      help: `Max block range to display active clusters. Default: ${this.MAX_VISIBLE_BLOCKS}`,
+      required: false,
+    });
 
     const args = parser.parse_args();
     Object.keys(args).forEach(key => {
@@ -63,6 +68,7 @@ export class ConfService extends ConfigService {
       NODE_URL: 'node_url',
       HIDE_TABLE: 'hide_table',
       NODE_RATE_LIMIT: 'node_rate_limit',
+      MAX_VISIBLE_BLOCKS: 'max_visible_blocks',
     };
     for (const envVarName of Object.keys(envVars)) {
       process.env[envVarName] =

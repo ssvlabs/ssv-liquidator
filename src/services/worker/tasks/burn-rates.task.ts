@@ -1,4 +1,3 @@
-import { IsNull } from 'typeorm';
 import { Injectable, Logger } from '@nestjs/common';
 import Web3Provider from '@cli/providers/web3.provider';
 import { ConfService } from '@cli/shared/services/conf.service';
@@ -90,9 +89,7 @@ export class BurnRatesTask {
     const missedRecords = (
       await this._clusterService
         .getQueryBuilder()
-        .where('cluster.burnRate IS NULL OR cluster.burnRate = :zeroBurnRate', {
-          zeroBurnRate: 0,
-        })
+        .where('cluster.burnRate IS NULL and cluster.isLiquidated != true')
         .take(this.batchSize)
         .getMany()
     ).map(item => {
@@ -107,7 +104,6 @@ export class BurnRatesTask {
       }
       return item;
     });
-
     // Nothing to process
     if (missedRecords.length === 0) {
       this._logger.debug('No clusters with empty burn rate. Done.');
