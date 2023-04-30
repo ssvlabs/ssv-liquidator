@@ -89,7 +89,7 @@ export class BurnRatesTask {
     const missedRecords = (
       await this._clusterService
         .getQueryBuilder()
-        .where('cluster.burnRate IS NULL and cluster.isLiquidated != true')
+        .where('cluster.burnRate IS NULL and cluster.isLiquidated == false')
         .take(this.batchSize)
         .getMany()
     ).map(item => {
