@@ -50,9 +50,9 @@ export class Clusters extends Component<IClustersProps, IClustersState> {
 
     this.timer = setInterval(async () => {
       if (this.willComponentUnmount) return;
-      const items = await this.props.service.findAll();
       const currentBlockNumber =
         await this.props.web3Provider.currentBlockNumber();
+      const items = await this.props.service.toDisplay();
       this.setStateSafely({
         items: transformClusterData(items, {
           currentBlockNumber,

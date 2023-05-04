@@ -47,19 +47,40 @@ export class WorkerService implements OnModuleInit {
         case SystemType.EVENT_CLUSTER_DEPOSITED:
         case SystemType.EVENT_CLUSTER_WITHDRAWN:
         case SystemType.EVENT_CLUSTER_REACTIVATED:
-        case SystemType.EVENT_OPERATOR_FEE_APPROVED:
         case SystemType.EVENT_VALIDATOR_REMOVED:
           // /Mark as cluster was updated and need to get
           // its fresh metrics in burn-rates task
-          const updated = await this._clusterService.update(
+          (await this._clusterService.update(
             {
               owner: dataItem.owner,
               operatorIds: dataItem.operatorIds,
             },
-            { burnRate: null, cluster: dataItem.cluster },
-          );
-          if (updated) {
+            { burnRate: null, isLiquidated: false, cluster: dataItem.cluster },
+          )) &&
             this._logger.debug(`Updated cluster: ${JSON.stringify(dataItem)}`);
+          break;
+        case SystemType.EVENT_OPERATOR_FEE_APPROVED:
+          // /Mark as cluster was updated and need to get
+          // its fresh metrics in burn-rates task
+          const items = await this._clusterService
+            .getQueryBuilder()
+            .where(
+              `isLiquidated == false and (instr(operatorIds, ',${dataItem.operatorId},') > 0 OR instr(operatorIds, '${dataItem.operatorId},') = 1 OR instr(operatorIds, ',${dataItem.operatorId}') > 0)`,
+            )
+            .getMany();
+          for (const item of items) {
+            (await this._clusterService.update(
+              {
+                owner: item.owner,
+                operatorIds: item.operatorIds,
+              },
+              {
+                burnRate: null,
+                isLiquidated: false,
+                cluster: item.cluster,
+              },
+            )) &&
+              this._logger.debug(`Updated cluster: ${JSON.stringify(item)}`);
           }
           break;
         case SystemType.EVENT_VALIDATOR_ADDED:

@@ -63,6 +63,7 @@ gas-price (g) = Gas price, default: low
 ssv-token-address = The contract address for the SSV token
 hide-table = Hide/show realtime table
 node-rate-limit = concurrent requests limit (optional, by default: 10)
+max-visible-blocks = Max block range to display active clusters (optional, by default: 50000)
 ```sh
 yarn cli --node-url=eth.infra.com --private-key=a70478942bf... --ssv-network-address=0x425890f2a5g... --ssv-network-views-address=0x425890f2a5g... --gas-price=slow --ssv-token-address=0x425890f2a5g84hw94...
 ```
@@ -87,6 +88,7 @@ SSV_TOKEN_ADDRESS=0x425890f2a5g84hw94...
 ACCOUNT_PRIVATE_KEY=a70478942bf...  
 GAS_PRICE=medium  
 HIDE_TABLE=false
+MAX_VISIBLE_BLOCKS=50000
 ```
 
 If you saved all the parameters in the `.env` file you can run:

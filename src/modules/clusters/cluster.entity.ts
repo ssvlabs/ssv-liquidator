@@ -1,4 +1,4 @@
-import moment from 'moment-timezone';
+// import moment from 'moment-timezone';
 import {
   Index,
   Entity,
@@ -10,8 +10,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-const DEFAULT_TIMEZONE = 'Asia/Jerusalem';
-const DEFAULT_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+// const DEFAULT_TIMEZONE = 'Asia/Jerusalem';
+// const DEFAULT_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
 @Entity()
 @Index(['owner', 'operatorIds'], { unique: true })
@@ -48,18 +48,12 @@ export class Cluster {
 
   @BeforeInsert()
   insertCreated() {
-    this.createdAt = new Date(
-      moment().tz(DEFAULT_TIMEZONE).format(DEFAULT_FORMAT),
-    );
-    this.updatedAt = new Date(
-      moment().tz(DEFAULT_TIMEZONE).format(DEFAULT_FORMAT),
-    );
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
   }
 
   @BeforeUpdate()
   insertUpdated() {
-    this.updatedAt = new Date(
-      moment().tz(DEFAULT_TIMEZONE).format(DEFAULT_FORMAT),
-    );
+    this.updatedAt = new Date();
   }
 }
