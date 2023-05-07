@@ -1,4 +1,3 @@
-import { IsNull } from 'typeorm';
 import { Injectable, Logger } from '@nestjs/common';
 import Web3Provider from '@cli/providers/web3.provider';
 import { ConfService } from '@cli/shared/services/conf.service';
@@ -88,10 +87,11 @@ export class BurnRatesTask {
 
   private async processBurnRates(): Promise<void> {
     const missedRecords = (
-      await this._clusterService.findBy({
-        where: { burnRate: IsNull() },
-        take: this.batchSize,
-      })
+      await this._clusterService
+        .getQueryBuilder()
+        .where('cluster.burnRate IS NULL and cluster.isLiquidated == false')
+        .take(this.batchSize)
+        .getMany()
     ).map(item => {
       try {
         item.cluster = JSON.parse(item.cluster);
@@ -104,7 +104,6 @@ export class BurnRatesTask {
       }
       return item;
     });
-
     // Nothing to process
     if (missedRecords.length === 0) {
       this._logger.debug('No clusters with empty burn rate. Done.');
@@ -239,8 +238,8 @@ export class BurnRatesTask {
           })}`,
         );
       } else {
-        record.burnRate = null;
-        record.balance = null;
+        record.burnRate = fields.burnRate;
+        record.balance = fields.balance;
         record.liquidationBlockNumber = null;
         this._logger.verbose(
           `Erased cluster data: ${JSON.stringify({

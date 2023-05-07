@@ -1,17 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThan, Repository, FindManyOptions } from 'typeorm';
+import { Repository, FindManyOptions, Not, LessThanOrEqual } from 'typeorm';
+import Web3Provider from '@cli/providers/web3.provider';
+
 import { Cluster } from '@cli/modules/clusters/cluster.entity';
+import { ConfService } from '@cli/shared/services/conf.service';
+import { RetryService } from '@cli/shared/services/retry.service';
 
 @Injectable()
 export class ClusterService {
   constructor(
     @InjectRepository(Cluster) private _clusterRepository: Repository<Cluster>,
+    private _config: ConfService,
+    private _retryService: RetryService,
   ) {}
+
+  getQueryBuilder() {
+    return this._clusterRepository.createQueryBuilder('cluster');
+  }
 
   async findAll(): Promise<Cluster[]> {
     return this._clusterRepository.find({
-      where: [{ burnRate: MoreThan(0) }, { isLiquidated: true }],
       order: {
         liquidationBlockNumber: 'ASC',
       },
@@ -20,6 +29,24 @@ export class ClusterService {
 
   async findBy(options: FindManyOptions): Promise<Cluster[]> {
     return this._clusterRepository.find(options);
+  }
+
+  async toDisplay(): Promise<Cluster[]> {
+    const currentBlockNumber = +(await this._retryService.getWithRetry(
+      Web3Provider.currentBlockNumber,
+    ));
+    return this.findBy({
+      where: {
+        isLiquidated: false,
+        burnRate: Not(0),
+        liquidationBlockNumber: LessThanOrEqual(
+          currentBlockNumber + +this._config.get('MAX_VISIBLE_BLOCKS'),
+        ),
+      },
+      order: {
+        liquidationBlockNumber: 'ASC',
+      },
+    });
   }
 
   async create(cluster: Cluster): Promise<any> {
@@ -51,11 +78,13 @@ export class ClusterService {
     const records = await this.findBy({ where });
     let updated = false;
     for (const record of records) {
-      for (const record of records) {
-        const dto: any = this._clusterRepository.create(updates);
-        updated =
-          updated || !!(await this._clusterRepository.update(where, dto));
-      }
+      const dto: any = this._clusterRepository.create({
+        ...record,
+        ...updates,
+      });
+      updated =
+        updated ||
+        !!(await this._clusterRepository.update(where, dto)).affected;
     }
     return updated;
   }
