@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ssv-liquidator-worker-svc
+  name: ssv-liquidator-worker-5-svc
   namespace: {{ .Values.namespace }}
   labels:
-    name: ssv-liquidator-worker-svc
+    name: ssv-liquidator-worker-5-svc
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -13,29 +13,38 @@ spec:
       protocol: TCP
       targetPort: 3000
   selector:
-    app: ssv-liquidator-worker
+    app: ssv-liquidator-worker-5
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: ssv-liquidator-worker
-  name: ssv-liquidator-worker
+    app: ssv-liquidator-worker-5
+  name: ssv-liquidator-worker-5
   namespace: {{ .Values.namespace }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: ssv-liquidator-worker
+      app: ssv-liquidator-worker-5
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: ssv-liquidator-worker
+        app: ssv-liquidator-worker-5
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/role
+                    operator: In
+                    values:
+                      - ssv-main
       containers:
-      - name: ssv-liquidator-worker
+      - name: ssv-liquidator-worker-5
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: Always
         ports:
@@ -68,7 +77,8 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: ssv_network_address_1
+# Jato2 v0.3.1-rc
+              key: ssv_network_address_5
 
         - name: HIDE_TABLE
           value: "1"
@@ -77,13 +87,14 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: ssv_network_views_address_1
+# Jato2 v0.3.1-rc
+              key: ssv_network_views_address_5
 
         - name: ACCOUNT_PRIVATE_KEY
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: account_private_key
+              key: account_private_key_2
 
         - name: SSV_TOKEN_ADDRESS
           valueFrom:
@@ -93,13 +104,13 @@ spec:
 
 #        volumeMounts:
 #        - mountPath: "/data/"
-#          name: ssv-liquidator-worker
+#          name: ssv-liquidator-worker-5
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
 #      volumes:
 #      - persistentVolumeClaim:
-#          claimName: ssv-liquidator-worker
-#        name: ssv-liquidator-worker
+#          claimName: ssv-liquidator-worker-5
+#        name: ssv-liquidator-worker-5
         {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}

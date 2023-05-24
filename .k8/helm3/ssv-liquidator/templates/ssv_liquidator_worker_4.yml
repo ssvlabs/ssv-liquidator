@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ssv-liquidator-worker-svc
+  name: ssv-liquidator-worker-4-svc
   namespace: {{ .Values.namespace }}
   labels:
-    name: ssv-liquidator-worker-svc
+    name: ssv-liquidator-worker-4-svc
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -13,29 +13,29 @@ spec:
       protocol: TCP
       targetPort: 3000
   selector:
-    app: ssv-liquidator-worker
+    app: ssv-liquidator-worker-4
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: ssv-liquidator-worker
-  name: ssv-liquidator-worker
+    app: ssv-liquidator-worker-4
+  name: ssv-liquidator-worker-4
   namespace: {{ .Values.namespace }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: ssv-liquidator-worker
+      app: ssv-liquidator-worker-4
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: ssv-liquidator-worker
+        app: ssv-liquidator-worker-4
     spec:
       containers:
-      - name: ssv-liquidator-worker
+      - name: ssv-liquidator-worker-4
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: Always
         ports:
@@ -68,7 +68,8 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: ssv_network_address_1
+# Jato2 v0.3.1-rc
+              key: ssv_network_address_4
 
         - name: HIDE_TABLE
           value: "1"
@@ -77,7 +78,8 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: ssv_network_views_address_1
+# Jato2 v0.3.1-rc
+              key: ssv_network_views_address_4
 
         - name: ACCOUNT_PRIVATE_KEY
           valueFrom:
@@ -93,13 +95,13 @@ spec:
 
 #        volumeMounts:
 #        - mountPath: "/data/"
-#          name: ssv-liquidator-worker
+#          name: ssv-liquidator-worker-4
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
 #      volumes:
 #      - persistentVolumeClaim:
-#          claimName: ssv-liquidator-worker
-#        name: ssv-liquidator-worker
+#          claimName: ssv-liquidator-worker-4
+#        name: ssv-liquidator-worker-4
         {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
