@@ -68,6 +68,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
+# Jato2 v0.3.1-rc
               key: ssv_network_address_6
 
         - name: HIDE_TABLE
@@ -77,6 +78,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
+# Jato2 v0.3.1-rc
               key: ssv_network_views_address_6
 
         - name: ACCOUNT_PRIVATE_KEY
