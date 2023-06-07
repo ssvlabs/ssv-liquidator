@@ -81,6 +81,11 @@
   },
   {
     "inputs": [],
+    "name": "MaxValueExceeded",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "NewBlockPeriodIsBelowMinimum",
     "type": "error"
   },
