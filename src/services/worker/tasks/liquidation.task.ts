@@ -270,7 +270,7 @@ export class LiquidationTask {
 
     // Build liquidation transaction base
     const transaction: Record<string, any> = {
-      to: this._config.get('SSV_NETWORK_ADDRESS'),
+      to: Web3Provider.getContractCoreAddress(),
       value: 0,
       nonce: await Web3Provider.web3.eth.getTransactionCount(
         Web3Provider.web3.eth.accounts.privateKeyToAccount(

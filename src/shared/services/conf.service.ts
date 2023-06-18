@@ -9,6 +9,14 @@ export class ConfService extends ConfigService {
   public init() {
     const parser = new ArgumentParser();
 
+    parser.add_argument('-sse', '--ssv-sync-env', {
+      help: `The SSV sync environment (prod or stage)`,
+      required: false,
+    });
+    parser.add_argument('-ss', '--ssv-sync', {
+      help: `The SSV contract name (format: version.network), for example: v4.prater`,
+      required: false,
+    });
     parser.add_argument('-ht', '--hide-table', {
       type: 'int',
       help: `Hide the summary table. Default is 0 (show)`,
@@ -60,9 +68,8 @@ export class ConfService extends ConfigService {
 
     const envVars = {
       // ENV name -> argparse name
-      SSV_TOKEN_ADDRESS: 'ssv_token_address',
-      SSV_NETWORK_ADDRESS: 'ssv_network_address',
-      SSV_NETWORK_VIEWS_ADDRESS: 'ssv_network_views_address',
+      SSV_SYNC_ENV: 'ssv_sync_env',
+      SSV_SYNC: 'ssv_sync',
       GAS_PRICE: 'gas_price',
       ACCOUNT_PRIVATE_KEY: 'private_key',
       NODE_URL: 'node_url',

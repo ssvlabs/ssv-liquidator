@@ -55,23 +55,22 @@ yarn cli --help
 ```
 
 Input parameters:
+ssv-sync-env (sse) - The SSV sync environment (prod or stage)
+ssv-sync (ss) - The SSV contract name (format: version.network), for example: v4.prater
 node-url (n) = ETH1 node url
 private-key (pk) = Account private key
-ssv-network-address (c) = Contract Network Address
-ssv-network-views-address (c) = Contract Network Views Address
 gas-price (g) = Gas price, default: low
-ssv-token-address = The contract address for the SSV token
 hide-table = Hide/show realtime table
 node-rate-limit = concurrent requests limit (optional, by default: 10)
 max-visible-blocks = Max block range to display active clusters (optional, by default: 50000)
 ```sh
-yarn cli --node-url=eth.infra.com --private-key=a70478942bf... --ssv-network-address=0x425890f2a5g... --ssv-network-views-address=0x425890f2a5g... --gas-price=slow --ssv-token-address=0x425890f2a5g84hw94...
+yarn cli --node-url=eth.infra.com --private-key=a70478942bf... --gas-price=slow --ssv-sync-env=prod --ssv-sync=v4.prater
 ```
 
 Example of running the CLI with the minimum requirements:
 
 ```sh
-yarn cli --private-key=a70478942bf...
+yarn cli --private-key=a70478942bf... --ssv-sync-env=prod --ssv-sync=v4.prater
 ```
 
 ### Option 2: Using an env file
@@ -81,10 +80,9 @@ Copy the `.env.example` file to `.env` and update `.env` with your parameters.
 Example content below:
 
 ```sh
-NODE_URL=eth.infra.com  
-SSV_NETWORK_ADDRESS=0x425890f2a5g...  
-SSV_NETWORK_VIEWS_ADDRESS=0x425890f2a5g...  
-SSV_TOKEN_ADDRESS=0x425890f2a5g84hw94...  
+NODE_URL=eth.infra.com
+SSV_SYNC_ENV=prod
+SSV_SYNC='v4.prater'
 ACCOUNT_PRIVATE_KEY=a70478942bf...  
 GAS_PRICE=medium  
 HIDE_TABLE=false

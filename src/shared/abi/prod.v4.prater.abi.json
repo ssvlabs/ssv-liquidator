@@ -1,6 +1,6 @@
 {
   "contractAddress": "0x45b831727dc96035e6a2f77aaace4835195a54af",
-  "contractAddressView": "0x6F47C9Dbe0e3a369aE0ccDFF982183881CcDfb42",
+  "tokenAddress": "0x3a9f01091C446bdE031E39ea8354647AFef091E7",
   "genesisBlock": 9109171,
   "abi": [
     {

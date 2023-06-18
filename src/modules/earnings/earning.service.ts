@@ -47,9 +47,7 @@ export class EarningService {
     };
     const { logs } = txReceipt;
     const transferData = logs.find(
-      log =>
-        log.address.toLowerCase() ===
-        this._config.get('SSV_TOKEN_ADDRESS').toLowerCase(),
+      log => log.address.toLowerCase() === Web3Provider.getTokenAddress(),
     );
     earnedData.earned =
       transferData &&

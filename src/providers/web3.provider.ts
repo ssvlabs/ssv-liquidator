@@ -7,6 +7,7 @@ export type ContractData = {
   network: string;
   address: ContractAddress;
   addressViews: ContractAddress;
+  tokenAddress: string;
   abi: Record<string, any>;
   abiViews: Record<string, any>;
   genesisBlock: number;
@@ -36,10 +37,10 @@ let [version, network] = contractGroup.split('.');
 version = version.toUpperCase();
 network = network.toUpperCase();
 
-let jsonData;
+let jsonCoreData;
 try {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  jsonData = require(`@cli/shared/abi/${contractEnv}.${contractGroup}.abi.json`);
+  jsonCoreData = require(`@cli/shared/abi/${contractEnv}.${contractGroup}.abi.json`);
 } catch (err) {
   console.error(
     `Failed to load JSON data from ${contractEnv}.${contractGroup}.abi.json`,
@@ -48,30 +49,44 @@ try {
   throw err;
 }
 
+let jsonViewsData;
 try {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  require(`@cli/shared/abi/${contractEnv}.${contractGroup}.view.abi.json`);
+  jsonViewsData = require(`@cli/shared/abi/${contractEnv}.${contractGroup}.views.abi.json`);
 } catch (err) {
   console.error(
-    `Failed to load JSON data from ${contractEnv}.${contractGroup}.view.abi.json`,
+    `Failed to load JSON data from ${contractEnv}.${contractGroup}.views.abi.json`,
     err,
   );
   throw err;
 }
 
 // Check if required properties exist in jsonData
-if (!jsonData.contractAddress || !jsonData.abi || !jsonData.genesisBlock) {
-  throw new Error(`Missing data in JSON for ${contractEnv}.${contractGroup}`);
+if (
+  !jsonCoreData.contractAddress ||
+  !jsonCoreData.abi ||
+  !jsonCoreData.genesisBlock
+) {
+  throw new Error(
+    `Missing core data in JSON for ${contractEnv}.${contractGroup}`,
+  );
+}
+
+// Check if required properties exist in jsonData
+if (!jsonViewsData.contractAddress || !jsonViewsData.abi) {
+  throw new Error(
+    `Missing views data in JSON for ${contractEnv}.${contractGroup}`,
+  );
 }
 
 const contract: ContractData = <ContractData>{
   version,
   network,
-  address: jsonData.contractAddress,
-  addressViews: jsonData.contractAddressView,
-  abi: jsonData.abi,
-  abiViews: require(`@cli/shared/abi/${contractEnv}.${contractGroup}.view.abi.json`),
-  genesisBlock: jsonData.genesisBlock,
+  address: jsonCoreData.contractAddress,
+  addressViews: jsonViewsData.contractAddress,
+  abi: jsonCoreData.abi,
+  abiViews: jsonViewsData.abi,
+  genesisBlock: jsonCoreData.genesisBlock,
 };
 
 export default class Web3Provider {
@@ -179,5 +194,13 @@ export default class Web3Provider {
 
   static getGenesisBlock() {
     return contract.genesisBlock;
+  }
+
+  static getTokenAddress() {
+    return contract.tokenAddress;
+  }
+
+  static getContractCoreAddress() {
+    return contract.address;
   }
 }
