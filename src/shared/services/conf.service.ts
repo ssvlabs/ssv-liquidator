@@ -5,12 +5,13 @@ export class ConfService extends ConfigService {
   private GAS_PRICE = 'low';
   private NODE_URL = 'eth.infra.com';
   private MAX_VISIBLE_BLOCKS = 50000;
+  private SSV_SYNC_ENV = 'prod';
 
   public init() {
     const parser = new ArgumentParser();
 
     parser.add_argument('-sse', '--ssv-sync-env', {
-      help: `The SSV sync environment (prod or stage)`,
+      help: `The SSV sync environment (prod or stage). Default: ${this.SSV_SYNC_ENV}`,
       required: false,
     });
     parser.add_argument('-ss', '--ssv-sync', {
