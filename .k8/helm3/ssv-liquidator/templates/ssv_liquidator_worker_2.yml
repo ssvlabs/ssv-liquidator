@@ -73,20 +73,20 @@ spec:
         - name: GAS_PRICE
           value: "medium"
 
-        - name: SSV_NETWORK_ADDRESS
+        - name: SSV_SYNC_ENV
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: ssv_network_address_2
+              key: ssv_sync_env_2
 
         - name: HIDE_TABLE
           value: "1"
 
-        - name: SSV_NETWORK_VIEWS_ADDRESS
+        - name: SSV_SYNC
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: ssv_network_views_address_2
+              key: ssv_sync_2
 
         - name: ACCOUNT_PRIVATE_KEY
           valueFrom:

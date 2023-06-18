@@ -1,6 +1,78 @@
 import Web3 from 'web3';
-import ABI_SSV_NETWORK_CORE from '@cli/shared/abi.ssv-network.json';
-import ABI_SSV_NETWORK_VIEWS from '@cli/shared/abi.ssv-network-views.json';
+
+export type NetworkName = string;
+export type ContractAddress = string;
+export type ContractData = {
+  version: string;
+  network: string;
+  address: ContractAddress;
+  addressViews: ContractAddress;
+  abi: Record<string, any>;
+  abiViews: Record<string, any>;
+  genesisBlock: number;
+};
+
+const contractEnv = process.env.SSV_SYNC_ENV;
+const contractGroup = process.env.SSV_SYNC;
+
+// Check if process.env['SSV_SYNC'] exists
+if (!contractGroup) {
+  throw new Error('SSV_SYNC is not defined in the environment variables');
+}
+
+// Check if group is in the expected format
+if (contractGroup.split('.').length !== 2) {
+  throw new Error(
+    `Invalid format for ${process.env.SSV_SYNC}. Expected format is version.networkName`,
+  );
+}
+
+// Check if process.env.SSV_SYNC_ENV exists
+if (!contractEnv) {
+  throw new Error('SSV_SYNC_ENV is not defined in the environment variables');
+}
+
+let [version, network] = contractGroup.split('.');
+version = version.toUpperCase();
+network = network.toUpperCase();
+
+let jsonData;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  jsonData = require(`@cli/shared/abi/${contractEnv}.${contractGroup}.abi.json`);
+} catch (err) {
+  console.error(
+    `Failed to load JSON data from ${contractEnv}.${contractGroup}.abi.json`,
+    err,
+  );
+  throw err;
+}
+
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  require(`@cli/shared/abi/${contractEnv}.${contractGroup}.view.abi.json`);
+} catch (err) {
+  console.error(
+    `Failed to load JSON data from ${contractEnv}.${contractGroup}.view.abi.json`,
+    err,
+  );
+  throw err;
+}
+
+// Check if required properties exist in jsonData
+if (!jsonData.contractAddress || !jsonData.abi || !jsonData.genesisBlock) {
+  throw new Error(`Missing data in JSON for ${contractEnv}.${contractGroup}`);
+}
+
+const contract: ContractData = <ContractData>{
+  version,
+  network,
+  address: jsonData.contractAddress,
+  addressViews: jsonData.contractAddressView,
+  abi: jsonData.abi,
+  abiViews: require(`@cli/shared/abi/${contractEnv}.${contractGroup}.view.abi.json`),
+  genesisBlock: jsonData.genesisBlock,
+};
 
 export default class Web3Provider {
   static get web3() {
@@ -8,24 +80,24 @@ export default class Web3Provider {
   }
 
   static get abiCore() {
-    return ABI_SSV_NETWORK_CORE as any;
+    return contract.abi as any;
   }
 
   static get abiViews() {
-    return ABI_SSV_NETWORK_VIEWS as any;
+    return contract.abiViews as any;
   }
 
   static get contractCore() {
     return new Web3Provider.web3.eth.Contract(
       Web3Provider.abiCore,
-      process.env.SSV_NETWORK_ADDRESS,
+      contract.address,
     );
   }
 
   static get contractViews() {
     return new Web3Provider.web3.eth.Contract(
       Web3Provider.abiViews,
-      process.env.SSV_NETWORK_VIEWS_ADDRESS,
+      contract.addressViews,
     );
   }
 
@@ -103,5 +175,9 @@ export default class Web3Provider {
 
   static operatorIdsToArray(str) {
     return str.split(',').map(Number);
+  }
+
+  static getGenesisBlock() {
+    return contract.genesisBlock;
   }
 }
