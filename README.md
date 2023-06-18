@@ -64,13 +64,13 @@ hide-table = Hide/show realtime table
 node-rate-limit = concurrent requests limit (optional, by default: 10)
 max-visible-blocks = Max block range to display active clusters (optional, by default: 50000)
 ```sh
-yarn cli --node-url=eth.infra.com --private-key=a70478942bf... --gas-price=slow --ssv-sync-env=prod --ssv-sync=v4.prater
+yarn cli --node-url=eth.infra.com --private-key=a70478942bf... --gas-price=slow --ssv-sync=v4.prater
 ```
 
 Example of running the CLI with the minimum requirements:
 
 ```sh
-yarn cli --private-key=a70478942bf... --ssv-sync-env=prod --ssv-sync=v4.prater
+yarn cli --private-key=a70478942bf... --ssv-sync=v4.prater
 ```
 
 ### Option 2: Using an env file
