@@ -11,7 +11,8 @@ services:
     volumes:
       - sqlite-data:/opt/app/data
     environment:
-      - SSV_NETWORK_ADDRESS
+      - SSV_SYNC_ENV
+      - SSV_SYNC
       - NODE_URL
       - ACCOUNT_PRIVATE_KEY
       - GAS_PRICE
