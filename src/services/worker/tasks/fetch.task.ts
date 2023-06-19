@@ -45,7 +45,7 @@ export class FetchTask {
 
       const fromBlock =
         (await this._systemService.get(SystemType.GENERAL_LAST_BLOCK_NUMBER)) ||
-        0;
+        Web3Provider.getGenesisBlock();
 
       this._logger.log(
         `Syncing events in a blocks range: ${fromBlock} - ${latestBlockNumber}`,
