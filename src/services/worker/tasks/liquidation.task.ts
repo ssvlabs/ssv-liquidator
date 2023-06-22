@@ -289,6 +289,10 @@ export class LiquidationTask {
         `Gas group was not found for ${totalOperators} operators. Going to estimate transaction gas...`,
       );
       transaction.gas = await this.getGas(transaction);
+    } else {
+      console.info(
+        `Gas group was found for ${totalOperators} operators and is: ${transaction.gas}`,
+      );
     }
 
     transaction.gasPrice = await this.getGasPrice();
