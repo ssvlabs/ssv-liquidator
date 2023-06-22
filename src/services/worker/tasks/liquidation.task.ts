@@ -282,7 +282,15 @@ export class LiquidationTask {
     };
 
     // Build gas and gas price values
-    transaction.gas = await this.getGas(transaction);
+    const totalOperators = Web3Provider.operatorIdsToArray(operatorIds).length;
+    transaction.gas = this._config.gasUsage(totalOperators);
+    if (!transaction.gas) {
+      console.error(
+        `Gas group was not found for ${totalOperators} operators. Going to estimate transaction gas...`,
+      );
+      transaction.gas = await this.getGas(transaction);
+    }
+
     transaction.gasPrice = await this.getGasPrice();
 
     return transaction;
