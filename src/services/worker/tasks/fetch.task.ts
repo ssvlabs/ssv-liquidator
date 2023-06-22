@@ -15,6 +15,10 @@ export class FetchTask {
     private readonly _metricsService: MetricsService,
   ) {}
 
+  static get BLOCK_RANGE() {
+    return 500;
+  }
+
   /*
     This task used to collect all contract events for specific period of time/blocks
   */
@@ -43,23 +47,43 @@ export class FetchTask {
     try {
       FetchTask.isProcessLocked = true;
 
-      const fromBlock =
-        (await this._systemService.get(SystemType.GENERAL_LAST_BLOCK_NUMBER)) ||
-        Web3Provider.getGenesisBlock();
+      while (true) {
+        const fromBlock =
+          (await this._systemService.get(
+            SystemType.GENERAL_LAST_BLOCK_NUMBER,
+          )) || Web3Provider.getGenesisBlock();
 
-      this._logger.log(
-        `Syncing events in a blocks range: ${fromBlock} - ${latestBlockNumber}`,
-      );
+        const toBlock = Math.min(
+          fromBlock + FetchTask.BLOCK_RANGE,
+          latestBlockNumber,
+        );
 
-      await this._syncUpdates(fromBlock, latestBlockNumber);
+        this._logger.log(
+          `Syncing events in a blocks range: ${fromBlock} - ${toBlock}`,
+        );
 
-      this._logger.log(
-        `Sync completed for a blocks range: ${fromBlock} - ${latestBlockNumber}`,
-      );
+        await this._syncUpdates(fromBlock, toBlock);
 
-      // Metrics
-      this._metricsService.fetchStatus.set(1);
-      this._metricsService.criticalStatus.set(1);
+        this._logger.log(
+          `Sync completed for a blocks range: ${fromBlock} - ${toBlock}`,
+        );
+
+        // Metrics
+        this._metricsService.fetchStatus.set(1);
+        this._metricsService.criticalStatus.set(1);
+
+        const messageDetails = `From block: ${fromBlock}, to block: ${toBlock}, latest block: ${latestBlockNumber}`;
+        if (toBlock < latestBlockNumber) {
+          this._logger.log(
+            `Continuing fetching immediately because latest block number is not reached. ${messageDetails}`,
+          );
+        } else {
+          this._logger.log(
+            `Fetched all events till latest block. ${messageDetails}`,
+          );
+          break;
+        }
+      }
     } finally {
       FetchTask.isProcessLocked = false;
     }
