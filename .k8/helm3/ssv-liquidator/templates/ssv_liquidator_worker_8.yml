@@ -60,7 +60,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: node_url_mainnet
+              key: node_url_8
 
         - name: GAS_PRICE
           value: "high"
