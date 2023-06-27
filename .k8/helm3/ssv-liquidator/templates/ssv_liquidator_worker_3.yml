@@ -23,7 +23,7 @@ metadata:
   name: ssv-liquidator-worker-3
   namespace: {{ .Values.namespace }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.replicaCount.ssv_liquidator_worker_3 }}
   selector:
     matchLabels:
       app: ssv-liquidator-worker-3
@@ -59,7 +59,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: node_url
+              key: node_url_3
 
         - name: GAS_PRICE
           value: "high"
