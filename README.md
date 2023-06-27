@@ -17,7 +17,7 @@ The SSV Liquidator node executes liquidations on accounts that do not hold enoug
 ##### The liquidator node performs 2 main processes:
 
 - Syncing network contract data Every minute the liquidator node pulls recent balance-determining events for the SSV networks contract and maps all of the network's accounts on the node level to calculate the potential block for liquidation for each account in the network
-- Liquidating accounts Once the potential liquidation block is reached the liquidator node will call the liquidate() function in the network contract, if the node was the first to successfully pass the transaction the account will be liquidated and its SSV collateral will be sent to the wallet address which performed the liquidation
+- Liquidating accounts once the potential liquidation block is reached. The liquidator node will call the liquidate() function in the network contract, if the node was the first to successfully pass the transaction the account will be liquidated and its SSV collateral will be sent to the wallet address which performed the liquidation
 
 ## Requirements 
 
@@ -54,23 +54,18 @@ yarn install
 yarn cli --help
 ```
 
-Input parameters:
-ssv-sync-env (sse) - The SSV sync environment (prod or stage). By default: prod
-ssv-sync (ss) - The SSV contract name (format: version.network), for example: v4.prater
-node-url (n) = ETH1 node url
-private-key (pk) = Account private key
-gas-price (g) = Gas price, default: low
-hide-table = Hide/show realtime table
-node-rate-limit = concurrent requests limit (optional, by default: 10)
-max-visible-blocks = Max block range to display active clusters (optional, by default: 50000)
+#### Input parameters:  
+node-url (n) = ETH1 node url  
+private-key (pk) = Account private key  
+ssv-network-address (c) = Contract Network Address  
+ssv-network-views-address (c) = Contract Network Views Address  
+gas-price (g) = Gas price, default: low  
+ssv-token-address = The contract address for the SSV token  
+hide-table = Hide/show realtime table  
+node-rate-limit = concurrent requests limit (optional, by default: 10)  
+max-visible-blocks = Max block range to display active clusters (optional, by default: 50000)  
 ```sh
-yarn cli --node-url=eth.infra.com --private-key=a70478942bf... --gas-price=slow --ssv-sync=v4.prater
-```
-
-Example of running the CLI with the minimum requirements:
-
-```sh
-yarn cli --private-key=a70478942bf... --ssv-sync=v4.prater
+yarn cli --node-url=eth.infra.com --private-key=a70478942bf... --ssv-network-address=0x425890f2a5g... --ssv-network-views-address=0x425890f2a5g... --gas-price=low --ssv-token-address=0x425890f2a5g84hw94...
 ```
 
 ### Option 2: Using an env file
@@ -80,9 +75,10 @@ Copy the `.env.example` file to `.env` and update `.env` with your parameters.
 Example content below:
 
 ```sh
-NODE_URL=eth.infra.com
-SSV_SYNC_ENV=prod
-SSV_SYNC='v4.prater'
+NODE_URL=eth.infra.com  
+SSV_NETWORK_ADDRESS=0x425890f2a5g...  
+SSV_NETWORK_VIEWS_ADDRESS=0x425890f2a5g...  
+SSV_TOKEN_ADDRESS=0x425890f2a5g84hw94...  
 ACCOUNT_PRIVATE_KEY=a70478942bf...  
 GAS_PRICE=medium  
 HIDE_TABLE=false
