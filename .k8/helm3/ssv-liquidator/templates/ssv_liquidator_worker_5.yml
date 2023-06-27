@@ -23,7 +23,7 @@ metadata:
   name: ssv-liquidator-worker-5
   namespace: {{ .Values.namespace }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.replicaCount.ssv_liquidator_worker_5 }}
   selector:
     matchLabels:
       app: ssv-liquidator-worker-5
