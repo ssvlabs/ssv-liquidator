@@ -1,5 +1,5 @@
 import Web3 from 'web3';
-import ABI_SSV_NETWORK_CORE from '@cli/shared/abi.ssv-network.json';
+import Web3Provider from '@cli/providers/web3.provider';
 
 export type SolidityError = {
   error: string;
@@ -18,7 +18,7 @@ export default class SolidityErrors {
     if (SolidityErrors._errors.length) {
       return SolidityErrors._errors;
     }
-    for (const item of ABI_SSV_NETWORK_CORE) {
+    for (const item of Web3Provider.abiCore) {
       if (item['type'] === 'error') {
         const inputTypes = [];
         for (const input of item['inputs'] || []) {

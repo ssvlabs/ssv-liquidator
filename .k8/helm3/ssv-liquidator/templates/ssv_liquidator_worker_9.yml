@@ -24,7 +24,7 @@ metadata:
   name: ssv-liquidator-worker-9
   namespace: {{ .Values.namespace }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.replicaCount.ssv_liquidator_worker_9 }}
   selector:
     matchLabels:
       app: ssv-liquidator-worker-9
@@ -60,27 +60,13 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: node_url_mainnet
+              key: node_url_9
 
         - name: GAS_PRICE
           value: "high"
 
-        - name: SSV_NETWORK_ADDRESS
-          valueFrom:
-            secretKeyRef:
-              name: config-secrets
-# Jato2 v0.3.1-rc
-              key: ssv_network_address_9
-
         - name: HIDE_TABLE
           value: "1"
-
-        - name: SSV_NETWORK_VIEWS_ADDRESS
-          valueFrom:
-            secretKeyRef:
-              name: config-secrets
-# Jato2 v0.3.1-rc
-              key: ssv_network_views_address_9
 
         - name: ACCOUNT_PRIVATE_KEY
           valueFrom:
@@ -88,11 +74,18 @@ spec:
               name: config-secrets
               key: account_private_key_3
 
-        - name: SSV_TOKEN_ADDRESS
+        - name: SSV_SYNC_ENV
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: ssv_token_address
+              key: ssv_sync_env_9
+
+        - name: SSV_SYNC
+          valueFrom:
+            secretKeyRef:
+              name: config-secrets
+              key: ssv_sync_9
+
 
 #        volumeMounts:
 #        - mountPath: "/data/"

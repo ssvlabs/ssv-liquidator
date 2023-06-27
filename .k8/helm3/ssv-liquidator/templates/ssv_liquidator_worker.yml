@@ -23,7 +23,7 @@ metadata:
   name: ssv-liquidator-worker
   namespace: {{ .Values.namespace }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.replicaCount.ssv_liquidator_worker }}
   selector:
     matchLabels:
       app: ssv-liquidator-worker
@@ -59,25 +59,13 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: node_url
+              key: node_url_1
 
         - name: GAS_PRICE
           value: "medium"
 
-        - name: SSV_NETWORK_ADDRESS
-          valueFrom:
-            secretKeyRef:
-              name: config-secrets
-              key: ssv_network_address_1
-
         - name: HIDE_TABLE
           value: "1"
-
-        - name: SSV_NETWORK_VIEWS_ADDRESS
-          valueFrom:
-            secretKeyRef:
-              name: config-secrets
-              key: ssv_network_views_address_1
 
         - name: ACCOUNT_PRIVATE_KEY
           valueFrom:
@@ -85,11 +73,17 @@ spec:
               name: config-secrets
               key: account_private_key
 
-        - name: SSV_TOKEN_ADDRESS
+        - name: SSV_SYNC_ENV
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: ssv_token_address
+              key: ssv_sync_env
+
+        - name: SSV_SYNC
+          valueFrom:
+            secretKeyRef:
+              name: config-secrets
+              key: ssv_sync
 
 #        volumeMounts:
 #        - mountPath: "/data/"
