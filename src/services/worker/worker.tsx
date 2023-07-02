@@ -18,7 +18,7 @@ import { getAllowedLogLevels } from '@cli/shared/services/logging';
 import { CustomLogger } from '@cli/shared/services/logger.service';
 import { EarningService } from '@cli/modules/earnings/earning.service';
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
-import { criticalStatus } from '@cli/modules/webapp/metrics/services/metrics.service';
+import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
 
 async function bootstrapApi() {
   const app = await NestFactory.create<NestExpressApplication>(
@@ -84,7 +84,7 @@ async function bootstrapCli() {
 async function bootstrap() {
   process.on('unhandledRejection', error => {
     console.error('[CRITICAL] unhandledRejection', error);
-    criticalStatus.set(1);
+    MetricsService.criticalStatus.set(1);
   });
 
   console.info('Starting API');

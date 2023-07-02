@@ -70,7 +70,6 @@ export class FetchTask {
 
         // Metrics
         this._metricsService.fetchStatus.set(1);
-        this._metricsService.criticalStatus.set(1);
 
         const messageDetails = `From block: ${fromBlock}, to block: ${toBlock}, latest block: ${latestBlockNumber}`;
         if (toBlock < latestBlockNumber) {

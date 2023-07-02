@@ -71,13 +71,11 @@ export class BurnRatesTask {
       BurnRatesTask.isProcessLocked = true;
 
       this._metricsService.burnRatesStatus.set(0);
-      this._metricsService.criticalStatus.set(0);
 
       await this.processBurnRates();
 
       // Only after full cycle of updates set successful metrics
       this._metricsService.burnRatesStatus.set(1);
-      this._metricsService.criticalStatus.set(1);
     } catch (e) {
       this._logger.error(`Failed to sync burn rates. Error: ${e}`);
     } finally {
