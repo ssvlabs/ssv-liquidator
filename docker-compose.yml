@@ -27,6 +27,7 @@ services:
       - NODE_RATE_LIMIT
       - LOG_LEVEL
       - NO_COLOR
+      - PORT
     restart: on-failure
 
   prometheus:

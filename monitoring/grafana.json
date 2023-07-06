@@ -29,6 +29,483 @@
   "liveNow": false,
   "panels": [
     {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 26,
+      "panels": [],
+      "title": "Metrics",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ab08aabf-fd19-4adc-8e55-27650a944631"
+      },
+      "description": "Current balance of the wallet of the liquidator",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 1
+      },
+      "id": 20,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "ab08aabf-fd19-4adc-8e55-27650a944631"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "liquidatorETHBalance{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"} ",
+          "instant": true,
+          "legendFormat": "liquidatorETHBalance",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Liquidator ETH Balance",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ab08aabf-fd19-4adc-8e55-27650a944631"
+      },
+      "description": "Total active clusters count",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 4,
+        "y": 1
+      },
+      "id": 25,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "ab08aabf-fd19-4adc-8e55-27650a944631"
+          },
+          "editorMode": "code",
+          "expr": "totalActiveClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"} ",
+          "instant": false,
+          "legendFormat": "totalActiveClusters",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Active clusters",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ab08aabf-fd19-4adc-8e55-27650a944631"
+      },
+      "description": "Total liquidatable clusters count",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 10,
+        "y": 1
+      },
+      "id": 21,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "ab08aabf-fd19-4adc-8e55-27650a944631"
+          },
+          "editorMode": "code",
+          "expr": "totalLiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"} ",
+          "instant": false,
+          "legendFormat": "totalLiquidatableClusters",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Liquidatable clusters",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ab08aabf-fd19-4adc-8e55-27650a944631"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 5
+      },
+      "id": 19,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Z0xYBqN7z"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "lastBlockNumberMetric{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"} ",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "lastBlockNumber",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Last synced block number",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ab08aabf-fd19-4adc-8e55-27650a944631"
+      },
+      "description": "Clusters gone through 90% of their liquidation collateral counter",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 5
+      },
+      "id": 23,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "ab08aabf-fd19-4adc-8e55-27650a944631"
+          },
+          "editorMode": "code",
+          "expr": "burnt90LiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"} ",
+          "instant": false,
+          "legendFormat": "burnt90LiquidatableClusters",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Liq Collateral 90% burnt",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ab08aabf-fd19-4adc-8e55-27650a944631"
+      },
+      "description": "Clusters gone through 50% of their liquidation collateral counter",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 5
+      },
+      "id": 22,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "ab08aabf-fd19-4adc-8e55-27650a944631"
+          },
+          "editorMode": "code",
+          "expr": "burnt50LiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"} ",
+          "instant": false,
+          "legendFormat": "burnt50LiquidatableClusters",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Liq Collateral 50% burnt",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ab08aabf-fd19-4adc-8e55-27650a944631"
+      },
+      "description": "Clusters gone through 99% of their liquidation collateral counter",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 5
+      },
+      "id": 24,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "ab08aabf-fd19-4adc-8e55-27650a944631"
+          },
+          "editorMode": "code",
+          "expr": "burnt99LiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"} ",
+          "instant": false,
+          "legendFormat": "burnt99LiquidatableClusters",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Liq Collateral 99% burnt",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
       "datasource": {
         "type": "datasource",
         "uid": "grafana"
@@ -37,9 +514,10 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 9
       },
       "id": 12,
+      "panels": [],
       "targets": [
         {
           "datasource": {
@@ -55,7 +533,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Z0xYBqN7z"
+        "uid": "ab08aabf-fd19-4adc-8e55-27650a944631"
       },
       "fieldConfig": {
         "defaults": {
@@ -108,7 +586,7 @@
         "h": 5,
         "w": 3,
         "x": 0,
-        "y": 1
+        "y": 10
       },
       "id": 17,
       "options": {
@@ -131,8 +609,9 @@
             "type": "prometheus",
             "uid": "Z0xYBqN7z"
           },
+          "editorMode": "code",
           "exemplar": false,
-          "expr": "criticalStatus{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"}",
+          "expr": "criticalStatus{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"} ",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -185,7 +664,7 @@
       },
       "datasource": {
         "type": "prometheus",
-        "uid": "Z0xYBqN7z"
+        "uid": "ab08aabf-fd19-4adc-8e55-27650a944631"
       },
       "fieldConfig": {
         "defaults": {
@@ -241,9 +720,9 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 9,
+        "w": 13,
         "x": 3,
-        "y": 1
+        "y": 10
       },
       "id": 18,
       "options": {
@@ -266,10 +745,12 @@
             "type": "prometheus",
             "uid": "Z0xYBqN7z"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "criticalStatus{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"}",
+          "expr": "criticalStatus{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"} ",
           "interval": "",
           "legendFormat": "criticalStatus",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -287,102 +768,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Z0xYBqN7z"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 20,
-        "w": 12,
-        "x": 12,
-        "y": 1
-      },
-      "id": 19,
-      "options": {
-        "legend": {
-          "calcs": [
-            "last"
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Z0xYBqN7z"
-          },
-          "exemplar": true,
-          "expr": "lastBlockNumberMetric{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"}",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "lastBlockNumber",
-          "refId": "A"
-        }
-      ],
-      "title": "Last Block Number",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Z0xYBqN7z"
+        "uid": "ab08aabf-fd19-4adc-8e55-27650a944631"
       },
       "fieldConfig": {
         "defaults": {
@@ -435,7 +821,7 @@
         "h": 5,
         "w": 3,
         "x": 0,
-        "y": 6
+        "y": 15
       },
       "id": 14,
       "options": {
@@ -458,8 +844,9 @@
             "type": "prometheus",
             "uid": "Z0xYBqN7z"
           },
+          "editorMode": "code",
           "exemplar": false,
-          "expr": "fetchStatus{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"}\t",
+          "expr": "fetchStatus{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -512,7 +899,7 @@
       },
       "datasource": {
         "type": "prometheus",
-        "uid": "Z0xYBqN7z"
+        "uid": "ab08aabf-fd19-4adc-8e55-27650a944631"
       },
       "fieldConfig": {
         "defaults": {
@@ -568,9 +955,9 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 9,
+        "w": 13,
         "x": 3,
-        "y": 6
+        "y": 15
       },
       "id": 6,
       "options": {
@@ -593,10 +980,12 @@
             "type": "prometheus",
             "uid": "Z0xYBqN7z"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "fetchStatus{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"}\t",
+          "expr": "fetchStatus{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"}",
           "interval": "",
           "legendFormat": "fetchStatus",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -614,7 +1003,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Z0xYBqN7z"
+        "uid": "ab08aabf-fd19-4adc-8e55-27650a944631"
       },
       "fieldConfig": {
         "defaults": {
@@ -667,7 +1056,7 @@
         "h": 5,
         "w": 3,
         "x": 0,
-        "y": 11
+        "y": 20
       },
       "id": 16,
       "options": {
@@ -690,6 +1079,7 @@
             "type": "prometheus",
             "uid": "Z0xYBqN7z"
           },
+          "editorMode": "code",
           "exemplar": false,
           "expr": "burnRatesStatus{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"}",
           "format": "table",
@@ -744,7 +1134,7 @@
       },
       "datasource": {
         "type": "prometheus",
-        "uid": "Z0xYBqN7z"
+        "uid": "ab08aabf-fd19-4adc-8e55-27650a944631"
       },
       "fieldConfig": {
         "defaults": {
@@ -800,9 +1190,9 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 9,
+        "w": 13,
         "x": 3,
-        "y": 11
+        "y": 20
       },
       "id": 8,
       "options": {
@@ -825,10 +1215,12 @@
             "type": "prometheus",
             "uid": "Z0xYBqN7z"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "burnRatesStatus{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"}",
+          "expr": "burnRatesStatus{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"} ",
           "interval": "",
           "legendFormat": "burnRatesStatus",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -846,7 +1238,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Z0xYBqN7z"
+        "uid": "ab08aabf-fd19-4adc-8e55-27650a944631"
       },
       "fieldConfig": {
         "defaults": {
@@ -899,7 +1291,7 @@
         "h": 5,
         "w": 3,
         "x": 0,
-        "y": 16
+        "y": 25
       },
       "id": 15,
       "options": {
@@ -922,6 +1314,7 @@
             "type": "prometheus",
             "uid": "Z0xYBqN7z"
           },
+          "editorMode": "code",
           "exemplar": false,
           "expr": "liquidationStatus{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"}",
           "format": "table",
@@ -976,7 +1369,7 @@
       },
       "datasource": {
         "type": "prometheus",
-        "uid": "Z0xYBqN7z"
+        "uid": "ab08aabf-fd19-4adc-8e55-27650a944631"
       },
       "fieldConfig": {
         "defaults": {
@@ -1032,9 +1425,9 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 9,
+        "w": 13,
         "x": 3,
-        "y": 16
+        "y": 25
       },
       "id": 7,
       "options": {
@@ -1057,10 +1450,12 @@
             "type": "prometheus",
             "uid": "Z0xYBqN7z"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "liquidationStatus{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"}",
+          "expr": "liquidationStatus{app=\"liquidation-cli\",instance=\"ssv-liquidator:3000\",job=\"ssv-liquidator\"} ",
           "interval": "",
           "legendFormat": "liquidationStatus",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1091,6 +1486,6 @@
   "timezone": "",
   "title": "SSV liquidation",
   "uid": "zt1nXrq7k",
-  "version": 1,
+  "version": 7,
   "weekStart": ""
 }

@@ -31,6 +31,63 @@ export class ClusterService {
     return this._clusterRepository.find(options);
   }
 
+  async countActive(): Promise<number> {
+    return this._clusterRepository.count({
+      where: {
+        isLiquidated: false,
+        burnRate: Not(0),
+      },
+    });
+  }
+
+  async countLiquidatable(): Promise<any> {
+    const minimumBlocksBeforeLiquidation =
+      await this._retryService.getWithRetry(
+        Web3Provider.minimumBlocksBeforeLiquidation,
+      );
+    const currentBlockNumber = +(await this._retryService.getWithRetry(
+      Web3Provider.currentBlockNumber,
+    ));
+
+    const toLiquidate = await this.findBy({
+      where: {
+        isLiquidated: false,
+        burnRate: Not(0),
+        liquidationBlockNumber: LessThanOrEqual(
+          currentBlockNumber + +minimumBlocksBeforeLiquidation,
+        ),
+      },
+    });
+
+    return toLiquidate.reduce(
+      (aggr, cluster) => {
+        if (
+          cluster.liquidationBlockNumber <=
+          currentBlockNumber + +minimumBlocksBeforeLiquidation * 0.5
+        ) {
+          aggr.burnt50 += 1;
+        } else if (
+          cluster.liquidationBlockNumber <=
+          currentBlockNumber + +minimumBlocksBeforeLiquidation * 0.1
+        ) {
+          aggr.burnt90 += 1;
+        } else if (
+          cluster.liquidationBlockNumber <=
+          currentBlockNumber + +minimumBlocksBeforeLiquidation * 0.01
+        ) {
+          aggr.burnt99 += 1;
+        }
+        return aggr;
+      },
+      {
+        total: toLiquidate.length,
+        burnt50: 0,
+        burnt90: 0,
+        burnt99: 0,
+      },
+    );
+  }
+
   async toDisplay(): Promise<Cluster[]> {
     const currentBlockNumber = +(await this._retryService.getWithRetry(
       Web3Provider.currentBlockNumber,

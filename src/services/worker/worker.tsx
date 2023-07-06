@@ -22,7 +22,7 @@ import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.ser
 
 async function bootstrapApi() {
   const app = await NestFactory.create<NestExpressApplication>(
-    WebappModule,
+    WorkerModule,
     new ExpressAdapter(),
     { cors: true },
   );
@@ -84,7 +84,7 @@ async function bootstrapCli() {
 async function bootstrap() {
   process.on('unhandledRejection', error => {
     console.error('[CRITICAL] unhandledRejection', error);
-    MetricsService.criticalStatus.set(1);
+    MetricsService.criticalStatus.set(0);
   });
 
   console.info('Starting API');

@@ -6,6 +6,6 @@ scrape_configs:
   - job_name: 'ssv-liquidator'
     metrics_path: '/metrics'
     static_configs:
-      - targets: ['ssv-liquidator:${APP_PORT}']
+      - targets: ['ssv-liquidator:${PORT}','ssv-liquidator-2:${PORT2}']
         labels:
           app: 'liquidation-cli'
