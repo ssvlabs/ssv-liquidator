@@ -85,15 +85,15 @@ spec:
               name: config-secrets
               key: ssv_sync
 
-#        volumeMounts:
-#        - mountPath: "/data/"
-#          name: ssv-liquidator-worker
+        volumeMounts:
+        - mountPath: "/data/"
+          name: ssv-liquidator-worker
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
-#      volumes:
-#      - persistentVolumeClaim:
-#          claimName: ssv-liquidator-worker
-#        name: ssv-liquidator-worker
+      volumes:
+      - persistentVolumeClaim:
+          claimName: ssv-liquidator-worker
+        name: ssv-liquidator-worker
         {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
