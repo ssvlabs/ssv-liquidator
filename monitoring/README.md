@@ -31,8 +31,8 @@ Access the Grafana service at `http://localhost:3333`
 ## Setting up the Dashboard
 To setup the dashboard:
 
-1. Click the Plus icon on the left panel to create a new dashboard.
-2. Click 'Import'.
-3. Click 'Upload .json file' in the 'Import via panel json'.
+1. Click `New`.
+2. Click `Import`.
+3. Click 'Upload .json file' in the 'Import dashboard'.
 4. Select the grafana.json file from the monitoring/ folder.
-5. Click 'Load'.
+5. Click 'Import'.
