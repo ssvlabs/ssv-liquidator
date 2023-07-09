@@ -4,8 +4,8 @@
 
 replicaCount: 
   ssv_liquidator_worker: 1
-  ssv_liquidator_worker_2: 1
-  ssv_liquidator_worker_3: 1
+  ssv_liquidator_worker_2: 0
+  ssv_liquidator_worker_3: 0
   ssv_liquidator_worker_4: 0
   ssv_liquidator_worker_5: 0
   ssv_liquidator_worker_6: 0
