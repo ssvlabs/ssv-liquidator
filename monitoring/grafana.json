@@ -3037,8 +3037,8 @@
       {
         "current": {
           "selected": true,
-          "text": "ssv-liquidator-worker-svc.liquidation:80",
-          "value": "ssv-liquidator-worker-svc.liquidation:80"
+          "text": "ssv-liquidator:3000",
+          "value": "ssv-liquidator:3000"
         },
         "hide": 1,
         "includeAll": false,
@@ -3047,21 +3047,11 @@
         "options": [
           {
             "selected": true,
-            "text": "ssv-liquidator-worker-svc.liquidation:80",
-            "value": "ssv-liquidator-worker-svc.liquidation:80"
-          },
-          {
-            "selected": false,
-            "text": "ssv-liquidator-worker-2-svc.liquidation:80",
-            "value": "ssv-liquidator-worker-2-svc.liquidation:80"
-          },
-          {
-            "selected": false,
-            "text": "ssv-liquidator-worker-3-svc.liquidation:80",
-            "value": "ssv-liquidator-worker-3-svc.liquidation:80"
+            "text": "ssv-liquidator:3000",
+            "value": "ssv-liquidator:3000"
           }
         ],
-        "query": "ssv-liquidator-worker-svc.liquidation:80,ssv-liquidator-worker-2-svc.liquidation:80,ssv-liquidator-worker-3-svc.liquidation:80",
+        "query": "ssv-liquidator:3000",
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
