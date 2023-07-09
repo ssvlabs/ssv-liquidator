@@ -87,12 +87,12 @@ spec:
 
         volumeMounts:
         - mountPath: "/data/"
-          name: ssv-liquidator-worker
+          name: ssv-liquidator-worker-tmp
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
       volumes:
       - persistentVolumeClaim:
-          claimName: ssv-liquidator-worker
+          claimName: ssv-liquidator-worker-tmp
         name: ssv-liquidator-worker
         {{- with .Values.affinity }}
       affinity:
