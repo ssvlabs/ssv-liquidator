@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: liquidator-j2-1-svc
+  name: liquidator-prater-j1-1-svc
   namespace: {{ .Values.namespace }}
   labels:
-    name: liquidator-j2-1-svc
+    name: liquidator-prater-j1-1-svc
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -13,29 +13,29 @@ spec:
       protocol: TCP
       targetPort: 3000
   selector:
-    app: liquidator-j2-1
+    app: liquidator-prater-j1-1
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: liquidator-j2-1
-  name: liquidator-j2-1
+    app: liquidator-prater-j1-1
+  name: liquidator-prater-j1-1
   namespace: {{ .Values.namespace }}
 spec:
-  replicas: {{ .Values.replicaCount.liquidator_j2_1 }}
+  replicas: {{ .Values.replicaCount.liquidator_prater_j1_1 }}
   selector:
     matchLabels:
-      app: liquidator-j2-1
+      app: liquidator-prater-j1-1
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: liquidator-j2-1
+        app: liquidator-prater-j1-1
     spec:
       containers:
-      - name: liquidator-j2-1
+      - name: liquidator-prater-j1-1
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: Always
         ports:
@@ -59,7 +59,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: node_url_4
+              key: node_url_1
 
         - name: GAS_PRICE
           value: "medium"
@@ -77,23 +77,23 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: ssv_sync_env_4
+              key: ssv_sync_env
 
         - name: SSV_SYNC
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: ssv_sync_4
+              key: ssv_sync
 
 #        volumeMounts:
 #        - mountPath: "/data/"
-#          name: liquidator-j2-1
+#          name: liquidator-prater-j1-1
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
 #      volumes:
 #      - persistentVolumeClaim:
-#          claimName: liquidator-j2-1
-#        name: liquidator-j2-1
+#          claimName: liquidator-prater-j1-1
+#        name: liquidator-prater-j1-1
         {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}

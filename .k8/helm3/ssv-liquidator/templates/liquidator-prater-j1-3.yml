@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: liquidator-j1-1-svc
+  name: liquidator-prater-j1-3-svc
   namespace: {{ .Values.namespace }}
   labels:
-    name: liquidator-j1-1-svc
+    name: liquidator-prater-j1-3-svc
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -13,29 +13,29 @@ spec:
       protocol: TCP
       targetPort: 3000
   selector:
-    app: liquidator-j1-1
+    app: liquidator-prater-j1-3
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: liquidator-j1-1
-  name: liquidator-j1-1
+    app: liquidator-prater-j1-3
+  name: liquidator-prater-j1-3
   namespace: {{ .Values.namespace }}
 spec:
-  replicas: {{ .Values.replicaCount.liquidator_j1_1 }}
+  replicas: {{ .Values.replicaCount.liquidator_prater_j1_3 }}
   selector:
     matchLabels:
-      app: liquidator-j1-1
+      app: liquidator-prater-j1-3
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: liquidator-j1-1
+        app: liquidator-prater-j1-3
     spec:
       containers:
-      - name: liquidator-j1-1
+      - name: liquidator-prater-j1-3
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: Always
         ports:
@@ -59,10 +59,10 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: node_url_1
+              key: node_url_3
 
         - name: GAS_PRICE
-          value: "medium"
+          value: "high"
 
         - name: HIDE_TABLE
           value: "1"
@@ -71,29 +71,29 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: account_private_key
+              key: account_private_key_3
 
         - name: SSV_SYNC_ENV
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: ssv_sync_env
+              key: ssv_sync_env_3
 
         - name: SSV_SYNC
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: ssv_sync
+              key: ssv_sync_3
 
 #        volumeMounts:
 #        - mountPath: "/data/"
-#          name: liquidator-j1-1
+#          name: liquidator-prater-j1-3
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
 #      volumes:
 #      - persistentVolumeClaim:
-#          claimName: liquidator-j1-1
-#        name: liquidator-j1-1
+#          claimName: liquidator-prater-j1-3
+#        name: liquidator-prater-j1-3
         {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
