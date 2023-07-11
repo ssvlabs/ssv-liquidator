@@ -71,7 +71,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: account_private_key_2
+              key: account_private_key_liquidator_mainnet_2
 
         - name: SSV_SYNC_ENV
           valueFrom:
