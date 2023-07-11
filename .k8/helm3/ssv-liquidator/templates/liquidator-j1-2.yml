@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ssv-liquidator-worker-9-svc
+  name: liquidator-j1-2-svc
   namespace: {{ .Values.namespace }}
   labels:
-    name: ssv-liquidator-worker-9-svc
+    name: liquidator-j1-2-svc
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -13,29 +13,38 @@ spec:
       protocol: TCP
       targetPort: 3000
   selector:
-    app: ssv-liquidator-worker-9
+    app: liquidator-j1-2
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: ssv-liquidator-worker-9
-  name: ssv-liquidator-worker-9
+    app: liquidator-j1-2
+  name: liquidator-j1-2
   namespace: {{ .Values.namespace }}
 spec:
-  replicas: {{ .Values.replicaCount.ssv_liquidator_worker_9 }}
+  replicas: {{ .Values.replicaCount.liquidator_j1_2 }}
   selector:
     matchLabels:
-      app: ssv-liquidator-worker-9
+      app: liquidator-j1-2
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: ssv-liquidator-worker-9
+        app: liquidator-j1-2
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/role
+                    operator: In
+                    values:
+                      - ssv-main
       containers:
-      - name: ssv-liquidator-worker-9
+      - name: liquidator-j1-2
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: Always
         ports:
@@ -59,10 +68,10 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: node_url_9
+              key: node_url_2
 
         - name: GAS_PRICE
-          value: "high"
+          value: "medium"
 
         - name: HIDE_TABLE
           value: "1"
@@ -71,30 +80,29 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: account_private_key_3
+              key: account_private_key_2
 
         - name: SSV_SYNC_ENV
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: ssv_sync_env_9
+              key: ssv_sync_env_2
 
         - name: SSV_SYNC
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: ssv_sync_9
-
+              key: ssv_sync_2
 
 #        volumeMounts:
 #        - mountPath: "/data/"
-#          name: ssv-liquidator-worker-9
+#          name: liquidator-j1-2
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
 #      volumes:
 #      - persistentVolumeClaim:
-#          claimName: ssv-liquidator-worker-9
-#        name: ssv-liquidator-worker-9
+#          claimName: liquidator-j1-2
+#        name: liquidator-j1-2
         {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}

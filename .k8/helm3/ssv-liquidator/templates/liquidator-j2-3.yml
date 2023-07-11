@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ssv-liquidator-worker-6-svc
+  name: liquidator-j2-3-svc
   namespace: {{ .Values.namespace }}
   labels:
-    name: ssv-liquidator-worker-6-svc
+    name: liquidator-j2-3-svc
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -13,29 +13,29 @@ spec:
       protocol: TCP
       targetPort: 3000
   selector:
-    app: ssv-liquidator-worker-6
+    app: liquidator-j2-3
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: ssv-liquidator-worker-6
-  name: ssv-liquidator-worker-6
+    app: liquidator-j2-3
+  name: liquidator-j2-3
   namespace: {{ .Values.namespace }}
 spec:
-  replicas: {{ .Values.replicaCount.ssv_liquidator_worker_6 }}
+  replicas: {{ .Values.replicaCount.liquidator_j2_3 }}
   selector:
     matchLabels:
-      app: ssv-liquidator-worker-6
+      app: liquidator-j2-3
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: ssv-liquidator-worker-6
+        app: liquidator-j2-3
     spec:
       containers:
-      - name: ssv-liquidator-worker-6
+      - name: liquidator-j2-3
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: Always
         ports:
@@ -87,13 +87,13 @@ spec:
 
 #        volumeMounts:
 #        - mountPath: "/data/"
-#          name: ssv-liquidator-worker-6
+#          name: liquidator-j2-3
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
 #      volumes:
 #      - persistentVolumeClaim:
-#          claimName: ssv-liquidator-worker-6
-#        name: ssv-liquidator-worker-6
+#          claimName: liquidator-j2-3
+#        name: liquidator-j2-3
         {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
