@@ -3,15 +3,11 @@
 # Declare variables to be passed into your templates.
 
 replicaCount: 
-  ssv_liquidator_worker: 1
-  ssv_liquidator_worker_2: 0
-  ssv_liquidator_worker_3: 0
-  ssv_liquidator_worker_4: 0
-  ssv_liquidator_worker_5: 0
-  ssv_liquidator_worker_6: 0
-  ssv_liquidator_worker_7: 0
-  ssv_liquidator_worker_8: 0
-  ssv_liquidator_worker_9: 0
+  liquidator_prater_j2_1: 1
+  liquidator_prater_j1_1: 0
+  liquidator_mainnet_1: 0
+  liquidator_mainnet_2: 0
+  liquidator_mainnet_3: 0
 
 namespace: liquidation
 
