@@ -189,6 +189,8 @@ export default class Web3Provider {
   }
 
   static async getETHBalance(): Promise<number> {
+    if (!process.env.ACCOUNT_PRIVATE_KEY) return 0;
+
     const account = Web3Provider.web3.eth.accounts.privateKeyToAccount(
       process.env.ACCOUNT_PRIVATE_KEY,
     );

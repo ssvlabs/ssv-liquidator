@@ -8,6 +8,8 @@ This repository contains the Grafana service for monitoring SSV Liquidator data.
 
 ## Running the Service
 ```shell
+# run the command from the parent directory,
+# this command runs all the services including Grafana and Prometeus
 docker-compose up
 ```
 
