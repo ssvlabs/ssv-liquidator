@@ -25,7 +25,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 137,
-  "iteration": 1689168068133,
+  "iteration": 1689173525800,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -273,8 +273,12 @@
                 "value": null
               },
               {
+                "color": "#EAB839",
+                "value": 3
+              },
+              {
                 "color": "red",
-                "value": 80
+                "value": 5
               }
             ]
           }
@@ -327,7 +331,7 @@
         "type": "prometheus",
         "uid": "eXfXfqH7z"
       },
-      "description": "Clusters gone through 99% of their liquidation collateral counter",
+      "description": "Clusters gone through 10% of their liquidation collateral counter",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -343,7 +347,7 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 1
               }
             ]
           }
@@ -352,7 +356,7 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 8,
+        "w": 6,
         "x": 0,
         "y": 11
       },
@@ -380,15 +384,84 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "burnt99LiquidatableClusters{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"} ",
+          "expr": "burnt10LiquidatableClusters{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"} ",
           "instant": false,
           "interval": "",
-          "legendFormat": "burnt99LiquidatableClusters",
+          "legendFormat": "burnt10LiquidatableClusters",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Liq Collateral 99% burnt",
+      "title": "Liq Collateral 10% burnt",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eXfXfqH7z"
+      },
+      "description": "Clusters gone through 50% of their liquidation collateral counter",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 6,
+        "y": 11
+      },
+      "id": 22,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.3.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eXfXfqH7z"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "burnt50LiquidatableClusters{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"} ",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "burnt50LiquidatableClusters",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Liq Collateral 50% burnt",
       "type": "stat"
     },
     {
@@ -412,7 +485,7 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 1
               }
             ]
           }
@@ -421,8 +494,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 8,
-        "x": 8,
+        "w": 6,
+        "x": 12,
         "y": 11
       },
       "id": 23,
@@ -465,7 +538,7 @@
         "type": "prometheus",
         "uid": "eXfXfqH7z"
       },
-      "description": "Clusters gone through 50% of their liquidation collateral counter",
+      "description": "Clusters gone through 99% of their liquidation collateral counter",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -478,6 +551,10 @@
               {
                 "color": "green",
                 "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
               }
             ]
           }
@@ -486,11 +563,11 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 8,
-        "x": 16,
+        "w": 6,
+        "x": 18,
         "y": 11
       },
-      "id": 22,
+      "id": 46,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -514,15 +591,15 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "burnt50LiquidatableClusters{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"} ",
+          "expr": "burnt99LiquidatableClusters{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"} ",
           "instant": false,
           "interval": "",
-          "legendFormat": "burnt50LiquidatableClusters",
+          "legendFormat": "burnt99LiquidatableClusters",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Liq Collateral 50% burnt",
+      "title": "Liq Collateral 99% burnt",
       "type": "stat"
     },
     {
@@ -539,6 +616,45 @@
       "type": "row"
     },
     {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                0.16
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "2m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "avg"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "0",
+        "frequency": "1m",
+        "handler": 1,
+        "name": "SSV liquidator CPU usage alert",
+        "noDataState": "no_data",
+        "notifications": [
+          {
+            "uid": "bEYELqHnz"
+          }
+        ]
+      },
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -608,33 +724,18 @@
           "metric": "container_cpu",
           "refId": "A",
           "step": 10
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "exemplar": true,
-          "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",pod=~\"ssv-liquidator-worker-2-.*\", container=\"ssv-liquidator-worker-2\"}[1m])) by (pod)",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "{{ pod }}",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "exemplar": true,
-          "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",pod=~\"ssv-liquidator-worker-3-.*\", container=\"ssv-liquidator-worker-3\"}[1m])) by (pod)",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "{{ pod }}",
-          "refId": "C"
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 0.16,
+          "visible": true
+        }
+      ],
       "timeRegions": [],
       "title": "SSV liquidator CPU usage",
       "tooltip": {
@@ -669,6 +770,45 @@
       }
     },
     {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                1600000000
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "2m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "avg"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "0",
+        "frequency": "1m",
+        "handler": 1,
+        "name": "SSV Liquidators Memory usage alert",
+        "noDataState": "no_data",
+        "notifications": [
+          {
+            "uid": "bEYELqHnz"
+          }
+        ]
+      },
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -738,33 +878,18 @@
           "metric": "container_memory_usage:sort_desc",
           "refId": "A",
           "step": 10
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "exemplar": true,
-          "expr": "sum (container_memory_working_set_bytes{image!=\"\",pod=~\"ssv-liquidator-worker-2-.*\", container=\"ssv-liquidator-worker-2\"}) by (pod)",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "{{ pod }}",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "exemplar": true,
-          "expr": "sum (container_memory_working_set_bytes{image!=\"\",pod=~\"ssv-liquidator-worker-3-.*\", container=\"ssv-liquidator-worker-3\"}) by (pod)",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "{{ pod }}",
-          "refId": "C"
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 1600000000,
+          "visible": true
+        }
+      ],
       "timeRegions": [],
       "title": "SSV Liquidators Memory usage",
       "tooltip": {
@@ -833,7 +958,7 @@
         "noDataState": "no_data",
         "notifications": [
           {
-            "uid": "Sg3QY3H7z"
+            "uid": "bEYELqHnz"
           }
         ]
       },
@@ -922,30 +1047,6 @@
           "interval": "",
           "legendFormat": "liquidator-prater-jato-v2-1",
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "exemplar": false,
-          "expr": "kube_pod_container_status_ready{container=\"ssv-liquidator-worker-2\",namespace=\"liquidation\",pod=~\"ssv-liquidator-worker-2-.*\",service=\"prometheus-operator-kube-state-metrics\"}",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "ssv-liquidator-worker-2",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "exemplar": false,
-          "expr": "kube_pod_container_status_ready{container=\"ssv-liquidator-worker-3\",namespace=\"liquidation\",pod=~\"ssv-liquidator-worker-3-.*\",service=\"prometheus-operator-kube-state-metrics\"}",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "ssv-liquidator-worker-3",
-          "refId": "C"
         }
       ],
       "thresholds": [
@@ -1080,7 +1181,7 @@
             "lastNotNull"
           ],
           "displayMode": "list",
-          "placement": "right"
+          "placement": "bottom"
         },
         "tooltip": {
           "mode": "single"
@@ -1097,30 +1198,6 @@
           "interval": "",
           "legendFormat": "liquidator-prater-jato-v2-1",
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "exemplar": true,
-          "expr": "changes(lastBlockNumberMetric{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-2-svc.liquidation:80\",job=\"ssv-liquidator\"}[2m])",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "ssv-liquidator-worker-2",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "exemplar": true,
-          "expr": "changes(lastBlockNumberMetric{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-3-svc.liquidation:80\",job=\"ssv-liquidator\"}[2m])",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "ssv-liquidator-worker-3",
-          "refId": "C"
         }
       ],
       "thresholds": [
@@ -1166,7 +1243,7 @@
         "for": "0",
         "frequency": "1m",
         "handler": 1,
-        "name": "SSV Liquidation Task Health alert",
+        "name": "Panel Title alert",
         "noDataState": "no_data",
         "notifications": [
           {
@@ -1224,8 +1301,7 @@
                 "value": 80
               }
             ]
-          },
-          "unit": "none"
+          }
         },
         "overrides": []
       },
@@ -1235,14 +1311,14 @@
         "x": 8,
         "y": 27
       },
-      "id": 35,
+      "id": 45,
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull"
           ],
           "displayMode": "list",
-          "placement": "right"
+          "placement": "bottom"
         },
         "tooltip": {
           "mode": "single"
@@ -1255,34 +1331,11 @@
             "uid": "eXfXfqH7z"
           },
           "exemplar": true,
-          "expr": "liquidationStatus{app=\"liquidation-cli\",instance=\"liquidator-prater-jato-v2-1-svc.liquidation:80\",job=\"ssv-liquidator\"}",
+          "expr": "liquidatorETHBalance{app=\"liquidation-cli\",instance=\"liquidator-prater-jato-v2-1-svc.liquidation:80\",job=\"ssv-liquidator\"}\t",
+          "format": "time_series",
           "interval": "",
-          "legendFormat": "liquidator-prater-jato-v2-1",
+          "legendFormat": "liquidatorETHBalance",
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "exemplar": true,
-          "expr": "liquidationStatus{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-2-svc.liquidation:80\",job=\"ssv-liquidator\"}",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "ssv-liquidator-worker-2",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "exemplar": true,
-          "expr": "liquidationStatus{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-3-svc.liquidation:80\",job=\"ssv-liquidator\"}",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "ssv-liquidator-worker-3",
-          "refId": "C"
         }
       ],
       "thresholds": [
@@ -1293,7 +1346,7 @@
           "visible": true
         }
       ],
-      "title": "Liquidation Task Health",
+      "title": "Liquidator ETH Balance",
       "type": "timeseries"
     },
     {
@@ -1404,7 +1457,7 @@
             "lastNotNull"
           ],
           "displayMode": "list",
-          "placement": "right"
+          "placement": "bottom"
         },
         "tooltip": {
           "mode": "single"
@@ -1421,30 +1474,6 @@
           "interval": "",
           "legendFormat": "liquidator-prater-jato-v2-1",
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "exemplar": true,
-          "expr": "totalLiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-2-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "ssv-liquidator-worker-2",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "exemplar": true,
-          "expr": "totalLiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-3-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "ssv-liquidator-worker-3",
-          "refId": "C"
         }
       ],
       "thresholds": [
@@ -1465,7 +1494,7 @@
           {
             "evaluator": {
               "params": [
-                1
+                0
               ],
               "type": "gt"
             },
@@ -1481,7 +1510,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "avg"
+              "type": "max"
             },
             "type": "query"
           }
@@ -1490,7 +1519,7 @@
         "for": "0",
         "frequency": "1m",
         "handler": 1,
-        "name": "SSV Liq Collateral 50% burnt alert",
+        "name": "SSV Liq Collateral 10% burnt alert",
         "noDataState": "no_data",
         "notifications": [
           {
@@ -1555,7 +1584,7 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 8,
+        "w": 6,
         "x": 0,
         "y": 33
       },
@@ -1566,7 +1595,7 @@
             "lastNotNull"
           ],
           "displayMode": "list",
-          "placement": "right"
+          "placement": "bottom"
         },
         "tooltip": {
           "mode": "single"
@@ -1579,45 +1608,21 @@
             "uid": "eXfXfqH7z"
           },
           "exemplar": true,
-          "expr": "burnt50LiquidatableClusters{app=\"liquidation-cli\",instance=\"liquidator-prater-jato-v2-1-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
+          "expr": "burnt10LiquidatableClusters{app=\"liquidation-cli\",instance=\"liquidator-prater-jato-v2-1-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
           "interval": "",
-          "legendFormat": "liquidator-prater-jato-v2-1",
+          "legendFormat": "burnt10LiquidatableClusters",
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "exemplar": true,
-          "expr": "burnt50LiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-2-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "ssv-liquidator-worker-2",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "exemplar": true,
-          "expr": "burnt50LiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-3-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "ssv-liquidator-worker-3",
-          "refId": "C"
         }
       ],
       "thresholds": [
         {
           "colorMode": "critical",
           "op": "gt",
-          "value": 1,
+          "value": 0,
           "visible": true
         }
       ],
-      "title": "Liq Collateral 50% burnt",
+      "title": "Liq Collateral 10% burnt",
       "type": "timeseries"
     },
     {
@@ -1627,7 +1632,7 @@
           {
             "evaluator": {
               "params": [
-                1
+                0
               ],
               "type": "gt"
             },
@@ -1643,7 +1648,145 @@
             },
             "reducer": {
               "params": [],
-              "type": "avg"
+              "type": "max"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "0",
+        "frequency": "1m",
+        "handler": 1,
+        "name": "Liq Collateral 50% burnt alert",
+        "noDataState": "no_data",
+        "notifications": [
+          {
+            "uid": "bEYELqHnz"
+          }
+        ]
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eXfXfqH7z"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 33
+      },
+      "id": 47,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eXfXfqH7z"
+          },
+          "exemplar": true,
+          "expr": "burnt50LiquidatableClusters{app=\"liquidation-cli\",instance=\"liquidator-prater-jato-v2-1-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
+          "interval": "",
+          "legendFormat": "burnt50LiquidatableClusters",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "op": "gt",
+          "value": 0,
+          "visible": true
+        }
+      ],
+      "title": "Liq Collateral 50% burnt",
+      "type": "timeseries"
+    },
+    {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                0
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "max"
             },
             "type": "query"
           }
@@ -1717,8 +1860,8 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 8,
-        "x": 8,
+        "w": 6,
+        "x": 12,
         "y": 33
       },
       "id": 33,
@@ -1728,7 +1871,7 @@
             "lastNotNull"
           ],
           "displayMode": "list",
-          "placement": "right"
+          "placement": "bottom"
         },
         "tooltip": {
           "mode": "single"
@@ -1743,39 +1886,15 @@
           "exemplar": true,
           "expr": "burnt90LiquidatableClusters{app=\"liquidation-cli\",instance=\"liquidator-prater-jato-v2-1-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
           "interval": "",
-          "legendFormat": "liquidator-prater-jato-v2-1",
+          "legendFormat": "burnt90LiquidatableClusters",
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "exemplar": true,
-          "expr": "burnt90LiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-2-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "ssv-liquidator-worker-2",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "exemplar": true,
-          "expr": "burnt90LiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-3-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "ssv-liquidator-worker-3",
-          "refId": "C"
         }
       ],
       "thresholds": [
         {
           "colorMode": "critical",
           "op": "gt",
-          "value": 1,
+          "value": 0,
           "visible": true
         }
       ],
@@ -1789,7 +1908,7 @@
           {
             "evaluator": {
               "params": [
-                1
+                0
               ],
               "type": "gt"
             },
@@ -1805,7 +1924,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "avg"
+              "type": "max"
             },
             "type": "query"
           }
@@ -1879,8 +1998,8 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 8,
-        "x": 16,
+        "w": 6,
+        "x": 18,
         "y": 33
       },
       "id": 34,
@@ -1890,7 +2009,7 @@
             "lastNotNull"
           ],
           "displayMode": "list",
-          "placement": "right"
+          "placement": "bottom"
         },
         "tooltip": {
           "mode": "single"
@@ -1905,39 +2024,15 @@
           "exemplar": true,
           "expr": "burnt99LiquidatableClusters{app=\"liquidation-cli\",instance=\"liquidator-prater-jato-v2-1-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
           "interval": "",
-          "legendFormat": "liquidator-prater-jato-v2-1",
+          "legendFormat": "burnt99LiquidatableClusters",
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "exemplar": true,
-          "expr": "burnt99LiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-2-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "ssv-liquidator-worker-2",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "exemplar": true,
-          "expr": "burnt99LiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-3-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "ssv-liquidator-worker-3",
-          "refId": "C"
         }
       ],
       "thresholds": [
         {
           "colorMode": "critical",
           "op": "gt",
-          "value": 1,
+          "value": 0,
           "visible": true
         }
       ],
@@ -2712,7 +2807,7 @@
       "type": "row"
     }
   ],
-  "refresh": "5s",
+  "refresh": "",
   "schemaVersion": 34,
   "style": "dark",
   "tags": [],
@@ -2721,8 +2816,8 @@
       {
         "current": {
           "selected": true,
-          "text": "ssv-liquidator:3000",
-          "value": "ssv-liquidator:3000"
+          "text": "liquidator-prater-jato-v2-1-svc.liquidation:80",
+          "value": "liquidator-prater-jato-v2-1-svc.liquidation:80"
         },
         "hide": 1,
         "includeAll": false,
@@ -2731,11 +2826,11 @@
         "options": [
           {
             "selected": true,
-            "text": "ssv-liquidator:3000",
-            "value": "ssv-liquidator:3000"
+            "text": "liquidator-prater-jato-v2-1-svc.liquidation:80",
+            "value": "liquidator-prater-jato-v2-1-svc.liquidation:80"
           }
         ],
-        "query": "ssv-liquidator:3000",
+        "query": "liquidator-prater-jato-v2-1-svc.liquidation:80",
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
@@ -2750,6 +2845,6 @@
   "timezone": "",
   "title": "SSV liquidation",
   "uid": "zt1nXrq7k35fw",
-  "version": 43,
+  "version": 65,
   "weekStart": ""
 }
