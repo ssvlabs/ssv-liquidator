@@ -58,7 +58,9 @@ export class ClusterService {
         const blockNumberWhen0 =
           currentBlockNumber + cluster.balance / cluster.burnRate;
         const diffBlocks = cluster.liquidationBlockNumber - blockNumberWhen0;
-        if (currentBlockNumber < blockNumberWhen0 + diffBlocks * 0.5) {
+        if (currentBlockNumber < blockNumberWhen0 + diffBlocks * 0.9) {
+          aggr.burnt10 += 1;
+        } else if (currentBlockNumber < blockNumberWhen0 + diffBlocks * 0.5) {
           aggr.burnt50 += 1;
         } else if (currentBlockNumber < blockNumberWhen0 + diffBlocks * 0.1) {
           aggr.burnt90 += 1;
@@ -69,6 +71,7 @@ export class ClusterService {
       },
       {
         total: toLiquidate.length,
+        burnt10: 0,
         burnt50: 0,
         burnt90: 0,
         burnt99: 0,

@@ -19,6 +19,7 @@ export class MetricsController {
     const liquidatorETHBalance = await Web3Provider.getETHBalance();
     this.metricsService.totalActiveClusters.set(clustersActive);
     this.metricsService.totalLiquidatableClusters.set(toLiquidate.total);
+    this.metricsService.burnt10LiquidatableClusters.set(toLiquidate.burnt10);
     this.metricsService.burnt50LiquidatableClusters.set(toLiquidate.burnt50);
     this.metricsService.burnt90LiquidatableClusters.set(toLiquidate.burnt90);
     this.metricsService.burnt99LiquidatableClusters.set(toLiquidate.burnt99);

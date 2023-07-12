@@ -7,6 +7,7 @@ export class MetricsService {
   static fetchStatus: Gauge<string>;
   static totalActiveClusters: Gauge<string>;
   static totalLiquidatableClusters: Gauge<string>;
+  static burnt10LiquidatableClusters: Gauge<string>;
   static burnt50LiquidatableClusters: Gauge<string>;
   static burnt90LiquidatableClusters: Gauge<string>;
   static burnt99LiquidatableClusters: Gauge<string>;
@@ -68,6 +69,13 @@ export class MetricsService {
       help: 'Total liquidatable clusters count',
     });
     registry.registerMetric(MetricsService.totalLiquidatableClusters);
+
+    // Clusters gone through 10% of their liquidation collateral
+    MetricsService.burnt10LiquidatableClusters = new Gauge({
+      name: 'burnt10LiquidatableClusters',
+      help: 'Clusters gone through 10% of their liquidation collateral counter',
+    });
+    registry.registerMetric(MetricsService.burnt10LiquidatableClusters);
 
     // Clusters gone through 50% of their liquidation collateral
     MetricsService.burnt50LiquidatableClusters = new Gauge({
@@ -146,6 +154,10 @@ export class MetricsService {
 
   get totalLiquidatableClusters(): Gauge<string> {
     return MetricsService.initialize().totalLiquidatableClusters;
+  }
+
+  get burnt10LiquidatableClusters(): Gauge<string> {
+    return MetricsService.initialize().burnt10LiquidatableClusters;
   }
 
   get burnt50LiquidatableClusters(): Gauge<string> {
