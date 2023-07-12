@@ -2721,8 +2721,8 @@
       {
         "current": {
           "selected": true,
-          "text": "liquidator-prater-jato-v2-1-svc.liquidation:80",
-          "value": "liquidator-prater-jato-v2-1-svc.liquidation:80"
+          "text": "ssv-liquidator:3000",
+          "value": "ssv-liquidator:3000"
         },
         "hide": 1,
         "includeAll": false,
@@ -2731,11 +2731,11 @@
         "options": [
           {
             "selected": true,
-            "text": "liquidator-prater-jato-v2-1-svc.liquidation:80",
-            "value": "liquidator-prater-jato-v2-1-svc.liquidation:80"
+            "text": "ssv-liquidator:3000",
+            "value": "ssv-liquidator:3000"
           }
         ],
-        "query": "liquidator-prater-jato-v2-1-svc.liquidation:80",
+        "query": "ssv-liquidator:3000",
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
