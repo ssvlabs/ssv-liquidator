@@ -41,10 +41,6 @@ export class ClusterService {
   }
 
   async countLiquidatable(): Promise<any> {
-    const minimumBlocksBeforeLiquidation =
-      await this._retryService.getWithRetry(
-        Web3Provider.minimumBlocksBeforeLiquidation,
-      );
     const currentBlockNumber = +(await this._retryService.getWithRetry(
       Web3Provider.currentBlockNumber,
     ));
@@ -53,28 +49,20 @@ export class ClusterService {
       where: {
         isLiquidated: false,
         burnRate: Not(0),
-        liquidationBlockNumber: LessThanOrEqual(
-          currentBlockNumber + +minimumBlocksBeforeLiquidation,
-        ),
+        liquidationBlockNumber: LessThanOrEqual(currentBlockNumber),
       },
     });
 
     return toLiquidate.reduce(
       (aggr, cluster) => {
-        if (
-          cluster.liquidationBlockNumber <=
-          currentBlockNumber + +minimumBlocksBeforeLiquidation * 0.5
-        ) {
+        const blockNumberWhen0 =
+          currentBlockNumber + cluster.balance / cluster.burnRate;
+        const diffBlocks = cluster.liquidationBlockNumber - blockNumberWhen0;
+        if (currentBlockNumber < blockNumberWhen0 + diffBlocks * 0.5) {
           aggr.burnt50 += 1;
-        } else if (
-          cluster.liquidationBlockNumber <=
-          currentBlockNumber + +minimumBlocksBeforeLiquidation * 0.1
-        ) {
+        } else if (currentBlockNumber < blockNumberWhen0 + diffBlocks * 0.1) {
           aggr.burnt90 += 1;
-        } else if (
-          cluster.liquidationBlockNumber <=
-          currentBlockNumber + +minimumBlocksBeforeLiquidation * 0.01
-        ) {
+        } else if (currentBlockNumber < blockNumberWhen0 + diffBlocks * 0.01) {
           aggr.burnt99 += 1;
         }
         return aggr;

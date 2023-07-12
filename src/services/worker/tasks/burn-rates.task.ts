@@ -353,6 +353,24 @@ export class BurnRatesTask {
     record.balance = balance;
     record.burnRate = burnRate;
     record.isLiquidated = isLiquidated;
+
+    // Get liquidation block number based on liquidationThresholdPeriod
+    const liquidationThresholdBlock =
+      currentBlockNumber +
+      record.balance / record.burnRate -
+      minimumBlocksBeforeLiquidation;
+
+    // Get liquidation block number based on liquidationCollateralAmount
+    const liquidationCollateralBlock =
+      currentBlockNumber +
+      (record.balance - collateralAmount) / record.burnRate;
+
+    record.liquidationBlockNumber = Math.min(
+      liquidationThresholdBlock,
+      liquidationCollateralBlock,
+    );
+
+    /*
     // Calculate in which block the cluster will start to be ready for liquidation
     const liveUntilBlockByBalance =
       currentBlockNumber +
@@ -378,5 +396,6 @@ export class BurnRatesTask {
       // more or equal than minimum collateral amount, set the block when need to liquidate by actual balance
       record.liquidationBlockNumber = liveUntilBlockByBalance;
     }
+    */
   }
 }
