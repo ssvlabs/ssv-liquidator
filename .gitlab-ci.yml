@@ -33,7 +33,7 @@ Build stage Docker image:
     - docker tag $IMAGE_NAME:$CI_COMMIT_SHA $DOCKER_REPO_INFRA_STAGE:$CI_COMMIT_SHA
     - $DOCKER_LOGIN_TO_INFRA_STAGE_REPO && docker push $DOCKER_REPO_INFRA_STAGE:$CI_COMMIT_SHA
   only:
-    - dm/IO1-3573_grafana
+    - stage
 
 Helm deploy on stage:
   stage: deploy
@@ -56,7 +56,7 @@ Helm deploy on stage:
       ssv-liquidator
       .k8/helm3/ssv-liquidator/
   only:
-    - dm/IO1-3573_grafana
+    - stage
 
 #blox-infra-prod
 Build prod Docker image:
