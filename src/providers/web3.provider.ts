@@ -188,6 +188,19 @@ export default class Web3Provider {
       .call();
   }
 
+  static async getETHBalance(): Promise<number> {
+    if (!process.env.ACCOUNT_PRIVATE_KEY) return 0;
+
+    const account = Web3Provider.web3.eth.accounts.privateKeyToAccount(
+      process.env.ACCOUNT_PRIVATE_KEY,
+    );
+    const address = account.address;
+
+    const weiBalance = await Web3Provider.web3.eth.getBalance(address);
+    const ethBalance = Web3Provider.web3.utils.fromWei(weiBalance, 'ether');
+    return +ethBalance;
+  }
+
   static operatorIdsToArray(str) {
     return str.split(',').map(Number);
   }

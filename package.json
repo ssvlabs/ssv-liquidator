@@ -11,6 +11,7 @@
     "liquidation"
   ],
   "scripts": {
+    "cli:dev": "nodemon --exec yarn cli",
     "cli": "sh cli.sh",
     "demo": "node tests/generate-demo-data.js",
     "lint": "eslint . --ext .ts",
@@ -72,6 +73,7 @@
     "husky": "^3.0.9",
     "lint-staged": "~9.4.2",
     "prettier": "^2.0.5",
+    "nodemon": "^2.0.22",
     "ts-loader": "^7.0.4",
     "ts-node": "^8.10.1",
     "tslint": "^6.1.2",

@@ -2,13 +2,20 @@ version: '3'
 
 services:
   worker:
+    hostname: ssv-liquidator
     stdin_open: true
     tty: true
     build:
       context: .
       dockerfile: Dockerfile
-    command: sh -c "yarn cli"
+    command: sh -c "yarn cli:dev"
+    env_file:
+      - ./.env.example
+      - ./.env
+    ports:
+      - '$PORT:$PORT'
     volumes:
+      - ./src:/opt/app/src
       - sqlite-data:/opt/app/data
     environment:
       - SSV_SYNC_ENV
@@ -20,7 +27,27 @@ services:
       - NODE_RATE_LIMIT
       - LOG_LEVEL
       - NO_COLOR
+      - PORT
     restart: on-failure
+
+  prometheus:
+    hostname: ssv-liquidator-prometheus
+    build:
+      context: .
+      dockerfile: ./monitoring/Dockerfile
+    env_file:
+      - ./.env.example
+      - ./.env
+    ports:
+      - 9090:9090
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - 3333:3000
+    depends_on:
+      - prometheus
+
 
 volumes:
   sqlite-data:

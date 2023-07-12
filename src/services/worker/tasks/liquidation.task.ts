@@ -5,18 +5,16 @@ import { Cluster } from '@cli/modules/clusters/cluster.entity';
 import { ConfService } from '@cli/shared/services/conf.service';
 import { RetryService } from '@cli/shared/services/retry.service';
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
-import {
-  liquidationStatus,
-  criticalStatus,
-} from '@cli/modules/webapp/metrics/services/metrics.service';
+import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
 
 @Injectable()
 export class LiquidationTask {
   private readonly _logger = new Logger(LiquidationTask.name);
   constructor(
     private _config: ConfService,
-    private _clusterService: ClusterService,
+    private _metrics: MetricsService,
     private _retryService: RetryService,
+    private _clusterService: ClusterService,
   ) {}
 
   async liquidate(): Promise<void> {
@@ -81,7 +79,7 @@ export class LiquidationTask {
             }
           }
         }
-        liquidationStatus.set(1);
+        this._metrics.liquidationStatus.set(1);
       } catch (error) {
         this._logger.error(
           `Error occurred during cluster liquidation preparations: ${JSON.stringify(
@@ -92,13 +90,12 @@ export class LiquidationTask {
           )}`,
           error,
         );
-        liquidationStatus.set(0);
+        this._metrics.liquidationStatus.set(0);
       }
     }
     if (clustersToLiquidate.length === 0) {
       // nothing to liquidate
-      liquidationStatus.set(1);
-      criticalStatus.set(1);
+      this._metrics.liquidationStatus.set(1);
       return;
     }
 
@@ -142,13 +139,11 @@ export class LiquidationTask {
     return this.sendSignedTransaction(transaction)
       .then(({ hash }) => {
         this._logger.log(`🎉 The hash of liquidate transaction is: ${hash}`);
-        liquidationStatus.set(1);
-        criticalStatus.set(1);
+        this._metrics.liquidationStatus.set(1);
       })
       .catch(({ error, hash }) => {
         this._logger.error(`Can not send transaction`, { error, hash });
-        liquidationStatus.set(0);
-        criticalStatus.set(0);
+        this._metrics.liquidationStatus.set(0);
         return !error && hash;
       });
   }
@@ -219,8 +214,7 @@ export class LiquidationTask {
             },
           )
           .on('receipt', data => {
-            liquidationStatus.set(1);
-            criticalStatus.set(1);
+            this._metrics.liquidationStatus.set(1);
             this._logger.log(`📝 Transaction receipt: ${JSON.stringify(data)}`);
           });
       },
