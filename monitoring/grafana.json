@@ -25,7 +25,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 137,
-  "iteration": 1688886955849,
+  "iteration": 1689168068133,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -39,8 +39,72 @@
       },
       "id": 26,
       "panels": [],
-      "title": "Metrics",
+      "title": "LIQUIDATOR METRICS",
       "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eXfXfqH7z"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 0,
+        "y": 1
+      },
+      "id": 19,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.3.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eXfXfqH7z"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "lastBlockNumberMetric{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"} ",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "lastBlockNumber",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Last synced block number",
+      "type": "stat"
     },
     {
       "datasource": {
@@ -79,9 +143,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 0,
+        "h": 5,
+        "w": 12,
+        "x": 12,
         "y": 1
       },
       "id": 20,
@@ -148,10 +212,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 4,
-        "y": 1
+        "h": 5,
+        "w": 12,
+        "x": 0,
+        "y": 6
       },
       "id": 25,
       "options": {
@@ -209,12 +273,8 @@
                 "value": null
               },
               {
-                "color": "#EAB839",
-                "value": 3
-              },
-              {
                 "color": "red",
-                "value": 5
+                "value": 80
               }
             ]
           }
@@ -222,10 +282,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 10,
-        "y": 1
+        "h": 5,
+        "w": 12,
+        "x": 12,
+        "y": 6
       },
       "id": 21,
       "options": {
@@ -267,71 +327,7 @@
         "type": "prometheus",
         "uid": "eXfXfqH7z"
       },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 0,
-        "y": 5
-      },
-      "id": 19,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.3.4",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "lastBlockNumberMetric{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"} ",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "lastBlockNumber",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Last synced block number",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "eXfXfqH7z"
-      },
-      "description": "Clusters gone through 50% of their liquidation collateral counter",
+      "description": "Clusters gone through 99% of their liquidation collateral counter",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -347,7 +343,7 @@
               },
               {
                 "color": "red",
-                "value": 1
+                "value": 80
               }
             ]
           }
@@ -355,12 +351,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 4,
-        "y": 5
+        "h": 5,
+        "w": 8,
+        "x": 0,
+        "y": 11
       },
-      "id": 22,
+      "id": 24,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -384,15 +380,15 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "burnt50LiquidatableClusters{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"} ",
+          "expr": "burnt99LiquidatableClusters{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"} ",
           "instant": false,
           "interval": "",
-          "legendFormat": "burnt50LiquidatableClusters",
+          "legendFormat": "burnt99LiquidatableClusters",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Liq Collateral 50% burnt",
+      "title": "Liq Collateral 99% burnt",
       "type": "stat"
     },
     {
@@ -416,7 +412,7 @@
               },
               {
                 "color": "red",
-                "value": 1
+                "value": 80
               }
             ]
           }
@@ -424,10 +420,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
+        "h": 5,
+        "w": 8,
         "x": 8,
-        "y": 5
+        "y": 11
       },
       "id": 23,
       "options": {
@@ -469,7 +465,7 @@
         "type": "prometheus",
         "uid": "eXfXfqH7z"
       },
-      "description": "Clusters gone through 99% of their liquidation collateral counter",
+      "description": "Clusters gone through 50% of their liquidation collateral counter",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -482,10 +478,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 1
               }
             ]
           }
@@ -493,12 +485,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 12,
-        "y": 5
+        "h": 5,
+        "w": 8,
+        "x": 16,
+        "y": 11
       },
-      "id": 24,
+      "id": 22,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -522,786 +514,29 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "burnt99LiquidatableClusters{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"} ",
+          "expr": "burnt50LiquidatableClusters{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"} ",
           "instant": false,
           "interval": "",
-          "legendFormat": "burnt99LiquidatableClusters",
+          "legendFormat": "burnt50LiquidatableClusters",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Liq Collateral 99% burnt",
+      "title": "Liq Collateral 50% burnt",
       "type": "stat"
     },
     {
       "collapsed": false,
-      "datasource": {
-        "type": "datasource",
-        "uid": "grafana"
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 9
+        "y": 16
       },
-      "id": 12,
+      "id": 43,
       "panels": [],
-      "targets": [
-        {
-          "datasource": {
-            "type": "datasource",
-            "uid": "grafana"
-          },
-          "refId": "A"
-        }
-      ],
-      "title": "Statuses",
+      "title": "POD METRICS",
       "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "eXfXfqH7z"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "green",
-            "mode": "thresholds"
-          },
-          "decimals": 0,
-          "mappings": [
-            {
-              "options": {
-                "0": {
-                  "color": "red",
-                  "index": 1,
-                  "text": "Down"
-                },
-                "1": {
-                  "color": "green",
-                  "index": 0,
-                  "text": "Up"
-                }
-              },
-              "type": "value"
-            }
-          ],
-          "max": 1,
-          "min": 0,
-          "noValue": "Checking",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 0
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 0,
-        "y": 10
-      },
-      "id": 17,
-      "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": false,
-        "text": {}
-      },
-      "pluginVersion": "8.3.4",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "criticalStatus{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"} ",
-          "format": "table",
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Critical status",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "eXfXfqH7z"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 13,
-        "x": 3,
-        "y": 10
-      },
-      "id": 18,
-      "options": {
-        "legend": {
-          "calcs": [
-            "last"
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "criticalStatus{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"} ",
-          "interval": "",
-          "legendFormat": "criticalStatus",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "title": "Critical Status",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "eXfXfqH7z"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "green",
-            "mode": "thresholds"
-          },
-          "decimals": 0,
-          "mappings": [
-            {
-              "options": {
-                "0": {
-                  "color": "red",
-                  "index": 1,
-                  "text": "Down"
-                },
-                "1": {
-                  "color": "green",
-                  "index": 0,
-                  "text": "Up"
-                }
-              },
-              "type": "value"
-            }
-          ],
-          "max": 1,
-          "min": 0,
-          "noValue": "Checking",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 0
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 0,
-        "y": 15
-      },
-      "id": 14,
-      "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": false,
-        "text": {}
-      },
-      "pluginVersion": "8.3.4",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "fetchStatus{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"}",
-          "format": "table",
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Fetch Task Health",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "eXfXfqH7z"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 13,
-        "x": 3,
-        "y": 15
-      },
-      "id": 6,
-      "options": {
-        "legend": {
-          "calcs": [
-            "last"
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "fetchStatus{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"}",
-          "interval": "",
-          "legendFormat": "fetchStatus",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "title": "Fetch Task Health",
-      "type": "timeseries"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "green",
-            "mode": "thresholds"
-          },
-          "decimals": 0,
-          "mappings": [
-            {
-              "options": {
-                "0": {
-                  "color": "red",
-                  "index": 1,
-                  "text": "Down"
-                },
-                "1": {
-                  "color": "green",
-                  "index": 0,
-                  "text": "Up"
-                }
-              },
-              "type": "value"
-            }
-          ],
-          "max": 1,
-          "min": 0,
-          "noValue": "Checking",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 0
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 0,
-        "y": 20
-      },
-      "id": 16,
-      "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": false,
-        "text": {}
-      },
-      "pluginVersion": "8.3.4",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Z0xYBqN7z"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "burnRatesStatus{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"}",
-          "format": "table",
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Burn Rates Task Health",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "eXfXfqH7z"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 13,
-        "x": 3,
-        "y": 20
-      },
-      "id": 8,
-      "options": {
-        "legend": {
-          "calcs": [
-            "last"
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "burnRatesStatus{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"} ",
-          "interval": "",
-          "legendFormat": "burnRatesStatus",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "title": "Burn Rates Task Health",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "eXfXfqH7z"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "green",
-            "mode": "thresholds"
-          },
-          "decimals": 0,
-          "mappings": [
-            {
-              "options": {
-                "0": {
-                  "color": "red",
-                  "index": 1,
-                  "text": "Down"
-                },
-                "1": {
-                  "color": "green",
-                  "index": 0,
-                  "text": "Up"
-                }
-              },
-              "type": "value"
-            }
-          ],
-          "max": 1,
-          "min": 0,
-          "noValue": "Checking",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 0
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 0,
-        "y": 25
-      },
-      "id": 15,
-      "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": false,
-        "text": {}
-      },
-      "pluginVersion": "8.3.4",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "liquidationStatus{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"}",
-          "format": "table",
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Liquidation Task Health",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "eXfXfqH7z"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 13,
-        "x": 3,
-        "y": 25
-      },
-      "id": 7,
-      "options": {
-        "legend": {
-          "calcs": [
-            "last"
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eXfXfqH7z"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "liquidationStatus{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"} ",
-          "interval": "",
-          "legendFormat": "liquidationStatus",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "title": "Liquidation Task Health",
-      "type": "timeseries"
     },
     {
       "aliasColors": {},
@@ -1322,7 +557,7 @@
         "h": 9,
         "w": 8,
         "x": 0,
-        "y": 30
+        "y": 17
       },
       "height": "",
       "hiddenSeries": false,
@@ -1364,7 +599,7 @@
             "uid": "eXfXfqH7z"
           },
           "exemplar": true,
-          "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",pod=~\"ssv-liquidator-worker-.*\", container=\"ssv-liquidator-worker\"}[1m])) by (pod)",
+          "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",pod=~\"liquidator-prater-jato-v2-1-.*\", container=\"liquidator-prater-jato-v2-1\"}[1m])) by (pod)",
           "format": "time_series",
           "hide": false,
           "interval": "10s",
@@ -1381,7 +616,7 @@
           },
           "exemplar": true,
           "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",pod=~\"ssv-liquidator-worker-2-.*\", container=\"ssv-liquidator-worker-2\"}[1m])) by (pod)",
-          "hide": false,
+          "hide": true,
           "interval": "",
           "legendFormat": "{{ pod }}",
           "refId": "B"
@@ -1393,7 +628,7 @@
           },
           "exemplar": true,
           "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",pod=~\"ssv-liquidator-worker-3-.*\", container=\"ssv-liquidator-worker-3\"}[1m])) by (pod)",
-          "hide": false,
+          "hide": true,
           "interval": "",
           "legendFormat": "{{ pod }}",
           "refId": "C"
@@ -1450,9 +685,9 @@
       "grid": {},
       "gridPos": {
         "h": 9,
-        "w": 7,
+        "w": 8,
         "x": 8,
-        "y": 30
+        "y": 17
       },
       "hiddenSeries": false,
       "id": 39,
@@ -1494,7 +729,7 @@
             "uid": "eXfXfqH7z"
           },
           "exemplar": true,
-          "expr": "sum (container_memory_working_set_bytes{image!=\"\",pod=~\"ssv-liquidator-worker-.*\", container=\"ssv-liquidator-worker\"}) by (pod)",
+          "expr": "sum (container_memory_working_set_bytes{image!=\"\",pod=~\"liquidator-prater-jato-v2-1-.*\", container=\"liquidator-prater-jato-v2-1\"}) by (pod)",
           "format": "time_series",
           "hide": false,
           "interval": "10s",
@@ -1511,7 +746,7 @@
           },
           "exemplar": true,
           "expr": "sum (container_memory_working_set_bytes{image!=\"\",pod=~\"ssv-liquidator-worker-2-.*\", container=\"ssv-liquidator-worker-2\"}) by (pod)",
-          "hide": false,
+          "hide": true,
           "interval": "",
           "legendFormat": "{{ pod }}",
           "refId": "B"
@@ -1523,7 +758,7 @@
           },
           "exemplar": true,
           "expr": "sum (container_memory_working_set_bytes{image!=\"\",pod=~\"ssv-liquidator-worker-3-.*\", container=\"ssv-liquidator-worker-3\"}) by (pod)",
-          "hide": false,
+          "hide": true,
           "interval": "",
           "legendFormat": "{{ pod }}",
           "refId": "C"
@@ -1588,52 +823,6 @@
               "type": "avg"
             },
             "type": "query"
-          },
-          {
-            "evaluator": {
-              "params": [
-                1
-              ],
-              "type": "lt"
-            },
-            "operator": {
-              "type": "or"
-            },
-            "query": {
-              "params": [
-                "B",
-                "5m",
-                "now"
-              ]
-            },
-            "reducer": {
-              "params": [],
-              "type": "avg"
-            },
-            "type": "query"
-          },
-          {
-            "evaluator": {
-              "params": [
-                1
-              ],
-              "type": "lt"
-            },
-            "operator": {
-              "type": "or"
-            },
-            "query": {
-              "params": [
-                "C",
-                "5m",
-                "now"
-              ]
-            },
-            "reducer": {
-              "params": [],
-              "type": "avg"
-            },
-            "type": "query"
           }
         ],
         "executionErrorState": "alerting",
@@ -1641,223 +830,6 @@
         "frequency": "1m",
         "handler": 1,
         "name": "SSV Liquidators pod state alert",
-        "noDataState": "no_data",
-        "notifications": [
-          {
-            "uid": "Sg3QY3H7z"
-          }
-        ]
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 15,
-        "y": 30
-      },
-      "id": 41,
-      "options": {
-        "legend": {
-          "calcs": [
-            "last"
-          ],
-          "displayMode": "list",
-          "placement": "right"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Z0xYBqN7z"
-          },
-          "exemplar": false,
-          "expr": "kube_pod_container_status_ready{container=\"ssv-liquidator-worker\",namespace=\"liquidation\",pod=~\"ssv-liquidator-worker-.*\",service=\"prometheus-operator-kube-state-metrics\"}",
-          "interval": "",
-          "legendFormat": "ssv-liquidator-worker",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Z0xYBqN7z"
-          },
-          "exemplar": false,
-          "expr": "kube_pod_container_status_ready{container=\"ssv-liquidator-worker-2\",namespace=\"liquidation\",pod=~\"ssv-liquidator-worker-2-.*\",service=\"prometheus-operator-kube-state-metrics\"}",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "ssv-liquidator-worker-2",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Z0xYBqN7z"
-          },
-          "exemplar": false,
-          "expr": "kube_pod_container_status_ready{container=\"ssv-liquidator-worker-3\",namespace=\"liquidation\",pod=~\"ssv-liquidator-worker-3-.*\",service=\"prometheus-operator-kube-state-metrics\"}",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "ssv-liquidator-worker-3",
-          "refId": "C"
-        }
-      ],
-      "thresholds": [
-        {
-          "colorMode": "critical",
-          "op": "lt",
-          "value": 1,
-          "visible": true
-        }
-      ],
-      "title": "SSV Liquidators pod state",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 39
-      },
-      "id": 28,
-      "panels": [],
-      "title": "Alerts",
-      "type": "row"
-    },
-    {
-      "alert": {
-        "alertRuleTags": {},
-        "conditions": [
-          {
-            "evaluator": {
-              "params": [
-                1
-              ],
-              "type": "lt"
-            },
-            "operator": {
-              "type": "and"
-            },
-            "query": {
-              "params": [
-                "A",
-                "2m",
-                "now"
-              ]
-            },
-            "reducer": {
-              "params": [],
-              "type": "max"
-            },
-            "type": "query"
-          },
-          {
-            "evaluator": {
-              "params": [
-                1
-              ],
-              "type": "lt"
-            },
-            "operator": {
-              "type": "or"
-            },
-            "query": {
-              "params": [
-                "B",
-                "2m",
-                "now"
-              ]
-            },
-            "reducer": {
-              "params": [],
-              "type": "avg"
-            },
-            "type": "query"
-          },
-          {
-            "evaluator": {
-              "params": [
-                -1
-              ],
-              "type": "lt"
-            },
-            "operator": {
-              "type": "or"
-            },
-            "query": {
-              "params": [
-                "C",
-                "2m",
-                "now"
-              ]
-            },
-            "reducer": {
-              "params": [],
-              "type": "avg"
-            },
-            "type": "query"
-          }
-        ],
-        "executionErrorState": "alerting",
-        "for": "0",
-        "frequency": "1m",
-        "handler": 1,
-        "name": "Last synced block number alert",
         "noDataState": "no_data",
         "notifications": [
           {
@@ -1921,10 +893,185 @@
         "overrides": []
       },
       "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 17
+      },
+      "id": 41,
+      "options": {
+        "legend": {
+          "calcs": [
+            "last"
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eXfXfqH7z"
+          },
+          "exemplar": false,
+          "expr": "kube_pod_container_status_ready{container=\"liquidator-prater-jato-v2-1\",namespace=\"liquidation\",pod=~\"liquidator-prater-jato-v2-1-.*\",service=\"prometheus-operator-kube-state-metrics\"}",
+          "interval": "",
+          "legendFormat": "liquidator-prater-jato-v2-1",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eXfXfqH7z"
+          },
+          "exemplar": false,
+          "expr": "kube_pod_container_status_ready{container=\"ssv-liquidator-worker-2\",namespace=\"liquidation\",pod=~\"ssv-liquidator-worker-2-.*\",service=\"prometheus-operator-kube-state-metrics\"}",
+          "hide": true,
+          "interval": "",
+          "legendFormat": "ssv-liquidator-worker-2",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eXfXfqH7z"
+          },
+          "exemplar": false,
+          "expr": "kube_pod_container_status_ready{container=\"ssv-liquidator-worker-3\",namespace=\"liquidation\",pod=~\"ssv-liquidator-worker-3-.*\",service=\"prometheus-operator-kube-state-metrics\"}",
+          "hide": true,
+          "interval": "",
+          "legendFormat": "ssv-liquidator-worker-3",
+          "refId": "C"
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "op": "lt",
+          "value": 1,
+          "visible": true
+        }
+      ],
+      "title": "SSV Liquidators pod state",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 26
+      },
+      "id": 28,
+      "panels": [],
+      "title": "ALERTS",
+      "type": "row"
+    },
+    {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                1
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "2m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "max"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "0",
+        "frequency": "1m",
+        "handler": 1,
+        "name": "SSV liquidator Last synced block number alert",
+        "noDataState": "no_data",
+        "notifications": [
+          {
+            "uid": "bEYELqHnz"
+          }
+        ]
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eXfXfqH7z"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
         "h": 6,
         "w": 8,
         "x": 0,
-        "y": 40
+        "y": 27
       },
       "id": 30,
       "options": {
@@ -1946,9 +1093,9 @@
             "uid": "eXfXfqH7z"
           },
           "exemplar": true,
-          "expr": "changes(lastBlockNumberMetric{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-svc.liquidation:80\",job=\"ssv-liquidator\"}[2m])",
+          "expr": "changes(lastBlockNumberMetric{app=\"liquidation-cli\",instance=\"liquidator-prater-jato-v2-1-svc.liquidation:80\",job=\"ssv-liquidator\"}[2m])",
           "interval": "",
-          "legendFormat": "ssv-liquidator-worker",
+          "legendFormat": "liquidator-prater-jato-v2-1",
           "refId": "A"
         },
         {
@@ -1958,7 +1105,7 @@
           },
           "exemplar": true,
           "expr": "changes(lastBlockNumberMetric{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-2-svc.liquidation:80\",job=\"ssv-liquidator\"}[2m])",
-          "hide": false,
+          "hide": true,
           "interval": "",
           "legendFormat": "ssv-liquidator-worker-2",
           "refId": "B"
@@ -1970,7 +1117,7 @@
           },
           "exemplar": true,
           "expr": "changes(lastBlockNumberMetric{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-3-svc.liquidation:80\",job=\"ssv-liquidator\"}[2m])",
-          "hide": false,
+          "hide": true,
           "interval": "",
           "legendFormat": "ssv-liquidator-worker-3",
           "refId": "C"
@@ -2013,59 +1160,13 @@
               "type": "avg"
             },
             "type": "query"
-          },
-          {
-            "evaluator": {
-              "params": [
-                1
-              ],
-              "type": "lt"
-            },
-            "operator": {
-              "type": "or"
-            },
-            "query": {
-              "params": [
-                "B",
-                "5m",
-                "now"
-              ]
-            },
-            "reducer": {
-              "params": [],
-              "type": "avg"
-            },
-            "type": "query"
-          },
-          {
-            "evaluator": {
-              "params": [
-                1
-              ],
-              "type": "lt"
-            },
-            "operator": {
-              "type": "or"
-            },
-            "query": {
-              "params": [
-                "C",
-                "5m",
-                "now"
-              ]
-            },
-            "reducer": {
-              "params": [],
-              "type": "avg"
-            },
-            "type": "query"
           }
         ],
         "executionErrorState": "alerting",
         "for": "0",
         "frequency": "1m",
         "handler": 1,
-        "name": "Liquidation Task Health alert",
+        "name": "SSV Liquidation Task Health alert",
         "noDataState": "no_data",
         "notifications": [
           {
@@ -2132,7 +1233,7 @@
         "h": 6,
         "w": 8,
         "x": 8,
-        "y": 40
+        "y": 27
       },
       "id": 35,
       "options": {
@@ -2154,9 +1255,9 @@
             "uid": "eXfXfqH7z"
           },
           "exemplar": true,
-          "expr": "liquidationStatus{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-svc.liquidation:80\",job=\"ssv-liquidator\"}",
+          "expr": "liquidationStatus{app=\"liquidation-cli\",instance=\"liquidator-prater-jato-v2-1-svc.liquidation:80\",job=\"ssv-liquidator\"}",
           "interval": "",
-          "legendFormat": "ssv-liquidator-worker",
+          "legendFormat": "liquidator-prater-jato-v2-1",
           "refId": "A"
         },
         {
@@ -2166,7 +1267,7 @@
           },
           "exemplar": true,
           "expr": "liquidationStatus{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-2-svc.liquidation:80\",job=\"ssv-liquidator\"}",
-          "hide": false,
+          "hide": true,
           "interval": "",
           "legendFormat": "ssv-liquidator-worker-2",
           "refId": "B"
@@ -2178,7 +1279,7 @@
           },
           "exemplar": true,
           "expr": "liquidationStatus{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-3-svc.liquidation:80\",job=\"ssv-liquidator\"}",
-          "hide": false,
+          "hide": true,
           "interval": "",
           "legendFormat": "ssv-liquidator-worker-3",
           "refId": "C"
@@ -2221,59 +1322,13 @@
               "type": "avg"
             },
             "type": "query"
-          },
-          {
-            "evaluator": {
-              "params": [
-                5
-              ],
-              "type": "gt"
-            },
-            "operator": {
-              "type": "or"
-            },
-            "query": {
-              "params": [
-                "B",
-                "5m",
-                "now"
-              ]
-            },
-            "reducer": {
-              "params": [],
-              "type": "avg"
-            },
-            "type": "query"
-          },
-          {
-            "evaluator": {
-              "params": [
-                5
-              ],
-              "type": "gt"
-            },
-            "operator": {
-              "type": "or"
-            },
-            "query": {
-              "params": [
-                "C",
-                "5m",
-                "now"
-              ]
-            },
-            "reducer": {
-              "params": [],
-              "type": "avg"
-            },
-            "type": "query"
           }
         ],
         "executionErrorState": "alerting",
         "for": "0",
         "frequency": "1m",
         "handler": 1,
-        "name": "Liquidatable clusters alert",
+        "name": "SSV Liquidatable clusters alert",
         "noDataState": "no_data",
         "notifications": [
           {
@@ -2340,7 +1395,7 @@
         "h": 6,
         "w": 8,
         "x": 16,
-        "y": 40
+        "y": 27
       },
       "id": 31,
       "options": {
@@ -2362,9 +1417,9 @@
             "uid": "eXfXfqH7z"
           },
           "exemplar": true,
-          "expr": "totalLiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
+          "expr": "totalLiquidatableClusters{app=\"liquidation-cli\",instance=\"liquidator-prater-jato-v2-1-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
           "interval": "",
-          "legendFormat": "ssv-liquidator-worker",
+          "legendFormat": "liquidator-prater-jato-v2-1",
           "refId": "A"
         },
         {
@@ -2374,7 +1429,7 @@
           },
           "exemplar": true,
           "expr": "totalLiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-2-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
-          "hide": false,
+          "hide": true,
           "interval": "",
           "legendFormat": "ssv-liquidator-worker-2",
           "refId": "B"
@@ -2386,7 +1441,7 @@
           },
           "exemplar": true,
           "expr": "totalLiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-3-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
-          "hide": false,
+          "hide": true,
           "interval": "",
           "legendFormat": "ssv-liquidator-worker-3",
           "refId": "C"
@@ -2429,59 +1484,13 @@
               "type": "avg"
             },
             "type": "query"
-          },
-          {
-            "evaluator": {
-              "params": [
-                1
-              ],
-              "type": "gt"
-            },
-            "operator": {
-              "type": "or"
-            },
-            "query": {
-              "params": [
-                "B",
-                "5m",
-                "now"
-              ]
-            },
-            "reducer": {
-              "params": [],
-              "type": "avg"
-            },
-            "type": "query"
-          },
-          {
-            "evaluator": {
-              "params": [
-                1
-              ],
-              "type": "gt"
-            },
-            "operator": {
-              "type": "or"
-            },
-            "query": {
-              "params": [
-                "C",
-                "5m",
-                "now"
-              ]
-            },
-            "reducer": {
-              "params": [],
-              "type": "avg"
-            },
-            "type": "query"
           }
         ],
         "executionErrorState": "alerting",
         "for": "0",
         "frequency": "1m",
         "handler": 1,
-        "name": "Liq Collateral 50% burnt alert",
+        "name": "SSV Liq Collateral 50% burnt alert",
         "noDataState": "no_data",
         "notifications": [
           {
@@ -2548,7 +1557,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 46
+        "y": 33
       },
       "id": 32,
       "options": {
@@ -2570,9 +1579,9 @@
             "uid": "eXfXfqH7z"
           },
           "exemplar": true,
-          "expr": "burnt50LiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
+          "expr": "burnt50LiquidatableClusters{app=\"liquidation-cli\",instance=\"liquidator-prater-jato-v2-1-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
           "interval": "",
-          "legendFormat": "ssv-liquidator-worker",
+          "legendFormat": "liquidator-prater-jato-v2-1",
           "refId": "A"
         },
         {
@@ -2582,7 +1591,7 @@
           },
           "exemplar": true,
           "expr": "burnt50LiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-2-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
-          "hide": false,
+          "hide": true,
           "interval": "",
           "legendFormat": "ssv-liquidator-worker-2",
           "refId": "B"
@@ -2594,7 +1603,7 @@
           },
           "exemplar": true,
           "expr": "burnt50LiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-3-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
-          "hide": false,
+          "hide": true,
           "interval": "",
           "legendFormat": "ssv-liquidator-worker-3",
           "refId": "C"
@@ -2637,59 +1646,13 @@
               "type": "avg"
             },
             "type": "query"
-          },
-          {
-            "evaluator": {
-              "params": [
-                1
-              ],
-              "type": "gt"
-            },
-            "operator": {
-              "type": "or"
-            },
-            "query": {
-              "params": [
-                "B",
-                "5m",
-                "now"
-              ]
-            },
-            "reducer": {
-              "params": [],
-              "type": "avg"
-            },
-            "type": "query"
-          },
-          {
-            "evaluator": {
-              "params": [
-                1
-              ],
-              "type": "gt"
-            },
-            "operator": {
-              "type": "or"
-            },
-            "query": {
-              "params": [
-                "C",
-                "5m",
-                "now"
-              ]
-            },
-            "reducer": {
-              "params": [],
-              "type": "avg"
-            },
-            "type": "query"
           }
         ],
         "executionErrorState": "alerting",
         "for": "0",
         "frequency": "1m",
         "handler": 1,
-        "name": "Liq Collateral 90% burnt alert",
+        "name": "SSV Liq Collateral 90% burnt alert",
         "noDataState": "no_data",
         "notifications": [
           {
@@ -2756,7 +1719,7 @@
         "h": 7,
         "w": 8,
         "x": 8,
-        "y": 46
+        "y": 33
       },
       "id": 33,
       "options": {
@@ -2778,9 +1741,9 @@
             "uid": "eXfXfqH7z"
           },
           "exemplar": true,
-          "expr": "burnt90LiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
+          "expr": "burnt90LiquidatableClusters{app=\"liquidation-cli\",instance=\"liquidator-prater-jato-v2-1-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
           "interval": "",
-          "legendFormat": "ssv-liquidator-worker",
+          "legendFormat": "liquidator-prater-jato-v2-1",
           "refId": "A"
         },
         {
@@ -2790,7 +1753,7 @@
           },
           "exemplar": true,
           "expr": "burnt90LiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-2-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
-          "hide": false,
+          "hide": true,
           "interval": "",
           "legendFormat": "ssv-liquidator-worker-2",
           "refId": "B"
@@ -2802,7 +1765,7 @@
           },
           "exemplar": true,
           "expr": "burnt90LiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-3-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
-          "hide": false,
+          "hide": true,
           "interval": "",
           "legendFormat": "ssv-liquidator-worker-3",
           "refId": "C"
@@ -2836,52 +1799,6 @@
             "query": {
               "params": [
                 "A",
-                "5m",
-                "now"
-              ]
-            },
-            "reducer": {
-              "params": [],
-              "type": "avg"
-            },
-            "type": "query"
-          },
-          {
-            "evaluator": {
-              "params": [
-                1
-              ],
-              "type": "gt"
-            },
-            "operator": {
-              "type": "or"
-            },
-            "query": {
-              "params": [
-                "B",
-                "5m",
-                "now"
-              ]
-            },
-            "reducer": {
-              "params": [],
-              "type": "avg"
-            },
-            "type": "query"
-          },
-          {
-            "evaluator": {
-              "params": [
-                1
-              ],
-              "type": "gt"
-            },
-            "operator": {
-              "type": "or"
-            },
-            "query": {
-              "params": [
-                "C",
                 "5m",
                 "now"
               ]
@@ -2964,7 +1881,7 @@
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 46
+        "y": 33
       },
       "id": 34,
       "options": {
@@ -2986,9 +1903,9 @@
             "uid": "eXfXfqH7z"
           },
           "exemplar": true,
-          "expr": "burnt99LiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
+          "expr": "burnt99LiquidatableClusters{app=\"liquidation-cli\",instance=\"liquidator-prater-jato-v2-1-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
           "interval": "",
-          "legendFormat": "ssv-liquidator-worker",
+          "legendFormat": "liquidator-prater-jato-v2-1",
           "refId": "A"
         },
         {
@@ -2998,7 +1915,7 @@
           },
           "exemplar": true,
           "expr": "burnt99LiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-2-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
-          "hide": false,
+          "hide": true,
           "interval": "",
           "legendFormat": "ssv-liquidator-worker-2",
           "refId": "B"
@@ -3010,7 +1927,7 @@
           },
           "exemplar": true,
           "expr": "burnt99LiquidatableClusters{app=\"liquidation-cli\",instance=\"ssv-liquidator-worker-3-svc.liquidation:80\",job=\"ssv-liquidator\"} ",
-          "hide": false,
+          "hide": true,
           "interval": "",
           "legendFormat": "ssv-liquidator-worker-3",
           "refId": "C"
@@ -3026,9 +1943,776 @@
       ],
       "title": "Liq Collateral 99% burnt",
       "type": "timeseries"
+    },
+    {
+      "collapsed": true,
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 40
+      },
+      "id": 12,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eXfXfqH7z"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "green",
+                "mode": "thresholds"
+              },
+              "decimals": 0,
+              "mappings": [
+                {
+                  "options": {
+                    "0": {
+                      "color": "red",
+                      "index": 1,
+                      "text": "Down"
+                    },
+                    "1": {
+                      "color": "green",
+                      "index": 0,
+                      "text": "Up"
+                    }
+                  },
+                  "type": "value"
+                }
+              ],
+              "max": 1,
+              "min": 0,
+              "noValue": "Checking",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 0
+                  },
+                  {
+                    "color": "green",
+                    "value": 1
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 3,
+            "x": 0,
+            "y": 41
+          },
+          "id": 17,
+          "options": {
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": false,
+            "text": {}
+          },
+          "pluginVersion": "8.3.4",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "eXfXfqH7z"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "criticalStatus{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"} ",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Critical status",
+          "type": "gauge"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eXfXfqH7z"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 21,
+            "x": 3,
+            "y": 41
+          },
+          "id": 18,
+          "options": {
+            "legend": {
+              "calcs": [
+                "last"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "eXfXfqH7z"
+              },
+              "editorMode": "code",
+              "exemplar": true,
+              "expr": "criticalStatus{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"} ",
+              "interval": "",
+              "legendFormat": "criticalStatus",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "title": "Critical Status",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eXfXfqH7z"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "green",
+                "mode": "thresholds"
+              },
+              "decimals": 0,
+              "mappings": [
+                {
+                  "options": {
+                    "0": {
+                      "color": "red",
+                      "index": 1,
+                      "text": "Down"
+                    },
+                    "1": {
+                      "color": "green",
+                      "index": 0,
+                      "text": "Up"
+                    }
+                  },
+                  "type": "value"
+                }
+              ],
+              "max": 1,
+              "min": 0,
+              "noValue": "Checking",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 0
+                  },
+                  {
+                    "color": "green",
+                    "value": 1
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 3,
+            "x": 0,
+            "y": 46
+          },
+          "id": 14,
+          "options": {
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": false,
+            "text": {}
+          },
+          "pluginVersion": "8.3.4",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "eXfXfqH7z"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "fetchStatus{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Fetch Task Health",
+          "type": "gauge"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eXfXfqH7z"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 21,
+            "x": 3,
+            "y": 46
+          },
+          "id": 6,
+          "options": {
+            "legend": {
+              "calcs": [
+                "last"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "eXfXfqH7z"
+              },
+              "editorMode": "code",
+              "exemplar": true,
+              "expr": "fetchStatus{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"}",
+              "interval": "",
+              "legendFormat": "fetchStatus",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "title": "Fetch Task Health",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eXfXfqH7z"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "green",
+                "mode": "thresholds"
+              },
+              "decimals": 0,
+              "mappings": [
+                {
+                  "options": {
+                    "0": {
+                      "color": "red",
+                      "index": 1,
+                      "text": "Down"
+                    },
+                    "1": {
+                      "color": "green",
+                      "index": 0,
+                      "text": "Up"
+                    }
+                  },
+                  "type": "value"
+                }
+              ],
+              "max": 1,
+              "min": 0,
+              "noValue": "Checking",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 0
+                  },
+                  {
+                    "color": "green",
+                    "value": 1
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 3,
+            "x": 0,
+            "y": 51
+          },
+          "id": 16,
+          "options": {
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": false,
+            "text": {}
+          },
+          "pluginVersion": "8.3.4",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "eXfXfqH7z"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "burnRatesStatus{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Burn Rates Task Health",
+          "type": "gauge"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eXfXfqH7z"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 21,
+            "x": 3,
+            "y": 51
+          },
+          "id": 8,
+          "options": {
+            "legend": {
+              "calcs": [
+                "last"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "eXfXfqH7z"
+              },
+              "editorMode": "code",
+              "exemplar": true,
+              "expr": "burnRatesStatus{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"} ",
+              "interval": "",
+              "legendFormat": "burnRatesStatus",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "title": "Burn Rates Task Health",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eXfXfqH7z"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "green",
+                "mode": "thresholds"
+              },
+              "decimals": 0,
+              "mappings": [
+                {
+                  "options": {
+                    "0": {
+                      "color": "red",
+                      "index": 1,
+                      "text": "Down"
+                    },
+                    "1": {
+                      "color": "green",
+                      "index": 0,
+                      "text": "Up"
+                    }
+                  },
+                  "type": "value"
+                }
+              ],
+              "max": 1,
+              "min": 0,
+              "noValue": "Checking",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 0
+                  },
+                  {
+                    "color": "green",
+                    "value": 1
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 3,
+            "x": 0,
+            "y": 56
+          },
+          "id": 15,
+          "options": {
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": false,
+            "text": {}
+          },
+          "pluginVersion": "8.3.4",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "eXfXfqH7z"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "liquidationStatus{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Liquidation Task Health",
+          "type": "gauge"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eXfXfqH7z"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 21,
+            "x": 3,
+            "y": 56
+          },
+          "id": 7,
+          "options": {
+            "legend": {
+              "calcs": [
+                "last"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "eXfXfqH7z"
+              },
+              "editorMode": "code",
+              "exemplar": true,
+              "expr": "liquidationStatus{app=\"liquidation-cli\",instance=~\"$instance.*\",job=\"ssv-liquidator\"} ",
+              "interval": "",
+              "legendFormat": "liquidationStatus",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "title": "Liquidation Task Health",
+          "type": "timeseries"
+        }
+      ],
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "grafana"
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "DEVELOPER METRICS",
+      "type": "row"
     }
   ],
-  "refresh": "",
+  "refresh": "5s",
   "schemaVersion": 34,
   "style": "dark",
   "tags": [],
@@ -3037,8 +2721,8 @@
       {
         "current": {
           "selected": true,
-          "text": "ssv-liquidator:3000",
-          "value": "ssv-liquidator:3000"
+          "text": "liquidator-prater-jato-v2-1-svc.liquidation:80",
+          "value": "liquidator-prater-jato-v2-1-svc.liquidation:80"
         },
         "hide": 1,
         "includeAll": false,
@@ -3047,11 +2731,11 @@
         "options": [
           {
             "selected": true,
-            "text": "ssv-liquidator:3000",
-            "value": "ssv-liquidator:3000"
+            "text": "liquidator-prater-jato-v2-1-svc.liquidation:80",
+            "value": "liquidator-prater-jato-v2-1-svc.liquidation:80"
           }
         ],
-        "query": "ssv-liquidator:3000",
+        "query": "liquidator-prater-jato-v2-1-svc.liquidation:80",
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
@@ -3064,8 +2748,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "SSV liquidation test",
+  "title": "SSV liquidation",
   "uid": "zt1nXrq7k35fw",
-  "version": 26,
+  "version": 43,
   "weekStart": ""
 }
