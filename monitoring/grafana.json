@@ -25,7 +25,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 137,
-  "iteration": 1689173525800,
+  "iteration": 1689238708356,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -622,7 +622,7 @@
           {
             "evaluator": {
               "params": [
-                0.16
+                80
               ],
               "type": "gt"
             },
@@ -663,7 +663,6 @@
         "type": "prometheus",
         "uid": "eXfXfqH7z"
       },
-      "decimals": 3,
       "editable": true,
       "error": false,
       "fill": 0,
@@ -715,7 +714,7 @@
             "uid": "eXfXfqH7z"
           },
           "exemplar": true,
-          "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",pod=~\"liquidator-prater-jato-v2-1-.*\", container=\"liquidator-prater-jato-v2-1\"}[1m])) by (pod)",
+          "expr": "round(\n  100 *\n    sum(\n      rate(container_cpu_usage_seconds_total{pod=~\"liquidator-prater-jato-v2-1-.*\"}[1m])\n    ) by (pod, container_name, namespace, slave)\n      /\n    sum(\n      kube_pod_container_resource_limits{pod=~\"liquidator-prater-jato-v2-1-.*\", resource=\"cpu\"}\n    ) by (pod, container_name, namespace, slave)\n)",
           "format": "time_series",
           "hide": false,
           "interval": "10s",
@@ -732,7 +731,7 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 0.16,
+          "value": 80,
           "visible": true
         }
       ],
@@ -753,7 +752,7 @@
       "yaxes": [
         {
           "$$hashKey": "object:383",
-          "format": "none",
+          "format": "percent",
           "label": "cores",
           "logBase": 1,
           "show": true
@@ -1228,7 +1227,7 @@
             "query": {
               "params": [
                 "A",
-                "5m",
+                "10s",
                 "now"
               ]
             },
@@ -1366,7 +1365,7 @@
             "query": {
               "params": [
                 "A",
-                "5m",
+                "10s",
                 "now"
               ]
             },
@@ -1504,7 +1503,7 @@
             "query": {
               "params": [
                 "A",
-                "5m",
+                "10s",
                 "now"
               ]
             },
@@ -1642,7 +1641,7 @@
             "query": {
               "params": [
                 "A",
-                "5m",
+                "10s",
                 "now"
               ]
             },
@@ -1780,7 +1779,7 @@
             "query": {
               "params": [
                 "A",
-                "5m",
+                "10s",
                 "now"
               ]
             },
@@ -1918,7 +1917,7 @@
             "query": {
               "params": [
                 "A",
-                "5m",
+                "10s",
                 "now"
               ]
             },
@@ -2845,6 +2844,6 @@
   "timezone": "",
   "title": "SSV liquidation",
   "uid": "zt1nXrq7k35fw",
-  "version": 65,
+  "version": 70,
   "weekStart": ""
 }
