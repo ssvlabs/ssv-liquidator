@@ -62,13 +62,13 @@ export class WorkerService implements OnModuleInit {
         case SystemType.EVENT_OPERATOR_FEE_APPROVED:
           // /Mark as cluster was updated and need to get
           // its fresh metrics in burn-rates task
-          const items = await this._clusterService
+          const toUpdateAsOperatorFeeUpdated = await this._clusterService
             .getQueryBuilder()
             .where(
               `isLiquidated == false and (instr(operatorIds, ',${dataItem.operatorId},') > 0 OR instr(operatorIds, '${dataItem.operatorId},') = 1 OR instr(operatorIds, ',${dataItem.operatorId}') > 0)`,
             )
             .getMany();
-          for (const item of items) {
+          for (const item of toUpdateAsOperatorFeeUpdated) {
             (await this._clusterService.update(
               {
                 owner: item.owner,
@@ -80,7 +80,11 @@ export class WorkerService implements OnModuleInit {
                 cluster: item.cluster,
               },
             )) &&
-              this._logger.debug(`Updated cluster: ${JSON.stringify(item)}`);
+              this._logger.debug(
+                `[operator fee updated] Updated cluster: ${JSON.stringify(
+                  item,
+                )}`,
+              );
           }
           break;
         case SystemType.EVENT_VALIDATOR_ADDED:
@@ -96,6 +100,38 @@ export class WorkerService implements OnModuleInit {
               dataItem,
             )}`,
           );
+          // TO-DO update clusters as well ?
+          break;
+        case SystemType.EVENT_LIQUIDATION_THRESHOLD_PERIOD_UPDATED:
+          await this._systemService.save(
+            SystemType.LIQUIDATION_THRESHOLD_PERIOD,
+            await Web3Provider.getLiquidationThresholdPeriod(),
+          );
+          this._logger.debug(
+            `Updated liquidation threshold period: ${JSON.stringify(dataItem)}`,
+          );
+          const toUpdateAsThresholdUpated = await this._clusterService
+            .getQueryBuilder()
+            .where('isLiquidated == false')
+            .getMany();
+          for (const item of toUpdateAsThresholdUpated) {
+            (await this._clusterService.update(
+              {
+                owner: item.owner,
+                operatorIds: item.operatorIds,
+              },
+              {
+                burnRate: null,
+                isLiquidated: false,
+                cluster: item.cluster,
+              },
+            )) &&
+              this._logger.debug(
+                `[threshold period updated] updated cluster: ${JSON.stringify(
+                  item,
+                )}`,
+              );
+          }
           break;
       }
     }
