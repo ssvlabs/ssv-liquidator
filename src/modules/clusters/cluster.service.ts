@@ -58,14 +58,14 @@ export class ClusterService {
         const blockNumberWhen0 =
           currentBlockNumber + cluster.balance / cluster.burnRate;
         const diffBlocks = cluster.liquidationBlockNumber - blockNumberWhen0;
-        if (currentBlockNumber < blockNumberWhen0 + diffBlocks * 0.9) {
-          aggr.burnt10 += 1;
-        } else if (currentBlockNumber < blockNumberWhen0 + diffBlocks * 0.5) {
-          aggr.burnt50 += 1;
-        } else if (currentBlockNumber < blockNumberWhen0 + diffBlocks * 0.1) {
-          aggr.burnt90 += 1;
-        } else if (currentBlockNumber < blockNumberWhen0 + diffBlocks * 0.01) {
+        if (currentBlockNumber >= blockNumberWhen0 + diffBlocks * 0.01) {
           aggr.burnt99 += 1;
+        } else if (currentBlockNumber >= blockNumberWhen0 + diffBlocks * 0.1) {
+          aggr.burnt90 += 1;
+        } else if (currentBlockNumber >= blockNumberWhen0 + diffBlocks * 0.5) {
+          aggr.burnt50 += 1;
+        } else if (currentBlockNumber >= blockNumberWhen0 + diffBlocks * 0.9) {
+          aggr.burnt10 += 1;
         }
         return aggr;
       },
