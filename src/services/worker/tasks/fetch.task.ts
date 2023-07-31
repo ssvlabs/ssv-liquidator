@@ -36,7 +36,7 @@ export class FetchTask {
     }
 
     try {
-      await Web3Provider.minimumBlocksBeforeLiquidation();
+      await Web3Provider.getLiquidationThresholdPeriod();
       // HERE we can validate the contract owner address
     } catch (err) {
       throw new Error(
