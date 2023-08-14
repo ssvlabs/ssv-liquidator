@@ -6,8 +6,8 @@ replicaCount:
   liquidator_prater_j1_1: 1
   liquidator_prater_j2_1: 1
   liquidator_mainnet_1: 1
-  liquidator_mainnet_2: 1
-  liquidator_mainnet_3: 1
+  liquidator_mainnet_2: 0
+  liquidator_mainnet_3: 0
 
 namespace: liquidation
 
