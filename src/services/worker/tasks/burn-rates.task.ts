@@ -328,7 +328,7 @@ export class BurnRatesTask {
     );
     const minimumBlocksBeforeLiquidation =
       await this._retryService.getWithRetry(
-        Web3Provider.minimumBlocksBeforeLiquidation,
+        Web3Provider.getLiquidationThresholdPeriod,
       );
     this._logger.log(
       `Fetched from the contract minimum blocks before liquidation: ${minimumBlocksBeforeLiquidation}`,
