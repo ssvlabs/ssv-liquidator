@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import Web3Provider from '@cli/providers/web3.provider';
 import { WorkerService } from '@cli/services/worker/worker.service';
 import { SystemService, SystemType } from '@cli/modules/system/system.service';
 import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
+import { Web3Provider } from '@cli/shared/services/web3.provider';
 
 @Injectable()
 export class FetchTask {
@@ -12,7 +12,8 @@ export class FetchTask {
   constructor(
     private _systemService: SystemService,
     private _workerService: WorkerService,
-    private readonly _metricsService: MetricsService,
+    private _metricsService: MetricsService,
+    private _web3Provider: Web3Provider,
   ) {}
 
   static get BLOCK_RANGE() {
@@ -30,13 +31,13 @@ export class FetchTask {
 
     let latestBlockNumber;
     try {
-      latestBlockNumber = await Web3Provider.web3.eth.getBlockNumber();
+      latestBlockNumber = await this._web3Provider.web3.eth.getBlockNumber();
     } catch (err) {
       throw new Error('Could not access the provided node endpoint');
     }
 
     try {
-      await Web3Provider.getLiquidationThresholdPeriod();
+      await this._web3Provider.getLiquidationThresholdPeriod();
       // HERE we can validate the contract owner address
     } catch (err) {
       throw new Error(
@@ -51,7 +52,7 @@ export class FetchTask {
         const fromBlock =
           (await this._systemService.get(
             SystemType.GENERAL_LAST_BLOCK_NUMBER,
-          )) || Web3Provider.getGenesisBlock();
+          )) || this._web3Provider.getGenesisBlock();
 
         const toBlock = Math.min(
           fromBlock + FetchTask.BLOCK_RANGE,
@@ -106,7 +107,7 @@ export class FetchTask {
     };
     while (filters.fromBlock < latestBlockNumber) {
       try {
-        const events = await Web3Provider.contractCore.getPastEvents(
+        const events = await this._web3Provider.contractCore.getPastEvents(
           'allEvents',
           filters,
         );

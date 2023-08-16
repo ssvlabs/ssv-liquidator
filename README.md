@@ -54,7 +54,9 @@ yarn install
 yarn cli --help
 ```
 
-#### Input parameters:  
+#### Input parameters: 
+ssv-sync-env (sse) = The SSV sync environment (prod or stage). Default: prod
+ssv-sync (ss) = The SSV contract name (format: version.network). Default: v4.prater
 node-url (n) = ETH1 node url  
 private-key (pk) = Account private key  
 ssv-network-address (c) = Contract Network Address  

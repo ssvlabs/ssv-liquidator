@@ -1,21 +1,25 @@
+import { Injectable } from '@nestjs/common';
 import { ArgumentParser } from 'argparse';
 import { ConfigService } from '@nestjs/config';
 
+@Injectable()
 export class ConfService extends ConfigService {
   private GAS_PRICE = 'low';
   private NODE_URL = 'eth.infra.com';
   private MAX_VISIBLE_BLOCKS = 50000;
   private SSV_SYNC_ENV = 'prod';
+  private SSV_SYNC = 'v4.prater';
 
-  public init() {
+  constructor() {
+    super();
     const parser = new ArgumentParser();
 
     parser.add_argument('-sse', '--ssv-sync-env', {
-      help: `The SSV sync environment (prod or stage). Default: ${this.SSV_SYNC_ENV}`,
+      help: `The SSV sync environment (prod or stage). example: ${this.SSV_SYNC_ENV}`,
       required: false,
     });
     parser.add_argument('-ss', '--ssv-sync', {
-      help: `The SSV contract name (format: version.network), for example: v4.prater`,
+      help: `The SSV contract name (format: version.network). example: ${this.SSV_SYNC}`,
       required: false,
     });
     parser.add_argument('-ht', '--hide-table', {
@@ -78,6 +82,7 @@ export class ConfService extends ConfigService {
       NODE_RATE_LIMIT: 'node_rate_limit',
       MAX_VISIBLE_BLOCKS: 'max_visible_blocks',
     };
+
     for (const envVarName of Object.keys(envVars)) {
       process.env[envVarName] =
         // First check if it exists in cli param

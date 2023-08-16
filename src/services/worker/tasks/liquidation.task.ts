@@ -1,11 +1,10 @@
 import { LessThanOrEqual } from 'typeorm';
 import { Injectable, Logger } from '@nestjs/common';
-import Web3Provider from '@cli/providers/web3.provider';
 import { Cluster } from '@cli/modules/clusters/cluster.entity';
 import { ConfService } from '@cli/shared/services/conf.service';
-import { RetryService } from '@cli/shared/services/retry.service';
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
+import { Web3Provider } from '@cli/shared/services/web3.provider';
 
 @Injectable()
 export class LiquidationTask {
@@ -13,14 +12,12 @@ export class LiquidationTask {
   constructor(
     private _config: ConfService,
     private _metrics: MetricsService,
-    private _retryService: RetryService,
     private _clusterService: ClusterService,
+    private _web3Provider: Web3Provider,
   ) {}
 
   async liquidate(): Promise<void> {
-    const currentBlockNumber = +(await this._retryService.getWithRetry(
-      Web3Provider.currentBlockNumber,
-    ));
+    const currentBlockNumber = +(await this._web3Provider.currentBlockNumber());
     const toLiquidateRecords = await this._clusterService.findBy({
       where: {
         liquidationBlockNumber: LessThanOrEqual(
@@ -44,9 +41,10 @@ export class LiquidationTask {
         this._logger.log(
           `Checking in a contract that cluster is liquidatable: ${logItem}`,
         );
-        const canLiquidateCluster = await this._retryService.getWithRetry(
-          Web3Provider.liquidatable,
-          [item.owner, item.operatorIds, item.cluster],
+        const canLiquidateCluster = await this._web3Provider.liquidatable(
+          item.owner,
+          item.operatorIds,
+          item.cluster,
         );
         if (canLiquidateCluster) {
           this._logger.log(`YES. Cluster is liquidatable: ${logItem}`);
@@ -55,9 +53,10 @@ export class LiquidationTask {
           this._logger.log(
             `Checking in a contract if cluster has already been liquidated: ${logItem}`,
           );
-          const isLiquidated = await this._retryService.getWithRetry(
-            Web3Provider.isLiquidated,
-            [item.owner, item.operatorIds, item.cluster],
+          const isLiquidated = await this._web3Provider.isLiquidated(
+            item.owner,
+            item.operatorIds,
+            item.cluster,
           );
           this._logger.log(
             `${isLiquidated ? 'YES' : 'NO'}. Cluster has ${
@@ -157,9 +156,9 @@ export class LiquidationTask {
     transaction: Record<string, any>,
     multiplier = 1.2,
   ): Promise<number> {
-    const gas = await Web3Provider.web3.eth.estimateGas({
+    const gas = await this._web3Provider.web3.eth.estimateGas({
       ...transaction,
-      from: Web3Provider.web3.eth.accounts.privateKeyToAccount(
+      from: this._web3Provider.web3.eth.accounts.privateKeyToAccount(
         this._config.get('ACCOUNT_PRIVATE_KEY'),
       ).address,
     });
@@ -170,7 +169,7 @@ export class LiquidationTask {
    * Estimate gas price.
    */
   async getGasPrice(): Promise<number> {
-    let gasPrice = +(await Web3Provider.web3.eth.getGasPrice());
+    let gasPrice = +(await this._web3Provider.web3.eth.getGasPrice());
     if (this._config.get('GAS_PRICE') === 'low') {
       gasPrice -= gasPrice * 0.1;
     } else if (this._config.get('GAS_PRICE') === 'medium') {
@@ -189,7 +188,7 @@ export class LiquidationTask {
     transaction: Record<string, any>,
   ): Promise<string> {
     return (
-      await Web3Provider.web3.eth.accounts.signTransaction(
+      await this._web3Provider.web3.eth.accounts.signTransaction(
         transaction,
         this._config.get('ACCOUNT_PRIVATE_KEY'),
       )
@@ -198,11 +197,11 @@ export class LiquidationTask {
 
   async sendSignedTransaction(
     transaction: Record<string, any>,
-    maxTimeout = RetryService.RETRY_DELAY * 30,
+    maxTimeout = this._web3Provider.RETRY_DELAY * 30,
   ): Promise<{ error; hash }> {
     const transactionPromise: Promise<{ error: any; hash: any }> = new Promise(
       async (resolve, reject) => {
-        Web3Provider.web3.eth
+        this._web3Provider.web3.eth
           .sendSignedTransaction(
             await this.getRawSignedTransaction(transaction),
             (error, hash) => {
@@ -255,19 +254,19 @@ export class LiquidationTask {
   }) {
     // Prepare liquidation method signature
     const methodSignature = (
-      await Web3Provider.contractCore.methods.liquidate(
+      await this._web3Provider.contractCore.methods.liquidate(
         owner,
-        Web3Provider.operatorIdsToArray(operatorIds),
+        this._web3Provider.operatorIdsToArray(operatorIds),
         cluster,
       )
     ).encodeABI();
 
     // Build liquidation transaction base
     const transaction: Record<string, any> = {
-      to: Web3Provider.getContractCoreAddress(),
+      to: this._web3Provider.getContractCoreAddress(),
       value: 0,
-      nonce: await Web3Provider.web3.eth.getTransactionCount(
-        Web3Provider.web3.eth.accounts.privateKeyToAccount(
+      nonce: await this._web3Provider.web3.eth.getTransactionCount(
+        this._web3Provider.web3.eth.accounts.privateKeyToAccount(
           this._config.get('ACCOUNT_PRIVATE_KEY'),
         ).address,
         'pending',
@@ -276,7 +275,8 @@ export class LiquidationTask {
     };
 
     // Build gas and gas price values
-    const totalOperators = Web3Provider.operatorIdsToArray(operatorIds).length;
+    const totalOperators =
+      this._web3Provider.operatorIdsToArray(operatorIds).length;
     transaction.gas = this._config.gasUsage(totalOperators);
     if (!transaction.gas) {
       console.error(

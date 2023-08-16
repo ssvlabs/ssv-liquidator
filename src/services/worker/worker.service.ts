@@ -1,9 +1,9 @@
-import Web3Provider from '@cli/providers/web3.provider';
-
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { SystemService, SystemType } from '@cli/modules/system/system.service';
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { EarningService } from '@cli/modules/earnings/earning.service';
+
+import { Web3Provider } from '@cli/shared/services/web3.provider';
 
 @Injectable()
 export class WorkerService implements OnModuleInit {
@@ -13,12 +13,13 @@ export class WorkerService implements OnModuleInit {
     private _clusterService: ClusterService,
     private _earningService: EarningService,
     private _systemService: SystemService,
+    private _web3Provider: Web3Provider,
   ) {}
 
   async onModuleInit() {
     await this._systemService.save(
       SystemType.MINIMUM_LIQUIDATION_COLLATERAL,
-      await Web3Provider.getMinimumLiquidationCollateral(),
+      await this._web3Provider.getMinimumLiquidationCollateral(),
     );
   }
 
@@ -93,7 +94,7 @@ export class WorkerService implements OnModuleInit {
         case SystemType.EVENT_COLLATERAL_UPDATED:
           await this._systemService.save(
             SystemType.MINIMUM_LIQUIDATION_COLLATERAL,
-            await Web3Provider.getMinimumLiquidationCollateral(),
+            await this._web3Provider.getMinimumLiquidationCollateral(),
           );
           this._logger.debug(
             `Updated minimum liquidation collateral: ${JSON.stringify(
@@ -105,7 +106,7 @@ export class WorkerService implements OnModuleInit {
         case SystemType.EVENT_LIQUIDATION_THRESHOLD_PERIOD_UPDATED:
           await this._systemService.save(
             SystemType.LIQUIDATION_THRESHOLD_PERIOD,
-            await Web3Provider.getLiquidationThresholdPeriod(),
+            await this._web3Provider.getLiquidationThresholdPeriod(),
           );
           this._logger.debug(
             `Updated liquidation threshold period: ${JSON.stringify(dataItem)}`,
