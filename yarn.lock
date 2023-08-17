@@ -7079,10 +7079,10 @@ typeorm@^0.3.12:
     xml2js "^0.4.23"
     yargs "^17.6.2"
 
-typescript-retry-decorator@^2.0.5:
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/typescript-retry-decorator/-/typescript-retry-decorator-2.0.5.tgz#24f33df76c4a711c96ba9e2a0e8a30dacf27569f"
-  integrity sha512-HvanMcvaVhxtDL9VBx9GkfAKm/dW5J7X73XlbfDI8rhoqzGSIjp0bIIingBBar3LvtJsiKPDqXRyV4E5pcz88Q==
+typescript-retry-decorator@^2.4.2:
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/typescript-retry-decorator/-/typescript-retry-decorator-2.4.2.tgz#f9b768d8036bf130ed4a8a72f1a4fa4ac21483ac"
+  integrity sha512-zboYVNuyam5XnF3x/QRT69yOLIjpLT1XecF+TbF1gEM6uPYmr2uZwJ06f8TrZ3Sffo6U3v/Kzsd9HloH0JOGvA==
 
 typescript@^3.9.3:
   version "3.9.10"

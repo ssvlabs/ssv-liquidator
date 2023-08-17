@@ -1,5 +1,7 @@
 import Web3 from 'web3';
 import { Injectable, Logger } from '@nestjs/common';
+import { Retryable } from 'typescript-retry-decorator';
+
 import { ConfService } from '@cli/shared/services/conf.service';
 
 export type NetworkName = string;
@@ -146,54 +148,55 @@ export class Web3Provider {
     );
   }
 
+  @Retryable(Web3Provider.RETRY_OPTIONS)
   async currentBlockNumber(): Promise<number> {
-    return this.getWithRetry(this.web3.eth.getBlockNumber);
+    return this.web3.eth.getBlockNumber();
   }
 
+  @Retryable(Web3Provider.RETRY_OPTIONS)
   async getLiquidationThresholdPeriod(): Promise<number> {
-    const func = this.contractViews.methods.getLiquidationThresholdPeriod();
-    return this.getWithRetry(func.call);
+    return this.contractViews.methods.getLiquidationThresholdPeriod().call();
   }
 
+  @Retryable(Web3Provider.RETRY_OPTIONS)
   async liquidatable(owner, operatorIds, clusterSnapshot): Promise<boolean> {
-    const func = this.contractViews.methods.isLiquidatable(
-      owner,
-      this.operatorIdsToArray(operatorIds),
-      clusterSnapshot,
-    );
-    return this.getWithRetry(func.call);
+    return this.contractViews.methods
+      .isLiquidatable(
+        owner,
+        this.operatorIdsToArray(operatorIds),
+        clusterSnapshot,
+      )
+      .call();
   }
 
+  @Retryable(Web3Provider.RETRY_OPTIONS)
   async isLiquidated(owner, operatorIds, clusterSnapshot): Promise<boolean> {
-    const func = this.contractViews.methods.isLiquidated(
-      owner,
-      this.operatorIdsToArray(operatorIds),
-      clusterSnapshot,
-    );
-    return this.getWithRetry(func.call);
+    return this.contractViews.methods
+      .isLiquidated(
+        owner,
+        this.operatorIdsToArray(operatorIds),
+        clusterSnapshot,
+      )
+      .call();
   }
 
+  @Retryable(Web3Provider.RETRY_OPTIONS)
   async getBurnRate(owner, operatorIds, clusterSnapshot): Promise<string> {
-    const func = this.contractViews.methods.getBurnRate(
-      owner,
-      this.operatorIdsToArray(operatorIds),
-      clusterSnapshot,
-    );
-    return this.getWithRetry(func.call);
+    return this.contractViews.methods
+      .getBurnRate(owner, this.operatorIdsToArray(operatorIds), clusterSnapshot)
+      .call();
   }
 
+  @Retryable(Web3Provider.RETRY_OPTIONS)
   async getBalance(owner, operatorIds, clusterSnapshot): Promise<string> {
-    const func = this.contractViews.methods.getBalance(
-      owner,
-      this.operatorIdsToArray(operatorIds),
-      clusterSnapshot,
-    );
-    return this.getWithRetry(func.call);
+    return this.contractViews.methods
+      .getBalance(owner, this.operatorIdsToArray(operatorIds), clusterSnapshot)
+      .call();
   }
 
+  @Retryable(Web3Provider.RETRY_OPTIONS)
   async getMinimumLiquidationCollateral(): Promise<string> {
-    const func = this.contractViews.methods.getMinimumLiquidationCollateral();
-    return this.getWithRetry(func.call);
+    return this.contractViews.methods.getMinimumLiquidationCollateral().call();
   }
 
   async getETHBalance(): Promise<number> {
@@ -265,69 +268,14 @@ export class Web3Provider {
     return String(solidityError.error).indexOf(error) !== -1;
   }
 
-  async getWithRetry(
-    contractMethod: any,
-    params: Array<any> = null,
-    maxRetries = 3,
-    maxTimeout = this.RETRY_DELAY * 2,
-  ) {
-    let retries = 0;
-    let retryDelay = this.RETRY_DELAY;
-    while (retries < maxRetries) {
-      try {
-        const timeoutPromise = new Promise((resolve, reject) => {
-          setTimeout(() => {
-            reject(
-              new Error(
-                `⏰ Web3Service::getWithRetry: Timeout expired: ${maxTimeout}ms`,
-              ),
-            );
-          }, maxTimeout);
-        });
-
-        return await Promise.race([
-          timeoutPromise,
-          contractMethod(...(params || [])),
-        ])
-          .then(result => result)
-          .catch(error => {
-            throw error;
-          });
-      } catch (error) {
-        console.log(error);
-        const methodSignature = `${contractMethod.toString()}(${(params || [])
-          .map(p => JSON.stringify(p))
-          .join(', ')})`;
-        if (error.data && String(error.data).startsWith('0x')) {
-          return this.getErrorByHash(error.data);
-        } else if (retries + 1 >= maxRetries) {
-          this._logger.error(
-            `Reached maximum number of retries (${maxRetries}). Method: ${methodSignature}`,
-            error,
-          );
-          throw new Error(error);
-        }
-        this._logger.warn(
-          `[RETRY] Retrying ${
-            retries + 1
-          } out of ${maxRetries} with delay ${retryDelay}. Method: ${methodSignature}`,
-        );
-        await this.sleep(retryDelay);
-        retries++;
-        retryDelay += this.RETRY_DELAY;
-      }
-    }
-  }
-
-  get RETRY_DELAY() {
+  static get RETRY_DELAY() {
     return 1000;
   }
 
-  /**
-   * Sleep specific amount of ms
-   * @param ms
-   */
-  sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
+  static RETRY_OPTIONS = {
+    maxAttempts: 3,
+    backOff: Web3Provider.RETRY_DELAY,
+    useConsoleLogger: true,
+    useOriginalError: true,
+  };
 }

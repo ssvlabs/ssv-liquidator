@@ -197,7 +197,7 @@ export class LiquidationTask {
 
   async sendSignedTransaction(
     transaction: Record<string, any>,
-    maxTimeout = this._web3Provider.RETRY_DELAY * 30,
+    maxTimeout = 1000 * 30,
   ): Promise<{ error; hash }> {
     const transactionPromise: Promise<{ error: any; hash: any }> = new Promise(
       async (resolve, reject) => {
