@@ -1,18 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindManyOptions, Not, LessThanOrEqual } from 'typeorm';
-import Web3Provider from '@cli/providers/web3.provider';
 
 import { Cluster } from '@cli/modules/clusters/cluster.entity';
 import { ConfService } from '@cli/shared/services/conf.service';
-import { RetryService } from '@cli/shared/services/retry.service';
+import { Web3Provider } from '@cli/shared/services/web3.provider';
 
 @Injectable()
 export class ClusterService {
   constructor(
     @InjectRepository(Cluster) private _clusterRepository: Repository<Cluster>,
     private _config: ConfService,
-    private _retryService: RetryService,
+    private _web3Provider: Web3Provider,
   ) {}
 
   getQueryBuilder() {
@@ -41,9 +40,7 @@ export class ClusterService {
   }
 
   async countLiquidatable(): Promise<any> {
-    const currentBlockNumber = +(await this._retryService.getWithRetry(
-      Web3Provider.currentBlockNumber,
-    ));
+    const currentBlockNumber = +(await this._web3Provider.currentBlockNumber());
 
     const toLiquidate = await this.findBy({
       where: {
@@ -80,9 +77,7 @@ export class ClusterService {
   }
 
   async toDisplay(): Promise<Cluster[]> {
-    const currentBlockNumber = +(await this._retryService.getWithRetry(
-      Web3Provider.currentBlockNumber,
-    ));
+    const currentBlockNumber = +(await this._web3Provider.currentBlockNumber());
     return this.findBy({
       where: {
         isLiquidated: false,
