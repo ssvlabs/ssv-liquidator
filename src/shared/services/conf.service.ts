@@ -15,11 +15,11 @@ export class ConfService extends ConfigService {
     const parser = new ArgumentParser();
 
     parser.add_argument('-sse', '--ssv-sync-env', {
-      help: `The SSV sync environment (prod or stage). example: ${this.SSV_SYNC_ENV}`,
+      help: `The SSV sync environment (prod or stage). Default: ${this.SSV_SYNC_ENV}`,
       required: false,
     });
     parser.add_argument('-ss', '--ssv-sync', {
-      help: `The SSV contract name (format: version.network). example: ${this.SSV_SYNC}`,
+      help: `The SSV contract name (format: version.network). Default: ${this.SSV_SYNC}`,
       required: false,
     });
     parser.add_argument('-ht', '--hide-table', {
@@ -35,30 +35,8 @@ export class ConfService extends ConfigService {
       help: "The liquidator's recipient address private key, used for creating a liquidation transaction",
       required: false,
     });
-    parser.add_argument('-na', '--ssv-network-address', {
-      help:
-        'The SSV Contract Network address, used to listen to balance change events and to create a liquidation transaction. ' +
-        'Refer to https://docs.ssv.network/developers/smart-contracts',
-      required: false,
-    });
-    parser.add_argument('-nva', '--ssv-network-views-address', {
-      help:
-        'The SSV Contract Network Views address, used to listen to balance change events and to create a liquidation transaction. ' +
-        'Refer to https://docs.ssv.network/developers/smart-contracts',
-      required: false,
-    });
     parser.add_argument('-g', '--gas-price', {
       help: `Preferred gas price for the liquidate transaction (low , medium, high). Default: ${this.GAS_PRICE}`,
-      required: false,
-    });
-    parser.add_argument('-t', '--ssv-token-address', {
-      help:
-        'SSV Token address. ' +
-        'Refer to https://docs.ssv.network/developers/smart-contracts',
-      required: false,
-    });
-    parser.add_argument('-nrl', '--node-rate-limit', {
-      help: 'Node Rate Limit. Default value: 10',
       required: false,
     });
     parser.add_argument('-mvb', '--max-visible-blocks', {
@@ -79,7 +57,6 @@ export class ConfService extends ConfigService {
       ACCOUNT_PRIVATE_KEY: 'private_key',
       NODE_URL: 'node_url',
       HIDE_TABLE: 'hide_table',
-      NODE_RATE_LIMIT: 'node_rate_limit',
       MAX_VISIBLE_BLOCKS: 'max_visible_blocks',
     };
 
@@ -103,10 +80,6 @@ export class ConfService extends ConfigService {
     }
   }
 
-  public rateLimit(): number {
-    return this.getNumber('NODE_RATE_LIMIT') || 10;
-  }
-
   public getNumber(key: string): number {
     return Number(this.get(key));
   }
@@ -115,8 +88,8 @@ export class ConfService extends ConfigService {
     return this.get('NODE_ENV') || 'development';
   }
 
-  gasUsage(operatorsCount: number): number {
-    return 300000;
+  gasUsage(): number {
+    return 300000; // tmp solution
     // const gasGroups = {
     //   '4': 132700,
     //   '7': 173600,

@@ -82,9 +82,9 @@ export class ClusterService {
       where: {
         isLiquidated: false,
         burnRate: Not(0),
-        // liquidationBlockNumber: LessThanOrEqual(
-        //   currentBlockNumber + +this._config.get('MAX_VISIBLE_BLOCKS'),
-        //),
+        liquidationBlockNumber: LessThanOrEqual(
+          currentBlockNumber + +this._config.get('MAX_VISIBLE_BLOCKS'),
+        ),
       },
       order: {
         liquidationBlockNumber: 'ASC',

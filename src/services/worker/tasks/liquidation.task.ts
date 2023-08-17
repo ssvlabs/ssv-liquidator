@@ -277,7 +277,7 @@ export class LiquidationTask {
     // Build gas and gas price values
     const totalOperators =
       this._web3Provider.operatorIdsToArray(operatorIds).length;
-    transaction.gas = this._config.gasUsage(totalOperators);
+    transaction.gas = this._config.gasUsage(); // totalOperators
     if (!transaction.gas) {
       console.error(
         `Gas group was not found for ${totalOperators} operators. Going to estimate transaction gas...`,
