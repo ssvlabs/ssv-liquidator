@@ -4,109 +4,146 @@ import { Cluster } from '@cli/modules/clusters/cluster.entity';
 import { ConfService } from '@cli/shared/services/conf.service';
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
+import { SystemService, SystemType } from '@cli/modules/system/system.service';
 import { Web3Provider } from '@cli/shared/services/web3.provider';
 
 @Injectable()
 export class LiquidationTask {
+  private static isProcessLocked = false;
   private readonly _logger = new Logger(LiquidationTask.name);
+
   constructor(
     private _config: ConfService,
     private _metrics: MetricsService,
     private _clusterService: ClusterService,
+    private _systemService: SystemService,
     private _web3Provider: Web3Provider,
   ) {}
 
+  static get BLOCK_RANGE() {
+    return 10;
+  }
+
   async liquidate(): Promise<void> {
-    const currentBlockNumber = +(await this._web3Provider.currentBlockNumber());
-    const toLiquidateRecords = await this._clusterService.findBy({
-      where: {
-        liquidationBlockNumber: LessThanOrEqual(
-          // Current block
-          // than the block number when balance becomes zero if not liquidated
-          currentBlockNumber,
-        ),
-      },
-    });
-    const clustersToLiquidate: Cluster[] = [];
-    const alreadyLiquidatedClusterUpdates = {
-      balance: null,
-      burnRate: null,
-      isLiquidated: true,
-      liquidationBlockNumber: null,
-    };
-    for (const item of toLiquidateRecords) {
-      item.cluster = JSON.parse(item.cluster);
-      const logItem = JSON.stringify(item);
-      try {
-        this._logger.log(
-          `Checking in a contract that cluster is liquidatable: ${logItem}`,
-        );
-        const canLiquidateCluster = await this._web3Provider.liquidatable(
-          item.owner,
-          item.operatorIds,
-          item.cluster,
-        );
-        if (canLiquidateCluster) {
-          this._logger.log(`YES. Cluster is liquidatable: ${logItem}`);
-          clustersToLiquidate.push(item);
-        } else {
+    if (LiquidationTask.isProcessLocked) {
+      this._logger.log(`Process is already locked`);
+      return;
+    }
+
+    const latestSyncedBlockNumber = await this._systemService.get(
+      SystemType.GENERAL_LAST_BLOCK_NUMBER,
+    );
+
+    const latestBlockNumber =
+      await this._web3Provider.web3.eth.getBlockNumber();
+
+    if (
+      latestSyncedBlockNumber + LiquidationTask.BLOCK_RANGE <
+      latestBlockNumber
+    ) {
+      // this._logger.log(`Ignore task. Events are not fully synced yet.`);
+      return;
+    }
+
+    try {
+      LiquidationTask.isProcessLocked = true;
+
+      const currentBlockNumber =
+        +(await this._web3Provider.currentBlockNumber());
+      const toLiquidateRecords = await this._clusterService.findBy({
+        where: {
+          liquidationBlockNumber: LessThanOrEqual(
+            // Current block
+            // than the block number when balance becomes zero if not liquidated
+            currentBlockNumber,
+          ),
+        },
+      });
+      const clustersToLiquidate: Cluster[] = [];
+      const alreadyLiquidatedClusterUpdates = {
+        balance: null,
+        burnRate: null,
+        isLiquidated: true,
+        liquidationBlockNumber: null,
+      };
+      for (const item of toLiquidateRecords) {
+        item.cluster = JSON.parse(item.cluster);
+        const logItem = JSON.stringify(item);
+        try {
           this._logger.log(
-            `Checking in a contract if cluster has already been liquidated: ${logItem}`,
+            `Checking in a contract that cluster is liquidatable: ${logItem}`,
           );
-          const isLiquidated = await this._web3Provider.isLiquidated(
+          const canLiquidateCluster = await this._web3Provider.liquidatable(
             item.owner,
             item.operatorIds,
             item.cluster,
           );
-          this._logger.log(
-            `${isLiquidated ? 'YES' : 'NO'}. Cluster has ${
-              isLiquidated ? '' : 'NOT'
-            } been liquidated: ${logItem}`,
-          );
-          if (isLiquidated) {
-            const updated = await this._clusterService.update(
-              { owner: item.owner, operatorIds: item.operatorIds },
-              alreadyLiquidatedClusterUpdates,
+          if (canLiquidateCluster) {
+            this._logger.log(`YES. Cluster is liquidatable: ${logItem}`);
+            clustersToLiquidate.push(item);
+          } else {
+            this._logger.log(
+              `Checking in a contract if cluster has already been liquidated: ${logItem}`,
             );
-            if (updated) {
-              this._logger.log(
-                `Updated liquidated cluster: ${JSON.stringify({
-                  ...item,
-                  ...alreadyLiquidatedClusterUpdates,
-                })}`,
+            const isLiquidated = await this._web3Provider.isLiquidated(
+              item.owner,
+              item.operatorIds,
+              item.cluster,
+            );
+            this._logger.log(
+              `${isLiquidated ? 'YES' : 'NO'}. Cluster has ${
+                isLiquidated ? '' : 'NOT'
+              } been liquidated: ${logItem}`,
+            );
+            if (isLiquidated) {
+              const updated = await this._clusterService.update(
+                { owner: item.owner, operatorIds: item.operatorIds },
+                alreadyLiquidatedClusterUpdates,
               );
+              if (updated) {
+                this._logger.log(
+                  `Updated liquidated cluster: ${JSON.stringify({
+                    ...item,
+                    ...alreadyLiquidatedClusterUpdates,
+                  })}`,
+                );
+              }
             }
           }
+          this._metrics.liquidationStatus.set(1);
+        } catch (error) {
+          this._logger.error(
+            `Error occurred during cluster liquidation preparations: ${JSON.stringify(
+              {
+                ...item,
+                ...alreadyLiquidatedClusterUpdates,
+              },
+            )}`,
+            error,
+          );
+          this._metrics.liquidationStatus.set(0);
         }
-        this._metrics.liquidationStatus.set(1);
-      } catch (error) {
-        this._logger.error(
-          `Error occurred during cluster liquidation preparations: ${JSON.stringify(
-            {
-              ...item,
-              ...alreadyLiquidatedClusterUpdates,
-            },
-          )}`,
-          error,
-        );
-        this._metrics.liquidationStatus.set(0);
       }
-    }
-    if (clustersToLiquidate.length === 0) {
-      // nothing to liquidate
-      this._metrics.liquidationStatus.set(1);
-      return;
-    }
+      if (clustersToLiquidate.length === 0) {
+        // nothing to liquidate
+        this._metrics.liquidationStatus.set(1);
+        return;
+      }
 
-    // When few liquidators of the same user works in parallel,
-    // it is better to try to liquidate feq clusters at the same time.
-    // Also, when different users try to liquidate the same list of clusters,
-    // it is better to try to liquidate some other cluster than others trying
-    // to liquidate at the same moment.
-    // To achieve this, - it is better to randomly sort final liquidation list.
-    clustersToLiquidate.sort(() => Math.random() - 0.5);
-    for (const item of clustersToLiquidate) {
-      await this.liquidateCluster(item);
+      // When few liquidators of the same user works in parallel,
+      // it is better to try to liquidate feq clusters at the same time.
+      // Also, when different users try to liquidate the same list of clusters,
+      // it is better to try to liquidate some other cluster than others trying
+      // to liquidate at the same moment.
+      // To achieve this, - it is better to randomly sort final liquidation list.
+      clustersToLiquidate.sort(() => Math.random() - 0.5);
+      for (const item of clustersToLiquidate) {
+        await this.liquidateCluster(item);
+      }
+    } catch (e) {
+      this._logger.error(`Failed to sync burn rates. Error: ${e}`);
+    } finally {
+      LiquidationTask.isProcessLocked = false;
     }
   }
 

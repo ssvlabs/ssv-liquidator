@@ -6,6 +6,7 @@ import {
 } from '@cli/shared/services/web3.provider';
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
+import { SystemService, SystemType } from '@cli/modules/system/system.service';
 
 @Injectable()
 export class BurnRatesTask {
@@ -19,8 +20,13 @@ export class BurnRatesTask {
     private _config: ConfService,
     private _clusterService: ClusterService,
     private _metricsService: MetricsService,
+    private _systemService: SystemService,
     private _web3Provider: Web3Provider,
   ) {}
+
+  static get BLOCK_RANGE() {
+    return 10;
+  }
 
   /**
    * How many records should be processed per one cron job
@@ -65,6 +71,21 @@ export class BurnRatesTask {
   async syncBurnRates(): Promise<void> {
     if (BurnRatesTask.isProcessLocked) {
       this._logger.log(`Process is already locked`);
+      return;
+    }
+
+    const latestSyncedBlockNumber = await this._systemService.get(
+      SystemType.GENERAL_LAST_BLOCK_NUMBER,
+    );
+
+    const latestBlockNumber =
+      await this._web3Provider.web3.eth.getBlockNumber();
+
+    if (
+      latestSyncedBlockNumber + BurnRatesTask.BLOCK_RANGE <
+      latestBlockNumber
+    ) {
+      // this._logger.log(`Ignore task. Events are not fully synced yet.`);
       return;
     }
 

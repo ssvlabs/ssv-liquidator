@@ -155,7 +155,16 @@ export class Web3Provider {
 
   @Retryable(Web3Provider.RETRY_OPTIONS)
   async getLiquidationThresholdPeriod(): Promise<number> {
-    return this.contractViews.methods.getLiquidationThresholdPeriod().call();
+    return this.contractViews.methods
+      .getLiquidationThresholdPeriod()
+      .call()
+      .catch(err => {
+        console.warn(
+          'getLiquidationThresholdPeriod',
+          this.getErrorByHash(err.data),
+        );
+        return;
+      });
   }
 
   @Retryable(Web3Provider.RETRY_OPTIONS)
@@ -166,7 +175,14 @@ export class Web3Provider {
         this.operatorIdsToArray(operatorIds),
         clusterSnapshot,
       )
-      .call();
+      .call()
+      .catch(err => {
+        console.warn('liquidatable', this.getErrorByHash(err.data), {
+          owner,
+          operatorIds,
+        });
+        return;
+      });
   }
 
   @Retryable(Web3Provider.RETRY_OPTIONS)
@@ -177,26 +193,56 @@ export class Web3Provider {
         this.operatorIdsToArray(operatorIds),
         clusterSnapshot,
       )
-      .call();
+      .call()
+      .catch(err => {
+        console.warn('isLiquidated', this.getErrorByHash(err.data), {
+          owner,
+          operatorIds,
+        });
+        return;
+      });
   }
 
   @Retryable(Web3Provider.RETRY_OPTIONS)
   async getBurnRate(owner, operatorIds, clusterSnapshot): Promise<string> {
     return this.contractViews.methods
       .getBurnRate(owner, this.operatorIdsToArray(operatorIds), clusterSnapshot)
-      .call();
+      .call()
+      .catch(err => {
+        console.warn('getBurnRate', this.getErrorByHash(err.data), {
+          owner,
+          operatorIds,
+        });
+        return;
+      });
   }
 
   @Retryable(Web3Provider.RETRY_OPTIONS)
   async getBalance(owner, operatorIds, clusterSnapshot): Promise<string> {
     return this.contractViews.methods
       .getBalance(owner, this.operatorIdsToArray(operatorIds), clusterSnapshot)
-      .call();
+      .call()
+      .catch(err => {
+        console.warn('getBalance', this.getErrorByHash(err.data), {
+          owner,
+          operatorIds,
+        });
+        return;
+      });
   }
 
   @Retryable(Web3Provider.RETRY_OPTIONS)
   async getMinimumLiquidationCollateral(): Promise<string> {
-    return this.contractViews.methods.getMinimumLiquidationCollateral().call();
+    return this.contractViews.methods
+      .getMinimumLiquidationCollateral()
+      .call()
+      .catch(err => {
+        console.warn(
+          'getMinimumLiquidationCollateral',
+          this.getErrorByHash(err.data),
+        );
+        return;
+      });
   }
 
   async getETHBalance(): Promise<number> {

@@ -7,7 +7,7 @@ import { FetchTask } from '../tasks/fetch.task';
 export class FetchCron {
   constructor(private _fetchTask: FetchTask) {}
 
-  @Cron('0 * * * * *')
+  @Cron('* * * * * *')
   async fetchNewValidators(): Promise<void> {
     try {
       await this._fetchTask.fetchAllEvents();
