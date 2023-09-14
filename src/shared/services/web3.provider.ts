@@ -177,7 +177,7 @@ export class Web3Provider {
       )
       .call()
       .catch(err => {
-        console.warn('liquidatable', this.getErrorByHash(err.data), {
+        console.warn('liquidatable', this.getErrorByHash(err.data) || err, {
           owner,
           operatorIds,
         });
@@ -195,7 +195,7 @@ export class Web3Provider {
       )
       .call()
       .catch(err => {
-        console.warn('isLiquidated', this.getErrorByHash(err.data), {
+        console.warn('isLiquidated', this.getErrorByHash(err.data) || err, {
           owner,
           operatorIds,
         });
@@ -209,7 +209,7 @@ export class Web3Provider {
       .getBurnRate(owner, this.operatorIdsToArray(operatorIds), clusterSnapshot)
       .call()
       .catch(err => {
-        console.warn('getBurnRate', this.getErrorByHash(err.data), {
+        console.warn('getBurnRate', this.getErrorByHash(err.data) || err, {
           owner,
           operatorIds,
         });
@@ -223,7 +223,7 @@ export class Web3Provider {
       .getBalance(owner, this.operatorIdsToArray(operatorIds), clusterSnapshot)
       .call()
       .catch(err => {
-        console.warn('getBalance', this.getErrorByHash(err.data), {
+        console.warn('getBalance', this.getErrorByHash(err.data) || err, {
           owner,
           operatorIds,
         });
