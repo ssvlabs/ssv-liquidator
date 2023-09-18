@@ -5,6 +5,11 @@
   "abi": [
     {
       "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
       "name": "ApprovalNotWithinTimeframe",
       "type": "error"
     },
@@ -51,6 +56,11 @@
     {
       "inputs": [],
       "name": "FeeIncreaseNotAllowed",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "FeeTooHigh",
       "type": "error"
     },
     {
@@ -569,7 +579,7 @@
           "type": "uint64"
         }
       ],
-      "name": "OperatorFeeCancellationDeclared",
+      "name": "OperatorFeeDeclarationCancelled",
       "type": "event"
     },
     {
@@ -645,6 +655,19 @@
         }
       ],
       "name": "OperatorFeeIncreaseLimitUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "maxFee",
+          "type": "uint64"
+        }
+      ],
+      "name": "OperatorMaximumFeeUpdated",
       "type": "event"
     },
     {
@@ -923,7 +946,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "owner",
+          "name": "clusterOwner",
           "type": "address"
         },
         {
@@ -988,27 +1011,16 @@
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "userAddress",
-          "type": "address"
-        }
-      ],
-      "name": "getRegisterAuth",
+      "inputs": [],
+      "name": "getVersion",
       "outputs": [
         {
-          "internalType": "bool",
-          "name": "authOperators",
-          "type": "bool"
-        },
-        {
-          "internalType": "bool",
-          "name": "authValidators",
-          "type": "bool"
+          "internalType": "string",
+          "name": "version",
+          "type": "string"
         }
       ],
-      "stateMutability": "view",
+      "stateMutability": "pure",
       "type": "function"
     },
     {
@@ -1078,7 +1090,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "owner",
+          "name": "clusterOwner",
           "type": "address"
         },
         {
@@ -1420,29 +1432,6 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "userAddress",
-          "type": "address"
-        },
-        {
-          "internalType": "bool",
-          "name": "authOperator",
-          "type": "bool"
-        },
-        {
-          "internalType": "bool",
-          "name": "authValidator",
-          "type": "bool"
-        }
-      ],
-      "name": "setRegisterAuth",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
           "name": "newOwner",
           "type": "address"
         }
@@ -1487,6 +1476,19 @@
         }
       ],
       "name": "updateLiquidationThresholdPeriod",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "maxFee",
+          "type": "uint64"
+        }
+      ],
+      "name": "updateMaximumOperatorFee",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -1632,6 +1634,19 @@
     {
       "inputs": [
         {
+          "internalType": "uint64",
+          "name": "operatorId",
+          "type": "uint64"
+        }
+      ],
+      "name": "withdrawAllOperatorEarnings",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "uint256",
           "name": "amount",
           "type": "uint256"
@@ -1653,19 +1668,6 @@
           "internalType": "uint256",
           "name": "amount",
           "type": "uint256"
-        }
-      ],
-      "name": "withdrawOperatorEarnings",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint64",
-          "name": "operatorId",
-          "type": "uint64"
         }
       ],
       "name": "withdrawOperatorEarnings",
