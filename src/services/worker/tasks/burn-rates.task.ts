@@ -85,7 +85,7 @@ export class BurnRatesTask {
       latestSyncedBlockNumber + BurnRatesTask.BLOCK_RANGE <
       latestBlockNumber
     ) {
-      // this._logger.log(`Ignore task. Events are not fully synced yet.`);
+      this._logger.debug(`Ignore task. Events are not fully synced yet.`);
       return;
     }
 

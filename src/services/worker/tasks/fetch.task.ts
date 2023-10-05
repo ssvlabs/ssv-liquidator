@@ -53,7 +53,7 @@ export class FetchTask {
       latestSyncedBlockNumber + FetchTask.MAX_DELAY_BLOCK_RANGE >
       latestBlockNumber
     ) {
-      // this._logger.log(`Ignore task. Allowed delay range.`);
+      this._logger.debug(`Ignore task. Allowed delay range.`);
       return;
     }
 
@@ -85,17 +85,16 @@ export class FetchTask {
       this._logger.log(
         `Fetched all events till latest block. ${messageDetails}`,
       );
-      /*
+
       if (toBlock < latestBlockNumber) {
-        this._logger.log(
+        this._logger.debug(
           `Continuing fetching immediately because latest block number is not reached. ${messageDetails}`,
         );
       } else {
-        this._logger.log(
+        this._logger.debug(
           `Fetched all events till latest block. ${messageDetails}`,
         );
       }
-      */
     } catch (e) {
       this._logger.error(`Failed to fetch events. Error: ${e}`);
     } finally {
