@@ -7,7 +7,7 @@ import { BurnRatesTask } from '../tasks/burn-rates.task';
 export class BurnRateCron {
   constructor(private _burnRatesTask: BurnRatesTask) {}
 
-  @Cron('0 * * * * *')
+  @Cron('*/10 * * * * *')
   async syncBurnRates(): Promise<void> {
     try {
       await this._burnRatesTask.syncBurnRates();

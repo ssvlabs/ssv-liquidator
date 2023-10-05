@@ -17,7 +17,11 @@ export class FetchTask {
   ) {}
 
   static get BLOCK_RANGE() {
-    return 500;
+    return 10_000;
+  }
+
+  static get MAX_DELAY_BLOCK_RANGE() {
+    return 1;
   }
 
   /*
@@ -29,13 +33,6 @@ export class FetchTask {
       return;
     }
 
-    let latestBlockNumber;
-    try {
-      latestBlockNumber = await this._web3Provider.web3.eth.getBlockNumber();
-    } catch (err) {
-      throw new Error('Could not access the provided node endpoint');
-    }
-
     try {
       await this._web3Provider.getLiquidationThresholdPeriod();
       // HERE we can validate the contract owner address
@@ -45,45 +42,61 @@ export class FetchTask {
       );
     }
 
+    const latestSyncedBlockNumber = await this._systemService.get(
+      SystemType.GENERAL_LAST_BLOCK_NUMBER,
+    );
+
+    const latestBlockNumber =
+      await this._web3Provider.web3.eth.getBlockNumber();
+
+    if (
+      latestSyncedBlockNumber + FetchTask.MAX_DELAY_BLOCK_RANGE >
+      latestBlockNumber
+    ) {
+      this._logger.debug(`Ignore task. Allowed delay range.`);
+      return;
+    }
+
+    FetchTask.isProcessLocked = true;
+
     try {
-      FetchTask.isProcessLocked = true;
+      const fromBlock =
+        latestSyncedBlockNumber || this._web3Provider.getGenesisBlock();
 
-      while (true) {
-        const fromBlock =
-          (await this._systemService.get(
-            SystemType.GENERAL_LAST_BLOCK_NUMBER,
-          )) || this._web3Provider.getGenesisBlock();
+      const toBlock = Math.min(
+        fromBlock + FetchTask.BLOCK_RANGE,
+        latestBlockNumber,
+      );
 
-        const toBlock = Math.min(
-          fromBlock + FetchTask.BLOCK_RANGE,
-          latestBlockNumber,
+      this._logger.log(
+        `Syncing events in a blocks range: ${fromBlock} - ${toBlock}`,
+      );
+
+      await this._syncUpdates(fromBlock, toBlock);
+
+      this._logger.log(
+        `Sync completed for a blocks range: ${fromBlock} - ${toBlock}`,
+      );
+
+      // Metrics
+      this._metricsService.fetchStatus.set(1);
+
+      const messageDetails = `From block: ${fromBlock}, to block: ${toBlock}, latest block: ${latestBlockNumber}`;
+      this._logger.log(
+        `Fetched all events till latest block. ${messageDetails}`,
+      );
+
+      if (toBlock < latestBlockNumber) {
+        this._logger.debug(
+          `Continuing fetching immediately because latest block number is not reached. ${messageDetails}`,
         );
-
-        this._logger.log(
-          `Syncing events in a blocks range: ${fromBlock} - ${toBlock}`,
+      } else {
+        this._logger.debug(
+          `Fetched all events till latest block. ${messageDetails}`,
         );
-
-        await this._syncUpdates(fromBlock, toBlock);
-
-        this._logger.log(
-          `Sync completed for a blocks range: ${fromBlock} - ${toBlock}`,
-        );
-
-        // Metrics
-        this._metricsService.fetchStatus.set(1);
-
-        const messageDetails = `From block: ${fromBlock}, to block: ${toBlock}, latest block: ${latestBlockNumber}`;
-        if (toBlock < latestBlockNumber) {
-          this._logger.log(
-            `Continuing fetching immediately because latest block number is not reached. ${messageDetails}`,
-          );
-        } else {
-          this._logger.log(
-            `Fetched all events till latest block. ${messageDetails}`,
-          );
-          break;
-        }
       }
+    } catch (e) {
+      this._logger.error(`Failed to fetch events. Error: ${e}`);
     } finally {
       FetchTask.isProcessLocked = false;
     }
