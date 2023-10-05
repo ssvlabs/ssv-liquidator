@@ -58,6 +58,11 @@
     },
     {
       "inputs": [],
+      "name": "FeeTooHigh",
+      "type": "error"
+    },
+    {
+      "inputs": [],
       "name": "FeeTooLow",
       "type": "error"
     },
@@ -258,7 +263,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "owner",
+          "name": "clusterOwner",
           "type": "address"
         },
         {
@@ -314,7 +319,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "owner",
+          "name": "clusterOwner",
           "type": "address"
         },
         {
@@ -373,6 +378,19 @@
         {
           "internalType": "uint64",
           "name": "",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getMaximumOperatorFee",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "operatorMaxFee",
           "type": "uint64"
         }
       ],
@@ -473,6 +491,11 @@
       "name": "getOperatorDeclaredFee",
       "outputs": [
         {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        },
+        {
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
@@ -564,7 +587,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "owner",
+          "name": "clusterOwner",
           "type": "address"
         },
         {
@@ -627,7 +650,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "owner",
+          "name": "clusterOwner",
           "type": "address"
         },
         {
@@ -683,7 +706,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "owner",
+          "name": "clusterOwner",
           "type": "address"
         },
         {
