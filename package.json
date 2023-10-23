@@ -10,6 +10,9 @@
     "ssv.network",
     "liquidation"
   ],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "cli:dev": "nodemon --exec yarn cli",
     "cli": "sh cli.sh",

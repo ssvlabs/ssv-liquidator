@@ -1,5 +1,6 @@
 #!/bin/sh
 
+export NODE_OPTIONS=--openssl-legacy-provider
 i=1
 RET=-1
 while [ $RET -ne 0 ] && [ $RET -ne 2 ]; do
