@@ -59,7 +59,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: node_url_4
+              key: node_url_holesky
 
         - name: GAS_PRICE
           value: "medium"
@@ -77,13 +77,13 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: ssv_sync_env_4
+              key: ssv_sync_env_holesky
 
         - name: SSV_SYNC
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: ssv_sync_4
+              key: ssv_sync_holesky
 
 #        volumeMounts:
 #        - mountPath: "/data/"
