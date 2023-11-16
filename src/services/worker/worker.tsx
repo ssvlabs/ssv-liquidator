@@ -10,8 +10,7 @@ import {
   ExpressAdapter,
   NestExpressApplication,
 } from '@nestjs/platform-express';
-import Web3Provider from '@cli/providers/web3.provider';
-import { WebappModule } from '@cli/modules/webapp/webapp.module';
+import { Web3Provider } from '@cli/shared/services/web3.provider';
 import { ConfService } from '@cli/shared/services/conf.service';
 import { WorkerModule } from '@cli/services/worker/worker.module';
 import { getAllowedLogLevels } from '@cli/shared/services/logging';
@@ -42,8 +41,7 @@ async function bootstrapApi() {
     }),
   );
 
-  const confService = app.select(WebappModule).get(ConfService);
-  confService.init();
+  const confService = app.select(WorkerModule).get(ConfService);
 
   const port = confService.getNumber('PORT') || 3000;
   await app.listen(port);
@@ -62,10 +60,10 @@ async function bootstrapCli() {
   app.useLogger(app.get(CustomLogger));
 
   const confService = app.select(WorkerModule).get(ConfService);
-  confService.init();
 
   const clusterService = app.select(WorkerModule).get(ClusterService);
   const earningService = app.select(WorkerModule).get(EarningService);
+  const web3Provider = app.select(WorkerModule).get(Web3Provider);
 
   if (confService.get('HIDE_TABLE') === '1') {
     return;
@@ -75,7 +73,7 @@ async function bootstrapCli() {
   render(
     <App
       clusterService={clusterService}
-      web3Provider={Web3Provider}
+      web3Provider={web3Provider}
       earningService={earningService}
     />,
   );

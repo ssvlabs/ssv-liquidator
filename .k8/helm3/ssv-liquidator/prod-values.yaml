@@ -2,8 +2,8 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 
-  liquidator_prater_j1_1: 1
+replicaCount:
+  liquidator_holesky_j2_1: 1
   liquidator_prater_j2_1: 1
   liquidator_mainnet_1: 1
   liquidator_mainnet_2: 0

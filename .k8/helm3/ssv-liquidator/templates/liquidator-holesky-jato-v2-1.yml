@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: liquidator-prater-jato-v1-1-svc
+  name: liquidator-holesky-jato-v2-1-svc
   namespace: {{ .Values.namespace }}
   labels:
-    name: liquidator-prater-jato-v1-1-svc
+    name: liquidator-holesky-jato-v2-1-svc
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -13,29 +13,29 @@ spec:
       protocol: TCP
       targetPort: 3000
   selector:
-    app: liquidator-prater-jato-v1-1
+    app: liquidator-holesky-jato-v2-1
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: liquidator-prater-jato-v1-1
-  name: liquidator-prater-jato-v1-1
+    app: liquidator-holesky-jato-v2-1
+  name: liquidator-holesky-jato-v2-1
   namespace: {{ .Values.namespace }}
 spec:
-  replicas: {{ .Values.replicaCount.liquidator_prater_j1_1 }}
+  replicas: {{ .Values.replicaCount.liquidator_holesky_j2_1 }}
   selector:
     matchLabels:
-      app: liquidator-prater-jato-v1-1
+      app: liquidator-holesky-jato-v2-1
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: liquidator-prater-jato-v1-1
+        app: liquidator-holesky-jato-v2-1
     spec:
       containers:
-      - name: liquidator-prater-jato-v1-1
+      - name: liquidator-holesky-jato-v2-1
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: Always
         ports:
@@ -59,7 +59,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: node_url_1
+              key: node_url_holesky
 
         - name: GAS_PRICE
           value: "medium"
@@ -71,29 +71,29 @@ spec:
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: account_private_key_liquidator_prater_j1_1
+              key: account_private_key_liquidator_holesky_j2_1
 
         - name: SSV_SYNC_ENV
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: ssv_sync_env
+              key: ssv_sync_env_holesky
 
         - name: SSV_SYNC
           valueFrom:
             secretKeyRef:
               name: config-secrets
-              key: ssv_sync
+              key: ssv_sync_holesky
 
 #        volumeMounts:
 #        - mountPath: "/data/"
-#          name: liquidator-prater-jato-v1-1
+#          name: liquidator-holesky-jato-v2-1
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
 #      volumes:
 #      - persistentVolumeClaim:
-#          claimName: liquidator-prater-jato-v1-1
-#        name: liquidator-prater-jato-v1-1
+#          claimName: liquidator-holesky-jato-v2-1
+#        name: liquidator-holesky-jato-v2-1
         {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}

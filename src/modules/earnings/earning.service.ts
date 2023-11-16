@@ -1,10 +1,9 @@
-import Web3Provider from '@cli/providers/web3.provider';
-
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DeleteResult } from 'typeorm';
 
 import { ConfService } from '@cli/shared/services/conf.service';
+import { Web3Provider } from '@cli/shared/services/web3.provider';
 
 import { Earning } from './earning.entity';
 
@@ -13,6 +12,7 @@ export class EarningService {
   constructor(
     @InjectRepository(Earning) private _earningRepository: Repository<Earning>,
     private _config: ConfService,
+    private _web3Provider: Web3Provider,
   ) {}
 
   async findAll(): Promise<Earning[]> {
@@ -32,8 +32,10 @@ export class EarningService {
   }
 
   async fetch(transactionHash: string): Promise<any> {
-    const tx = await Web3Provider.web3.eth.getTransaction(transactionHash);
-    const txReceipt = await Web3Provider.web3.eth.getTransactionReceipt(
+    const tx = await this._web3Provider.web3.eth.getTransaction(
+      transactionHash,
+    );
+    const txReceipt = await this._web3Provider.web3.eth.getTransactionReceipt(
       transactionHash,
     );
 
@@ -47,18 +49,18 @@ export class EarningService {
     };
     const { logs } = txReceipt;
     const transferData = logs.find(
-      log => log.address.toLowerCase() === Web3Provider.getTokenAddress(),
+      log => log.address.toLowerCase() === this._web3Provider.getTokenAddress(),
     );
     earnedData.earned =
       transferData &&
-      +Web3Provider.web3.utils.hexToNumberString(transferData.data);
+      +this._web3Provider.web3.utils.hexToNumberString(transferData.data);
 
     return earnedData;
   }
 
   async update(item: any): Promise<void> {
     const liquidatorAddress =
-      Web3Provider.web3.eth.accounts.privateKeyToAccount(
+      this._web3Provider.web3.eth.accounts.privateKeyToAccount(
         this._config.get('ACCOUNT_PRIVATE_KEY'),
       ).address;
     if (item.from.toLowerCase() !== liquidatorAddress.toLocaleLowerCase())

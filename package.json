@@ -10,6 +10,9 @@
     "ssv.network",
     "liquidation"
   ],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "cli:dev": "nodemon --exec yarn cli",
     "cli": "sh cli.sh",
@@ -49,7 +52,7 @@
     "sqlite3": "^5.0.8",
     "typeorm": "^0.3.12",
     "typescript": "^3.9.3",
-    "typescript-retry-decorator": "^2.0.5",
+    "typescript-retry-decorator": "^2.4.2",
     "web3": "^1.5.1"
   },
   "devDependencies": {
@@ -72,8 +75,8 @@
     "eslint-plugin-simple-import-sort": "^5.0.3",
     "husky": "^3.0.9",
     "lint-staged": "~9.4.2",
-    "prettier": "^2.0.5",
     "nodemon": "^2.0.22",
+    "prettier": "^2.0.5",
     "ts-loader": "^7.0.4",
     "ts-node": "^8.10.1",
     "tslint": "^6.1.2",

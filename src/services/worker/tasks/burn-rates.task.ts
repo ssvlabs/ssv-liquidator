@@ -1,10 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
-import Web3Provider from '@cli/providers/web3.provider';
 import { ConfService } from '@cli/shared/services/conf.service';
-import { RetryService } from '@cli/shared/services/retry.service';
-import SolidityErrors from '@cli/providers/solidity-errors.provider';
+import {
+  Web3Provider,
+  ERROR_CLUSTER_LIQUIDATED,
+} from '@cli/shared/services/web3.provider';
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
+import { SystemService, SystemType } from '@cli/modules/system/system.service';
 
 @Injectable()
 export class BurnRatesTask {
@@ -16,10 +18,15 @@ export class BurnRatesTask {
 
   constructor(
     private _config: ConfService,
-    private _retryService: RetryService,
     private _clusterService: ClusterService,
     private _metricsService: MetricsService,
+    private _systemService: SystemService,
+    private _web3Provider: Web3Provider,
   ) {}
+
+  static get BLOCK_RANGE() {
+    return 10;
+  }
 
   /**
    * How many records should be processed per one cron job
@@ -64,6 +71,21 @@ export class BurnRatesTask {
   async syncBurnRates(): Promise<void> {
     if (BurnRatesTask.isProcessLocked) {
       this._logger.log(`Process is already locked`);
+      return;
+    }
+
+    const latestSyncedBlockNumber = await this._systemService.get(
+      SystemType.GENERAL_LAST_BLOCK_NUMBER,
+    );
+
+    const latestBlockNumber =
+      await this._web3Provider.web3.eth.getBlockNumber();
+
+    if (
+      latestSyncedBlockNumber + BurnRatesTask.BLOCK_RANGE <
+      latestBlockNumber
+    ) {
+      this._logger.debug(`Ignore task. Events are not fully synced yet.`);
       return;
     }
 
@@ -114,21 +136,22 @@ export class BurnRatesTask {
     // Iterate over all clusters with missing parts and sync them one by one
     for (const record of missedRecords) {
       const logRecord = JSON.stringify(record);
-      const burnRateTask = this._retryService.getWithRetry(
-        Web3Provider.getBurnRate,
-        [record.owner, record.operatorIds, record.cluster],
+      const burnRateTask = this._web3Provider.getBurnRate(
+        record.owner,
+        record.operatorIds,
+        record.cluster,
       );
-      const balanceTask = this._retryService.getWithRetry(
-        Web3Provider.getBalance,
-        [record.owner, record.operatorIds, record.cluster],
+      const balanceTask = this._web3Provider.getBalance(
+        record.owner,
+        record.operatorIds,
+        record.cluster,
       );
-      const liquidatedTask = this._retryService.getWithRetry(
-        Web3Provider.isLiquidated,
-        [record.owner, record.operatorIds, record.cluster],
+      const liquidatedTask = this._web3Provider.isLiquidated(
+        record.owner,
+        record.operatorIds,
+        record.cluster,
       );
-      const currentBlockNumberTask = this._retryService.getWithRetry(
-        Web3Provider.currentBlockNumber,
-      );
+      const currentBlockNumberTask = this._web3Provider.currentBlockNumber();
 
       // Wait for all the parts of cluster data
       this._logger.verbose(
@@ -282,9 +305,9 @@ export class BurnRatesTask {
           this.decreaseBatchSize();
         } else if (fields[clusterField].error) {
           error = fields[clusterField].error;
-          const isLiquidated = SolidityErrors.isError(
+          const isLiquidated = this._web3Provider.isError(
             error,
-            SolidityErrors.ERROR_CLUSTER_LIQUIDATED,
+            ERROR_CLUSTER_LIQUIDATED,
           );
           this._logger.debug(
             `Found error in one of cluster fields "${clusterField}": ${JSON.stringify(
@@ -316,9 +339,8 @@ export class BurnRatesTask {
     this._logger.log(
       'Fetching from the contract minimum liquidation collateral..',
     );
-    const collateralAmount = +(await this._retryService.getWithRetry(
-      Web3Provider.getMinimumLiquidationCollateral,
-    ));
+    const collateralAmount =
+      +(await this._web3Provider.getMinimumLiquidationCollateral());
     this._logger.log(
       `Fetched from the contract minimum liquidation collateral: ${collateralAmount}`,
     );
@@ -327,9 +349,7 @@ export class BurnRatesTask {
       'Fetching from the contract minimum blocks before liquidation..',
     );
     const minimumBlocksBeforeLiquidation =
-      await this._retryService.getWithRetry(
-        Web3Provider.getLiquidationThresholdPeriod,
-      );
+      await this._web3Provider.getLiquidationThresholdPeriod();
     this._logger.log(
       `Fetched from the contract minimum blocks before liquidation: ${minimumBlocksBeforeLiquidation}`,
     );

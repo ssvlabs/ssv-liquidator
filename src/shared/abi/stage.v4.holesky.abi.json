@@ -1,7 +1,6 @@
 {
-  "contractAddress": "0xd6b633304Db2DD59ce93753FA55076DA367e5b2c",
-  "tokenAddress": "0x6471F70b932390f527c6403773D082A0Db8e8A9F",
-  "genesisBlock": 9249887,
+  "contractAddress": "0x0d33801785340072C452b994496B19f196b7eE15",
+  "genesisBlock": 117512,
   "abi": [
     {
       "inputs": [],
@@ -847,6 +846,25 @@
       "inputs": [
         {
           "indexed": true,
+          "internalType": "bytes",
+          "name": "publicKey",
+          "type": "bytes"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint64[]",
+          "name": "operatorIds",
+          "type": "uint64[]"
+        }
+      ],
+      "name": "ValidatorExited",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
           "internalType": "address",
           "name": "owner",
           "type": "address"
@@ -1006,6 +1024,24 @@
         }
       ],
       "name": "executeOperatorFee",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "publicKey",
+          "type": "bytes"
+        },
+        {
+          "internalType": "uint64[]",
+          "name": "operatorIds",
+          "type": "uint64[]"
+        }
+      ],
+      "name": "exitValidator",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

@@ -1,6 +1,11 @@
 {
-  "contractAddress": "0x8dB45282d7C4559fd093C26f677B3837a5598914",
+  "contractAddress": "0x352A18AEe90cdcd825d1E37d9939dCA86C00e281",
   "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
     {
       "inputs": [],
       "name": "ApprovalNotWithinTimeframe",
@@ -53,12 +58,22 @@
     },
     {
       "inputs": [],
+      "name": "FeeTooHigh",
+      "type": "error"
+    },
+    {
+      "inputs": [],
       "name": "FeeTooLow",
       "type": "error"
     },
     {
       "inputs": [],
       "name": "IncorrectClusterState",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "IncorrectValidatorState",
       "type": "error"
     },
     {
@@ -78,12 +93,27 @@
     },
     {
       "inputs": [],
+      "name": "MaxValueExceeded",
+      "type": "error"
+    },
+    {
+      "inputs": [],
       "name": "NewBlockPeriodIsBelowMinimum",
       "type": "error"
     },
     {
       "inputs": [],
-      "name": "NoFeeDelcared",
+      "name": "NoFeeDeclared",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NotAuthorized",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "OperatorAlreadyExists",
       "type": "error"
     },
     {
@@ -93,7 +123,17 @@
     },
     {
       "inputs": [],
+      "name": "OperatorsListNotUnique",
+      "type": "error"
+    },
+    {
+      "inputs": [],
       "name": "SameFeeChangeNotAllowed",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "TargetModuleDoesNotExist",
       "type": "error"
     },
     {
@@ -114,16 +154,6 @@
     {
       "inputs": [],
       "name": "ValidatorDoesNotExist",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "ValidatorOwnedByOtherAddress",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "ZeroFeeIncreaseNotAllowed",
       "type": "error"
     },
     {
@@ -233,7 +263,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "owner",
+          "name": "clusterOwner",
           "type": "address"
         },
         {
@@ -259,14 +289,14 @@
               "type": "uint64"
             },
             {
-              "internalType": "uint256",
-              "name": "balance",
-              "type": "uint256"
-            },
-            {
               "internalType": "bool",
               "name": "active",
               "type": "bool"
+            },
+            {
+              "internalType": "uint256",
+              "name": "balance",
+              "type": "uint256"
             }
           ],
           "internalType": "struct ISSVNetworkCore.Cluster",
@@ -289,7 +319,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "owner",
+          "name": "clusterOwner",
           "type": "address"
         },
         {
@@ -315,14 +345,14 @@
               "type": "uint64"
             },
             {
-              "internalType": "uint256",
-              "name": "balance",
-              "type": "uint256"
-            },
-            {
               "internalType": "bool",
               "name": "active",
               "type": "bool"
+            },
+            {
+              "internalType": "uint256",
+              "name": "balance",
+              "type": "uint256"
             }
           ],
           "internalType": "struct ISSVNetworkCore.Cluster",
@@ -343,37 +373,24 @@
     },
     {
       "inputs": [],
-      "name": "getDeclaredOperatorFeePeriod",
-      "outputs": [
-        {
-          "internalType": "uint64",
-          "name": "",
-          "type": "uint64"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getExecuteOperatorFeePeriod",
-      "outputs": [
-        {
-          "internalType": "uint64",
-          "name": "",
-          "type": "uint64"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
       "name": "getLiquidationThresholdPeriod",
       "outputs": [
         {
           "internalType": "uint64",
           "name": "",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getMaximumOperatorFee",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "operatorMaxFee",
           "type": "uint64"
         }
       ],
@@ -445,6 +462,11 @@
           "type": "uint32"
         },
         {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
           "internalType": "bool",
           "name": "",
           "type": "bool"
@@ -469,9 +491,9 @@
       "name": "getOperatorDeclaredFee",
       "outputs": [
         {
-          "internalType": "uint256",
+          "internalType": "bool",
           "name": "",
-          "type": "uint256"
+          "type": "bool"
         },
         {
           "internalType": "uint256",
@@ -479,9 +501,14 @@
           "type": "uint256"
         },
         {
-          "internalType": "uint256",
+          "internalType": "uint64",
           "name": "",
-          "type": "uint256"
+          "type": "uint64"
+        },
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
         }
       ],
       "stateMutability": "view",
@@ -531,7 +558,25 @@
       "outputs": [
         {
           "internalType": "uint64",
-          "name": "",
+          "name": "operatorMaxFeeIncrease",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getOperatorFeePeriods",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "declareOperatorFeePeriod",
+          "type": "uint64"
+        },
+        {
+          "internalType": "uint64",
+          "name": "executeOperatorFeePeriod",
           "type": "uint64"
         }
       ],
@@ -541,6 +586,11 @@
     {
       "inputs": [
         {
+          "internalType": "address",
+          "name": "clusterOwner",
+          "type": "address"
+        },
+        {
           "internalType": "bytes",
           "name": "publicKey",
           "type": "bytes"
@@ -549,14 +599,22 @@
       "name": "getValidator",
       "outputs": [
         {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        },
-        {
           "internalType": "bool",
-          "name": "",
+          "name": "active",
           "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getValidatorsPerOperatorLimit",
+      "outputs": [
+        {
+          "internalType": "uint32",
+          "name": "",
+          "type": "uint32"
         }
       ],
       "stateMutability": "view",
@@ -578,7 +636,7 @@
     {
       "inputs": [
         {
-          "internalType": "contract SSVNetwork",
+          "internalType": "contract ISSVViews",
           "name": "ssvNetwork_",
           "type": "address"
         }
@@ -592,7 +650,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "owner",
+          "name": "clusterOwner",
           "type": "address"
         },
         {
@@ -618,14 +676,14 @@
               "type": "uint64"
             },
             {
-              "internalType": "uint256",
-              "name": "balance",
-              "type": "uint256"
-            },
-            {
               "internalType": "bool",
               "name": "active",
               "type": "bool"
+            },
+            {
+              "internalType": "uint256",
+              "name": "balance",
+              "type": "uint256"
             }
           ],
           "internalType": "struct ISSVNetworkCore.Cluster",
@@ -648,7 +706,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "owner",
+          "name": "clusterOwner",
           "type": "address"
         },
         {
@@ -674,14 +732,14 @@
               "type": "uint64"
             },
             {
-              "internalType": "uint256",
-              "name": "balance",
-              "type": "uint256"
-            },
-            {
               "internalType": "bool",
               "name": "active",
               "type": "bool"
+            },
+            {
+              "internalType": "uint256",
+              "name": "balance",
+              "type": "uint256"
             }
           ],
           "internalType": "struct ISSVNetworkCore.Cluster",
@@ -744,6 +802,19 @@
       "name": "renounceOwnership",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "ssvNetwork",
+      "outputs": [
+        {
+          "internalType": "contract ISSVViews",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
