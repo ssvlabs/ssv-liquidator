@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
+import {Cron, CronExpression} from '@nestjs/schedule';
 
 import { BurnRatesTask } from '../tasks/burn-rates.task';
 
@@ -7,7 +7,7 @@ import { BurnRatesTask } from '../tasks/burn-rates.task';
 export class BurnRateCron {
   constructor(private _burnRatesTask: BurnRatesTask) {}
 
-  @Cron('*/10 * * * * *')
+  @Cron(CronExpression.EVERY_10_SECONDS)
   async syncBurnRates(): Promise<void> {
     try {
       await this._burnRatesTask.syncBurnRates();
