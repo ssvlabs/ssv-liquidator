@@ -49,8 +49,11 @@ async function bootstrapApi() {
   await app.listen(port);
 
   app.useLogger(app.get(CustomLogger));
-  logger.log('API is active')
-  logger.log(`WebApp is running on port: ${port}`)
+  logger.log('API is active');
+  logger.log(`WebApp is running on port: ${port}`);
+  logger.log(`Node url: ${process.env.NODE_URL}`);
+  logger.log(`Network: ${process.env.SSV_SYNC}`);
+  await app.get(Web3Provider).printConfig()
 }
 
 async function bootstrapCli() {
@@ -83,6 +86,7 @@ async function bootstrapCli() {
 }
 
 async function bootstrap() {
+  logger.log(`Liquidator starting`)
   process.on('unhandledRejection', (error: Error) => {
     logger.error(`[CRITICAL] unhandledRejection ${error} ${error.stack}`)
     MetricsService.criticalStatus.set(0);

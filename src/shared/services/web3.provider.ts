@@ -37,6 +37,7 @@ export class Web3Provider {
   public web3: Web3;
   private readonly _contractCore: Contract;
   private readonly _contractViews: Contract;
+  private liquidatorAddress: string;
 
   private _errors: SolidityError[] = [];
 
@@ -113,6 +114,10 @@ export class Web3Provider {
       genesisBlock: jsonCoreData.genesisBlock,
     };
 
+    this.liquidatorAddress = this.web3.eth.accounts.privateKeyToAccount(
+      process.env.ACCOUNT_PRIVATE_KEY,
+    ).address;
+
     for (const item of this.abiCore) {
       if (item['type'] === 'error') {
         const inputTypes = [];
@@ -125,6 +130,7 @@ export class Web3Provider {
           hash: new Web3().utils.keccak256(error).substring(0, 10),
         });
       }
+
     }
 
     this.web3 = new Web3(process.env.NODE_URL);
@@ -141,6 +147,12 @@ export class Web3Provider {
 
   get abiViews() {
     return this.contract.abiViews as any;
+  }
+
+  async printConfig(){
+
+    this._logger.log(`Liquidator address: ${this.liquidatorAddress}`);
+    this._logger.log(`Liquidator balance: ${await this.getLiquidatorETHBalance()} ETH`)
   }
 
   getOwnerAndOperatorsStr(owner, operatorIds): string {
@@ -230,15 +242,9 @@ export class Web3Provider {
       });
   }
 
-  async getETHBalance(): Promise<number> {
-    if (!process.env.ACCOUNT_PRIVATE_KEY) return 0;
-
-    const account = this.web3.eth.accounts.privateKeyToAccount(
-      process.env.ACCOUNT_PRIVATE_KEY,
-    );
-    const address = account.address;
-
-    const weiBalance = await this.web3.eth.getBalance(address);
+  async getLiquidatorETHBalance(): Promise<number> {
+    if (!process.env.ACCOUNT_PRIVATE_KEY) return 0; // TODO this is a bug or at least misleading.
+    const weiBalance = await this.web3.eth.getBalance(this.liquidatorAddress);
     const ethBalance = this.web3.utils.fromWei(weiBalance, 'ether');
     return +ethBalance;
   }
