@@ -316,14 +316,12 @@ export class LiquidationTask {
       this._web3Provider.operatorIdsToArray(operatorIds).length;
     transaction.gas = this._config.gasUsage(); // totalOperators
     if (!transaction.gas) {
-      console.error(
-        `Gas group was not found for ${totalOperators} operators. Going to estimate transaction gas...`,
+      this._logger.error(
+        `Gas group was not found for ${totalOperators} operators. Going to estimate transaction gas...`
       );
       transaction.gas = await this.getGas(transaction);
     } else {
-      console.info(
-        `Gas group was found for ${totalOperators} operators and is: ${transaction.gas}`,
-      );
+      this._logger.log(`Gas group was found for ${totalOperators} operators and is: ${transaction.gas}`)
     }
 
     transaction.gasPrice = await this.getGasPrice();

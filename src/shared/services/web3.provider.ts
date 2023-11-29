@@ -28,7 +28,7 @@ export const ERROR_CLUSTER_LIQUIDATED = 'ClusterIsLiquidated';
 @Injectable()
 export class Web3Provider {
 
-  get contractCore(): any {
+  get contractCore(): Contract {
     return this._contractCore;
   }
   private readonly _logger = new Logger(Web3Provider.name);
@@ -72,10 +72,7 @@ export class Web3Provider {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       jsonCoreData = require(`@cli/shared/abi/${contractEnv}.${contractGroup}.abi.json`);
     } catch (err) {
-      console.error(
-        `Failed to load JSON data from ${contractEnv}.${contractGroup}.abi.json`,
-        err,
-      );
+      this._logger.error(`Failed to load JSON data from ${contractEnv}.${contractGroup}.abi.json. ${err}`);
       throw err;
     }
 
@@ -84,10 +81,7 @@ export class Web3Provider {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       jsonViewsData = require(`@cli/shared/abi/${contractEnv}.${contractGroup}.views.abi.json`);
     } catch (err) {
-      console.error(
-        `Failed to load JSON data from ${contractEnv}.${contractGroup}.views.abi.json`,
-        err,
-      );
+      this._logger.error(`Failed to load JSON data from ${contractEnv}.${contractGroup}.views.abi.json. ${err}`)
       throw err;
     }
 
@@ -149,6 +143,10 @@ export class Web3Provider {
     return this.contract.abiViews as any;
   }
 
+  getOwnerAndOperatorsStr(owner, operatorIds): string {
+    return `{ owner '${owner}', operatorIds '${operatorIds}' }`;
+  }
+
   @Retryable(Web3Provider.RETRY_OPTIONS)
   async currentBlockNumber(): Promise<number> {
     return this.web3.eth.getBlockNumber();
@@ -160,10 +158,7 @@ export class Web3Provider {
       .getLiquidationThresholdPeriod()
       .call()
       .catch(err => {
-        console.warn(
-          'getLiquidationThresholdPeriod',
-          this.getErrorByHash(err.data),
-        );
+        this._logger.warn(`getLiquidationThresholdPeriod ${JSON.stringify(this.getErrorByHash(err.data))}`)
         return;
       });
   }
@@ -178,10 +173,8 @@ export class Web3Provider {
       )
       .call()
       .catch(err => {
-        console.warn('liquidatable', this.getErrorByHash(err.data) || err, {
-          owner,
-          operatorIds,
-        });
+        this._logger.warn(`liquidatable ${JSON.stringify(this.getErrorByHash(err.data) || err)}
+          ${this.getOwnerAndOperatorsStr(owner, operatorIds)}`);
         return;
       });
   }
@@ -196,10 +189,8 @@ export class Web3Provider {
       )
       .call()
       .catch(err => {
-        console.warn('isLiquidated', this.getErrorByHash(err.data) || err, {
-          owner,
-          operatorIds,
-        });
+        this._logger.warn(`isLiquidated ${JSON.stringify(this.getErrorByHash(err.data) || err)}
+          ${this.getOwnerAndOperatorsStr(owner, operatorIds)}`);
         return;
       });
   }
@@ -210,10 +201,8 @@ export class Web3Provider {
       .getBurnRate(owner, this.operatorIdsToArray(operatorIds), clusterSnapshot)
       .call()
       .catch(err => {
-        console.warn('getBurnRate', this.getErrorByHash(err.data) || err, {
-          owner,
-          operatorIds,
-        });
+        this._logger.warn(`getBurnRate ${JSON.stringify(this.getErrorByHash(err.data) || err)}
+          ${this.getOwnerAndOperatorsStr(owner, operatorIds)}`);
         return;
       });
   }
@@ -224,10 +213,8 @@ export class Web3Provider {
       .getBalance(owner, this.operatorIdsToArray(operatorIds), clusterSnapshot)
       .call()
       .catch(err => {
-        console.warn('getBalance', this.getErrorByHash(err.data) || err, {
-          owner,
-          operatorIds,
-        });
+        this._logger.warn(`getBalance ${JSON.stringify(this.getErrorByHash(err.data) || err)}
+          ${this.getOwnerAndOperatorsStr(owner, operatorIds)}`);
         return;
       });
   }
@@ -238,10 +225,7 @@ export class Web3Provider {
       .getMinimumLiquidationCollateral()
       .call()
       .catch(err => {
-        console.warn(
-          'getMinimumLiquidationCollateral',
-          this.getErrorByHash(err.data),
-        );
+        this._logger.warn(`getMinimumLiquidationCollateral ${JSON.stringify(this.getErrorByHash(err.data))}`);
         return;
       });
   }
