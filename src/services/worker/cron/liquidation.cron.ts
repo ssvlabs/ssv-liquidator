@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
+import {Cron, CronExpression} from '@nestjs/schedule';
 
 import { LiquidationTask } from '../tasks/liquidation.task';
 
@@ -7,7 +7,7 @@ import { LiquidationTask } from '../tasks/liquidation.task';
 export class LiquidationCron {
   constructor(private _liquidationTask: LiquidationTask) {}
 
-  @Cron('*/10 * * * * *')
+  @Cron(CronExpression.EVERY_10_SECONDS)
   async liquidate(): Promise<void> {
     try {
       await this._liquidationTask.liquidate();

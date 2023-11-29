@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Retryable } from 'typescript-retry-decorator';
 
 import { ConfService } from '@cli/shared/services/conf.service';
+import {Contract} from "web3-eth-contract";
 
 export type NetworkName = string;
 export type ContractAddress = string;
@@ -26,10 +27,16 @@ export const ERROR_CLUSTER_LIQUIDATED = 'ClusterIsLiquidated';
 
 @Injectable()
 export class Web3Provider {
+
+  get contractCore(): any {
+    return this._contractCore;
+  }
   private readonly _logger = new Logger(Web3Provider.name);
 
   private contract: ContractData;
   public web3: Web3;
+  private readonly _contractCore: Contract;
+  private readonly _contractViews: Contract;
 
   private _errors: SolidityError[] = [];
 
@@ -127,6 +134,11 @@ export class Web3Provider {
     }
 
     this.web3 = new Web3(process.env.NODE_URL);
+    this._contractCore = new this.web3.eth.Contract(this.abiCore, this.contract.address);
+    this._contractViews = new this.web3.eth.Contract(
+        this.abiViews,
+        this.contract.addressViews,
+    );
   }
 
   get abiCore() {
@@ -137,17 +149,6 @@ export class Web3Provider {
     return this.contract.abiViews as any;
   }
 
-  get contractCore() {
-    return new this.web3.eth.Contract(this.abiCore, this.contract.address);
-  }
-
-  get contractViews() {
-    return new this.web3.eth.Contract(
-      this.abiViews,
-      this.contract.addressViews,
-    );
-  }
-
   @Retryable(Web3Provider.RETRY_OPTIONS)
   async currentBlockNumber(): Promise<number> {
     return this.web3.eth.getBlockNumber();
@@ -155,7 +156,7 @@ export class Web3Provider {
 
   @Retryable(Web3Provider.RETRY_OPTIONS)
   async getLiquidationThresholdPeriod(): Promise<number> {
-    return this.contractViews.methods
+    return this._contractViews.methods
       .getLiquidationThresholdPeriod()
       .call()
       .catch(err => {
@@ -169,7 +170,7 @@ export class Web3Provider {
 
   @Retryable(Web3Provider.RETRY_OPTIONS)
   async liquidatable(owner, operatorIds, clusterSnapshot): Promise<boolean> {
-    return this.contractViews.methods
+    return this._contractViews.methods
       .isLiquidatable(
         owner,
         this.operatorIdsToArray(operatorIds),
@@ -187,7 +188,7 @@ export class Web3Provider {
 
   @Retryable(Web3Provider.RETRY_OPTIONS)
   async isLiquidated(owner, operatorIds, clusterSnapshot): Promise<boolean> {
-    return this.contractViews.methods
+    return this._contractViews.methods
       .isLiquidated(
         owner,
         this.operatorIdsToArray(operatorIds),
@@ -205,7 +206,7 @@ export class Web3Provider {
 
   @Retryable(Web3Provider.RETRY_OPTIONS)
   async getBurnRate(owner, operatorIds, clusterSnapshot): Promise<string> {
-    return this.contractViews.methods
+    return this._contractViews.methods
       .getBurnRate(owner, this.operatorIdsToArray(operatorIds), clusterSnapshot)
       .call()
       .catch(err => {
@@ -219,7 +220,7 @@ export class Web3Provider {
 
   @Retryable(Web3Provider.RETRY_OPTIONS)
   async getBalance(owner, operatorIds, clusterSnapshot): Promise<string> {
-    return this.contractViews.methods
+    return this._contractViews.methods
       .getBalance(owner, this.operatorIdsToArray(operatorIds), clusterSnapshot)
       .call()
       .catch(err => {
@@ -233,7 +234,7 @@ export class Web3Provider {
 
   @Retryable(Web3Provider.RETRY_OPTIONS)
   async getMinimumLiquidationCollateral(): Promise<string> {
-    return this.contractViews.methods
+    return this._contractViews.methods
       .getMinimumLiquidationCollateral()
       .call()
       .catch(err => {

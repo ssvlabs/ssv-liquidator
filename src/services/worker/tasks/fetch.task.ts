@@ -32,15 +32,7 @@ export class FetchTask {
       this._logger.debug(`Fetching new events is already locked`);
       return;
     }
-
-    try {
-      await this._web3Provider.getLiquidationThresholdPeriod();
-      // HERE we can validate the contract owner address
-    } catch (err) {
-      throw new Error(
-        `'The provided contract address is not valid. Error: ${err}`,
-      );
-    }
+    
 
     const latestSyncedBlockNumber = await this._systemService.get(
       SystemType.GENERAL_LAST_BLOCK_NUMBER,
