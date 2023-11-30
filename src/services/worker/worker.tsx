@@ -1,5 +1,3 @@
-import 'dotenv/config';
-
 import importJsx from 'import-jsx';
 import React from 'react';
 import path from 'path';

@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfService } from '@cli/shared/services/conf.service';
 import {
   Web3Provider,
   ERROR_CLUSTER_LIQUIDATED,
@@ -17,7 +16,6 @@ export class BurnRatesTask {
   private readonly _logger = new Logger(BurnRatesTask.name);
 
   constructor(
-    private _config: ConfService,
     private _clusterService: ClusterService,
     private _metricsService: MetricsService,
     private _systemService: SystemService,

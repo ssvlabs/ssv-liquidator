@@ -37,7 +37,7 @@ export class Web3Provider {
   public web3: Web3;
   private readonly _contractCore: Contract;
   private readonly _contractViews: Contract;
-  private liquidatorAddress: string;
+  private readonly liquidatorAddress: string;
 
   private _errors: SolidityError[] = [];
 
@@ -114,9 +114,7 @@ export class Web3Provider {
       genesisBlock: jsonCoreData.genesisBlock,
     };
 
-    this.liquidatorAddress = this.web3.eth.accounts.privateKeyToAccount(
-      process.env.ACCOUNT_PRIVATE_KEY,
-    ).address;
+
 
     for (const item of this.abiCore) {
       if (item['type'] === 'error') {
@@ -134,6 +132,9 @@ export class Web3Provider {
     }
 
     this.web3 = new Web3(process.env.NODE_URL);
+    this.liquidatorAddress = this.web3.eth.accounts.privateKeyToAccount(
+      this._config.get('ACCOUNT_PRIVATE_KEY'),
+    ).address;
     this._contractCore = new this.web3.eth.Contract(this.abiCore, this.contract.address);
     this._contractViews = new this.web3.eth.Contract(
         this.abiViews,
@@ -243,7 +244,6 @@ export class Web3Provider {
   }
 
   async getLiquidatorETHBalance(): Promise<number> {
-    if (!process.env.ACCOUNT_PRIVATE_KEY) return 0; // TODO this is a bug or at least misleading.
     const weiBalance = await this.web3.eth.getBalance(this.liquidatorAddress);
     const ethBalance = this.web3.utils.fromWei(weiBalance, 'ether');
     return +ethBalance;
