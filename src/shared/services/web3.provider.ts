@@ -1,9 +1,10 @@
 import Web3 from 'web3';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Retryable } from 'typescript-retry-decorator';
 
 import { ConfService } from '@cli/shared/services/conf.service';
 import {Contract} from "web3-eth-contract";
+import {CustomLogger} from "@cli/shared/services/logger.service";
 
 export type NetworkName = string;
 export type ContractAddress = string;
@@ -31,7 +32,7 @@ export class Web3Provider {
   get contractCore(): Contract {
     return this._contractCore;
   }
-  private readonly _logger = new Logger(Web3Provider.name);
+  private readonly _logger = new CustomLogger(Web3Provider.name);
 
   private contract: ContractData;
   public web3: Web3;
@@ -53,7 +54,7 @@ export class Web3Provider {
     // Check if group is in the expected format
     if (contractGroup.split('.').length !== 2) {
       throw new Error(
-        `Invalid format for ${process.env.SSV_SYNC}. Expected format is version.networkName`,
+        `Invalid format for ${this._config.get('SSV_SYNC')}. Expected format is version.networkName`,
       );
     }
 
@@ -131,7 +132,7 @@ export class Web3Provider {
 
     }
 
-    this.web3 = new Web3(process.env.NODE_URL);
+    this.web3 = new Web3(this._config.get('NODE_URL'));
     this.liquidatorAddress = this.web3.eth.accounts.privateKeyToAccount(
       this._config.get('ACCOUNT_PRIVATE_KEY'),
     ).address;

@@ -1,4 +1,4 @@
-import {Logger} from "@nestjs/common";
+import {CustomLogger} from "@cli/shared/services/logger.service";
 
 /**
  * It transforms the items object from sqlite into a custom format
@@ -6,7 +6,7 @@ import {Logger} from "@nestjs/common";
  * @returns List of custom formatted pod data
  */
 export const transformEarningData = items => {
-  const logger = new Logger('EarningDataTransformer');
+  const logger = new CustomLogger('EarningDataTransformer');
   const earnings = [];
   try {
     for (let i = 0; i < items.length; i++) {

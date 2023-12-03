@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
   Web3Provider,
   ERROR_CLUSTER_LIQUIDATED,
@@ -6,6 +6,7 @@ import {
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
 import { SystemService, SystemType } from '@cli/modules/system/system.service';
+import {CustomLogger} from "@cli/shared/services/logger.service";
 
 @Injectable()
 export class BurnRatesTask {
@@ -13,7 +14,7 @@ export class BurnRatesTask {
   private static BATCH_SIZE_RATIO = 0.9;
   private static MINIMUM_BATCH_SIZE = 10;
   private static isProcessLocked = false;
-  private readonly _logger = new Logger(BurnRatesTask.name);
+  private readonly _logger = new CustomLogger(BurnRatesTask.name);
 
   constructor(
     private _clusterService: ClusterService,

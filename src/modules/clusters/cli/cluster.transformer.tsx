@@ -1,6 +1,6 @@
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
-import {Logger} from "@nestjs/common";
+import {CustomLogger} from "@cli/shared/services/logger.service";
 
 TimeAgo.addLocale(en);
 const timeAgo = new TimeAgo('en-US');
@@ -46,7 +46,7 @@ const textStatus = (item, extra: any) => {
  * @returns List of custom formatted pod data
  */
 export const transformClusterData = (items, extra: any) => {
-  const logger = new Logger('ClusterDataTransformer');
+  const logger = new CustomLogger('ClusterDataTransformer');
   const clusters = [];
   try {
     for (let i = 0; i < items.length; i++) {

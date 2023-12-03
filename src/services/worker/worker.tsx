@@ -3,7 +3,7 @@ import React from 'react';
 import path from 'path';
 import { render } from 'ink';
 import { NestFactory, Reflector } from '@nestjs/core';
-import {ClassSerializerInterceptor, Logger, ValidationPipe} from '@nestjs/common';
+import {ClassSerializerInterceptor, ValidationPipe} from '@nestjs/common';
 import {
   ExpressAdapter,
   NestExpressApplication,
@@ -49,8 +49,8 @@ async function bootstrapApi() {
   app.useLogger(logger);
   logger.log('API is active');
   logger.log(`WebApp is running on port: ${port}`);
-  logger.log(`Node url: ${process.env.NODE_URL}`);
-  logger.log(`Network: ${process.env.SSV_SYNC}`);
+  logger.log(`Node url: ${confService.get('NODE_URL')}`);
+  logger.log(`Network: ${confService.get('SSV_SYNC')}`);
   await app.get(Web3Provider).printConfig()
 }
 

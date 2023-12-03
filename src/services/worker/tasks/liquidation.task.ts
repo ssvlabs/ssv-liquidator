@@ -1,16 +1,17 @@
 import { LessThanOrEqual } from 'typeorm';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Cluster } from '@cli/modules/clusters/cluster.entity';
 import { ConfService } from '@cli/shared/services/conf.service';
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
 import { SystemService, SystemType } from '@cli/modules/system/system.service';
 import { Web3Provider } from '@cli/shared/services/web3.provider';
+import {CustomLogger} from "@cli/shared/services/logger.service";
 
 @Injectable()
 export class LiquidationTask {
   private static isProcessLocked = false;
-  private readonly _logger = new Logger(LiquidationTask.name);
+  private readonly _logger = new CustomLogger(LiquidationTask.name);
 
   constructor(
     private _config: ConfService,
