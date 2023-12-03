@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import {Injectable, Logger} from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import { ArgumentParser } from 'argparse';
 import { ConfigService } from '@nestjs/config';
 
