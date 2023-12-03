@@ -16,7 +16,7 @@ import { EarningService } from '@cli/modules/earnings/earning.service';
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
 
-const logger = new Logger('App');
+const logger = new CustomLogger('App');
 
 async function bootstrapApi() {
   const app = await NestFactory.create<NestExpressApplication>(
@@ -46,7 +46,7 @@ async function bootstrapApi() {
   const port = confService.getNumber('PORT') || 3000;
   await app.listen(port);
 
-  app.useLogger(app.get(CustomLogger));
+  app.useLogger(logger);
   logger.log('API is active');
   logger.log(`WebApp is running on port: ${port}`);
   logger.log(`Node url: ${process.env.NODE_URL}`);
@@ -60,7 +60,7 @@ async function bootstrapCli() {
     autoFlushLogs: false,
     bufferLogs: false,
   });
-  app.useLogger(app.get(CustomLogger));
+  app.useLogger(logger);
   logger.log('Starting Liquidation worker')
 
   const confService = app.select(WorkerModule).get(ConfService);
