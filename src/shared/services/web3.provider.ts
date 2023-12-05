@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { Retryable } from 'typescript-retry-decorator';
 
 import { ConfService } from '@cli/shared/services/conf.service';
-import {Contract} from "web3-eth-contract";
-import {CustomLogger} from "@cli/shared/services/logger.service";
+import { Contract } from 'web3-eth-contract';
+import { CustomLogger } from '@cli/shared/services/logger.service';
 
 export type NetworkName = string;
 export type ContractAddress = string;
@@ -28,7 +28,6 @@ export const ERROR_CLUSTER_LIQUIDATED = 'ClusterIsLiquidated';
 
 @Injectable()
 export class Web3Provider {
-
   get contractCore(): Contract {
     return this._contractCore;
   }
@@ -54,7 +53,9 @@ export class Web3Provider {
     // Check if group is in the expected format
     if (contractGroup.split('.').length !== 2) {
       throw new Error(
-        `Invalid format for ${this._config.get('SSV_SYNC')}. Expected format is version.networkName`,
+        `Invalid format for ${this._config.get(
+          'SSV_SYNC',
+        )}. Expected format is version.networkName`,
       );
     }
 
@@ -74,7 +75,9 @@ export class Web3Provider {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       jsonCoreData = require(`@cli/shared/abi/${contractEnv}.${contractGroup}.abi.json`);
     } catch (err) {
-      this._logger.error(`Failed to load JSON data from ${contractEnv}.${contractGroup}.abi.json. ${err}`);
+      this._logger.error(
+        `Failed to load JSON data from ${contractEnv}.${contractGroup}.abi.json. ${err}`,
+      );
       throw err;
     }
 
@@ -83,7 +86,9 @@ export class Web3Provider {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       jsonViewsData = require(`@cli/shared/abi/${contractEnv}.${contractGroup}.views.abi.json`);
     } catch (err) {
-      this._logger.error(`Failed to load JSON data from ${contractEnv}.${contractGroup}.views.abi.json. ${err}`)
+      this._logger.error(
+        `Failed to load JSON data from ${contractEnv}.${contractGroup}.views.abi.json. ${err}`,
+      );
       throw err;
     }
 
@@ -115,8 +120,6 @@ export class Web3Provider {
       genesisBlock: jsonCoreData.genesisBlock,
     };
 
-
-
     for (const item of this.abiCore) {
       if (item['type'] === 'error') {
         const inputTypes = [];
@@ -129,17 +132,19 @@ export class Web3Provider {
           hash: new Web3().utils.keccak256(error).substring(0, 10),
         });
       }
-
     }
 
     this.web3 = new Web3(this._config.get('NODE_URL'));
     this.liquidatorAddress = this.web3.eth.accounts.privateKeyToAccount(
       this._config.get('ACCOUNT_PRIVATE_KEY'),
     ).address;
-    this._contractCore = new this.web3.eth.Contract(this.abiCore, this.contract.address);
+    this._contractCore = new this.web3.eth.Contract(
+      this.abiCore,
+      this.contract.address,
+    );
     this._contractViews = new this.web3.eth.Contract(
-        this.abiViews,
-        this.contract.addressViews,
+      this.abiViews,
+      this.contract.addressViews,
     );
   }
 
@@ -151,10 +156,11 @@ export class Web3Provider {
     return this.contract.abiViews as any;
   }
 
-  async printConfig(){
-
+  async printConfig() {
     this._logger.log(`Liquidator address: ${this.liquidatorAddress}`);
-    this._logger.log(`Liquidator balance: ${await this.getLiquidatorETHBalance()} ETH`)
+    this._logger.log(
+      `Liquidator balance: ${await this.getLiquidatorETHBalance()} ETH`,
+    );
   }
 
   getOwnerAndOperatorsStr(owner, operatorIds): string {
@@ -172,7 +178,11 @@ export class Web3Provider {
       .getLiquidationThresholdPeriod()
       .call()
       .catch(err => {
-        this._logger.warn(`getLiquidationThresholdPeriod ${JSON.stringify(this.getErrorByHash(err.data))}`)
+        this._logger.warn(
+          `getLiquidationThresholdPeriod ${JSON.stringify(
+            this.getErrorByHash(err.data),
+          )}`,
+        );
         return;
       });
   }
@@ -187,7 +197,9 @@ export class Web3Provider {
       )
       .call()
       .catch(err => {
-        this._logger.warn(`liquidatable ${JSON.stringify(this.getErrorByHash(err.data) || err)}
+        this._logger.warn(`liquidatable ${JSON.stringify(
+          this.getErrorByHash(err.data) || err,
+        )}
           ${this.getOwnerAndOperatorsStr(owner, operatorIds)}`);
         return;
       });
@@ -203,7 +215,9 @@ export class Web3Provider {
       )
       .call()
       .catch(err => {
-        this._logger.warn(`isLiquidated ${JSON.stringify(this.getErrorByHash(err.data) || err)}
+        this._logger.warn(`isLiquidated ${JSON.stringify(
+          this.getErrorByHash(err.data) || err,
+        )}
           ${this.getOwnerAndOperatorsStr(owner, operatorIds)}`);
         return;
       });
@@ -215,7 +229,9 @@ export class Web3Provider {
       .getBurnRate(owner, this.operatorIdsToArray(operatorIds), clusterSnapshot)
       .call()
       .catch(err => {
-        this._logger.warn(`getBurnRate ${JSON.stringify(this.getErrorByHash(err.data) || err)}
+        this._logger.warn(`getBurnRate ${JSON.stringify(
+          this.getErrorByHash(err.data) || err,
+        )}
           ${this.getOwnerAndOperatorsStr(owner, operatorIds)}`);
         return;
       });
@@ -227,7 +243,9 @@ export class Web3Provider {
       .getBalance(owner, this.operatorIdsToArray(operatorIds), clusterSnapshot)
       .call()
       .catch(err => {
-        this._logger.warn(`getBalance ${JSON.stringify(this.getErrorByHash(err.data) || err)}
+        this._logger.warn(`getBalance ${JSON.stringify(
+          this.getErrorByHash(err.data) || err,
+        )}
           ${this.getOwnerAndOperatorsStr(owner, operatorIds)}`);
         return;
       });
@@ -239,7 +257,11 @@ export class Web3Provider {
       .getMinimumLiquidationCollateral()
       .call()
       .catch(err => {
-        this._logger.warn(`getMinimumLiquidationCollateral ${JSON.stringify(this.getErrorByHash(err.data))}`);
+        this._logger.warn(
+          `getMinimumLiquidationCollateral ${JSON.stringify(
+            this.getErrorByHash(err.data),
+          )}`,
+        );
         return;
       });
   }

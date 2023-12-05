@@ -3,7 +3,7 @@ import React from 'react';
 import path from 'path';
 import { render } from 'ink';
 import { NestFactory, Reflector } from '@nestjs/core';
-import {ClassSerializerInterceptor, ValidationPipe} from '@nestjs/common';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import {
   ExpressAdapter,
   NestExpressApplication,
@@ -24,7 +24,6 @@ async function bootstrapApi() {
     new ExpressAdapter(),
     { cors: true, logger: false },
   );
-
 
   app.enable('trust proxy');
   app.enableCors();
@@ -47,11 +46,10 @@ async function bootstrapApi() {
   await app.listen(port);
 
   app.useLogger(logger);
-  logger.log('API is active');
   logger.log(`WebApp is running on port: ${port}`);
   logger.log(`Node url: ${confService.get('NODE_URL')}`);
   logger.log(`Network: ${confService.get('SSV_SYNC')}`);
-  await app.get(Web3Provider).printConfig()
+  await app.get(Web3Provider).printConfig();
 }
 
 async function bootstrapCli() {
@@ -61,7 +59,7 @@ async function bootstrapCli() {
     bufferLogs: false,
   });
   app.useLogger(logger);
-  logger.log('Starting Liquidation worker')
+  logger.log('Starting Liquidation worker');
 
   const confService = app.select(WorkerModule).get(ConfService);
 
@@ -84,9 +82,9 @@ async function bootstrapCli() {
 }
 
 async function bootstrap() {
-  logger.log(`Liquidator starting`)
+  logger.log(`Liquidator starting`);
   process.on('unhandledRejection', (error: Error) => {
-    logger.error(`[CRITICAL] unhandledRejection ${error} ${error.stack}`)
+    logger.error(`[CRITICAL] unhandledRejection ${error} ${error.stack}`);
     MetricsService.criticalStatus.set(0);
   });
   await bootstrapApi();

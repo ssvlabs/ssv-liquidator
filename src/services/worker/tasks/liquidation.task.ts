@@ -6,7 +6,7 @@ import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
 import { SystemService, SystemType } from '@cli/modules/system/system.service';
 import { Web3Provider } from '@cli/shared/services/web3.provider';
-import {CustomLogger} from "@cli/shared/services/logger.service";
+import { CustomLogger } from '@cli/shared/services/logger.service';
 
 @Injectable()
 export class LiquidationTask {
@@ -318,11 +318,13 @@ export class LiquidationTask {
     transaction.gas = this._config.gasUsage(); // totalOperators
     if (!transaction.gas) {
       this._logger.error(
-        `Gas group was not found for ${totalOperators} operators. Going to estimate transaction gas...`
+        `Gas group was not found for ${totalOperators} operators. Going to estimate transaction gas...`,
       );
       transaction.gas = await this.getGas(transaction);
     } else {
-      this._logger.log(`Gas group was found for ${totalOperators} operators and is: ${transaction.gas}`)
+      this._logger.log(
+        `Gas group was found for ${totalOperators} operators and is: ${transaction.gas}`,
+      );
     }
 
     transaction.gasPrice = await this.getGasPrice();

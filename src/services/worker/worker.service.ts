@@ -4,7 +4,7 @@ import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { EarningService } from '@cli/modules/earnings/earning.service';
 
 import { Web3Provider } from '@cli/shared/services/web3.provider';
-import {CustomLogger} from "@cli/shared/services/logger.service";
+import { CustomLogger } from '@cli/shared/services/logger.service';
 
 @Injectable()
 export class WorkerService implements OnModuleInit {

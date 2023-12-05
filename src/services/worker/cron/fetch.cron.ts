@@ -1,8 +1,8 @@
-import {Injectable} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import {Cron, CronExpression} from '@nestjs/schedule';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { FetchTask } from '../tasks/fetch.task';
-import {CustomLogger} from "@cli/shared/services/logger.service";
+import { CustomLogger } from '@cli/shared/services/logger.service';
 
 @Injectable()
 export class FetchCron {
@@ -14,7 +14,7 @@ export class FetchCron {
     try {
       await this._fetchTask.fetchAllEvents();
     } catch (e) {
-      this._logger.error(e);
+      this._logger.error(`Fetching new validators cron task failed. ${e}`);
     }
   }
 }

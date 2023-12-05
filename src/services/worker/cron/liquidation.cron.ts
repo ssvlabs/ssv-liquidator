@@ -1,8 +1,8 @@
-import {Injectable} from '@nestjs/common';
-import {Cron, CronExpression} from '@nestjs/schedule';
+import { Injectable } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 import { LiquidationTask } from '../tasks/liquidation.task';
-import {CustomLogger} from "@cli/shared/services/logger.service";
+import { CustomLogger } from '@cli/shared/services/logger.service';
 
 @Injectable()
 export class LiquidationCron {

@@ -6,7 +6,7 @@ import {
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
 import { SystemService, SystemType } from '@cli/modules/system/system.service';
-import {CustomLogger} from "@cli/shared/services/logger.service";
+import { CustomLogger } from '@cli/shared/services/logger.service';
 
 @Injectable()
 export class BurnRatesTask {

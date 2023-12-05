@@ -2,11 +2,10 @@ import { ConsoleLogger, LogLevel } from '@nestjs/common';
 import { getAllowedLogLevels } from '@cli/shared/services/logging';
 
 export class CustomLogger extends ConsoleLogger {
-
   protected context: string;
   constructor(context: string) {
     super();
-    this.context = context
+    this.context = context;
   }
   printMessages(messages, context = '', logLevel = 'log', writeStreamType) {
     if (getAllowedLogLevels().indexOf(logLevel) === -1) {

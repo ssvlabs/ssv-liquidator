@@ -1,4 +1,4 @@
-import {CustomLogger} from "@cli/shared/services/logger.service";
+import { CustomLogger } from '@cli/shared/services/logger.service';
 
 /**
  * It transforms the items object from sqlite into a custom format
@@ -19,7 +19,7 @@ export const transformEarningData = items => {
       });
     }
   } catch (e) {
-    logger.error(e);
+    logger.error(`Failed to transform earning data. ${e}`);
   }
   return earnings;
 };

@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import {Injectable} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ArgumentParser } from 'argparse';
 import { ConfigService } from '@nestjs/config';
 
@@ -62,12 +62,15 @@ export class ConfService extends ConfigService {
     };
 
     for (const envVarName of Object.keys(envVars)) {
-      const found = args[envVars[envVarName]] ||
+      const found =
+        args[envVars[envVarName]] ||
         // Then check if there is env variable
         process.env[envVarName] ||
         // Then check if there is default value
         this[envVarName];
-      if (found) { process.env[envVarName] = found }
+      if (found) {
+        process.env[envVarName] = found;
+      }
       if (!process.env[envVarName]) {
         console.error(
           '\x1b[31m%s\x1b[0m',
