@@ -390,7 +390,7 @@
       "outputs": [
         {
           "internalType": "uint64",
-          "name": "operatorMaxFee",
+          "name": "",
           "type": "uint64"
         }
       ],
@@ -431,6 +431,19 @@
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getNetworkValidatorsCount",
+      "outputs": [
+        {
+          "internalType": "uint32",
+          "name": "",
+          "type": "uint32"
         }
       ],
       "stateMutability": "view",
@@ -558,7 +571,7 @@
       "outputs": [
         {
           "internalType": "uint64",
-          "name": "operatorMaxFeeIncrease",
+          "name": "",
           "type": "uint64"
         }
       ],
@@ -571,12 +584,12 @@
       "outputs": [
         {
           "internalType": "uint64",
-          "name": "declareOperatorFeePeriod",
+          "name": "",
           "type": "uint64"
         },
         {
           "internalType": "uint64",
-          "name": "executeOperatorFeePeriod",
+          "name": "",
           "type": "uint64"
         }
       ],
@@ -600,7 +613,7 @@
       "outputs": [
         {
           "internalType": "bool",
-          "name": "active",
+          "name": "",
           "type": "bool"
         }
       ],
@@ -626,7 +639,7 @@
       "outputs": [
         {
           "internalType": "string",
-          "name": "version",
+          "name": "",
           "type": "string"
         }
       ],
