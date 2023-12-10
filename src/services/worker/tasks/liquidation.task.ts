@@ -1,16 +1,17 @@
 import { LessThanOrEqual } from 'typeorm';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Cluster } from '@cli/modules/clusters/cluster.entity';
 import { ConfService } from '@cli/shared/services/conf.service';
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
 import { SystemService, SystemType } from '@cli/modules/system/system.service';
 import { Web3Provider } from '@cli/shared/services/web3.provider';
+import { CustomLogger } from '@cli/shared/services/logger.service';
 
 @Injectable()
 export class LiquidationTask {
   private static isProcessLocked = false;
-  private readonly _logger = new Logger(LiquidationTask.name);
+  private readonly _logger = new CustomLogger(LiquidationTask.name);
 
   constructor(
     private _config: ConfService,
@@ -316,12 +317,12 @@ export class LiquidationTask {
       this._web3Provider.operatorIdsToArray(operatorIds).length;
     transaction.gas = this._config.gasUsage(); // totalOperators
     if (!transaction.gas) {
-      console.error(
+      this._logger.error(
         `Gas group was not found for ${totalOperators} operators. Going to estimate transaction gas...`,
       );
       transaction.gas = await this.getGas(transaction);
     } else {
-      console.info(
+      this._logger.log(
         `Gas group was found for ${totalOperators} operators and is: ${transaction.gas}`,
       );
     }

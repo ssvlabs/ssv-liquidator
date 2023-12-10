@@ -1,9 +1,10 @@
 import Web3 from 'web3';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Retryable } from 'typescript-retry-decorator';
 
 import { ConfService } from '@cli/shared/services/conf.service';
-import {Contract} from "web3-eth-contract";
+import { Contract } from 'web3-eth-contract';
+import { CustomLogger } from '@cli/shared/services/logger.service';
 
 export type NetworkName = string;
 export type ContractAddress = string;
@@ -27,16 +28,16 @@ export const ERROR_CLUSTER_LIQUIDATED = 'ClusterIsLiquidated';
 
 @Injectable()
 export class Web3Provider {
-
-  get contractCore(): any {
+  get contractCore(): Contract {
     return this._contractCore;
   }
-  private readonly _logger = new Logger(Web3Provider.name);
+  private readonly _logger = new CustomLogger(Web3Provider.name);
 
   private contract: ContractData;
   public web3: Web3;
   private readonly _contractCore: Contract;
   private readonly _contractViews: Contract;
+  private readonly liquidatorAddress: string;
 
   private _errors: SolidityError[] = [];
 
@@ -52,7 +53,9 @@ export class Web3Provider {
     // Check if group is in the expected format
     if (contractGroup.split('.').length !== 2) {
       throw new Error(
-        `Invalid format for ${process.env.SSV_SYNC}. Expected format is version.networkName`,
+        `Invalid format for ${this._config.get(
+          'SSV_SYNC',
+        )}. Expected format is version.networkName`,
       );
     }
 
@@ -72,9 +75,8 @@ export class Web3Provider {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       jsonCoreData = require(`@cli/shared/abi/${contractEnv}.${contractGroup}.abi.json`);
     } catch (err) {
-      console.error(
-        `Failed to load JSON data from ${contractEnv}.${contractGroup}.abi.json`,
-        err,
+      this._logger.error(
+        `Failed to load JSON data from ${contractEnv}.${contractGroup}.abi.json. ${err}`,
       );
       throw err;
     }
@@ -84,9 +86,8 @@ export class Web3Provider {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       jsonViewsData = require(`@cli/shared/abi/${contractEnv}.${contractGroup}.views.abi.json`);
     } catch (err) {
-      console.error(
-        `Failed to load JSON data from ${contractEnv}.${contractGroup}.views.abi.json`,
-        err,
+      this._logger.error(
+        `Failed to load JSON data from ${contractEnv}.${contractGroup}.views.abi.json. ${err}`,
       );
       throw err;
     }
@@ -133,11 +134,17 @@ export class Web3Provider {
       }
     }
 
-    this.web3 = new Web3(process.env.NODE_URL);
-    this._contractCore = new this.web3.eth.Contract(this.abiCore, this.contract.address);
+    this.web3 = new Web3(this._config.get('NODE_URL'));
+    this.liquidatorAddress = this.web3.eth.accounts.privateKeyToAccount(
+      this._config.get('ACCOUNT_PRIVATE_KEY'),
+    ).address;
+    this._contractCore = new this.web3.eth.Contract(
+      this.abiCore,
+      this.contract.address,
+    );
     this._contractViews = new this.web3.eth.Contract(
-        this.abiViews,
-        this.contract.addressViews,
+      this.abiViews,
+      this.contract.addressViews,
     );
   }
 
@@ -147,6 +154,17 @@ export class Web3Provider {
 
   get abiViews() {
     return this.contract.abiViews as any;
+  }
+
+  async printConfig() {
+    this._logger.log(`Liquidator address: ${this.liquidatorAddress}`);
+    this._logger.log(
+      `Liquidator balance: ${await this.getLiquidatorETHBalance()} ETH`,
+    );
+  }
+
+  getOwnerAndOperatorsStr(owner, operatorIds): string {
+    return `{ owner '${owner}', operatorIds '${operatorIds}' }`;
   }
 
   @Retryable(Web3Provider.RETRY_OPTIONS)
@@ -160,9 +178,10 @@ export class Web3Provider {
       .getLiquidationThresholdPeriod()
       .call()
       .catch(err => {
-        console.warn(
-          'getLiquidationThresholdPeriod',
-          this.getErrorByHash(err.data),
+        this._logger.warn(
+          `getLiquidationThresholdPeriod ${JSON.stringify(
+            this.getErrorByHash(err.data),
+          )}`,
         );
         return;
       });
@@ -178,10 +197,10 @@ export class Web3Provider {
       )
       .call()
       .catch(err => {
-        console.warn('liquidatable', this.getErrorByHash(err.data) || err, {
-          owner,
-          operatorIds,
-        });
+        this._logger.warn(`liquidatable ${JSON.stringify(
+          this.getErrorByHash(err.data) || err,
+        )}
+          ${this.getOwnerAndOperatorsStr(owner, operatorIds)}`);
         return;
       });
   }
@@ -196,10 +215,10 @@ export class Web3Provider {
       )
       .call()
       .catch(err => {
-        console.warn('isLiquidated', this.getErrorByHash(err.data) || err, {
-          owner,
-          operatorIds,
-        });
+        this._logger.warn(`isLiquidated ${JSON.stringify(
+          this.getErrorByHash(err.data) || err,
+        )}
+          ${this.getOwnerAndOperatorsStr(owner, operatorIds)}`);
         return;
       });
   }
@@ -210,10 +229,10 @@ export class Web3Provider {
       .getBurnRate(owner, this.operatorIdsToArray(operatorIds), clusterSnapshot)
       .call()
       .catch(err => {
-        console.warn('getBurnRate', this.getErrorByHash(err.data) || err, {
-          owner,
-          operatorIds,
-        });
+        this._logger.warn(`getBurnRate ${JSON.stringify(
+          this.getErrorByHash(err.data) || err,
+        )}
+          ${this.getOwnerAndOperatorsStr(owner, operatorIds)}`);
         return;
       });
   }
@@ -224,10 +243,10 @@ export class Web3Provider {
       .getBalance(owner, this.operatorIdsToArray(operatorIds), clusterSnapshot)
       .call()
       .catch(err => {
-        console.warn('getBalance', this.getErrorByHash(err.data) || err, {
-          owner,
-          operatorIds,
-        });
+        this._logger.warn(`getBalance ${JSON.stringify(
+          this.getErrorByHash(err.data) || err,
+        )}
+          ${this.getOwnerAndOperatorsStr(owner, operatorIds)}`);
         return;
       });
   }
@@ -238,23 +257,17 @@ export class Web3Provider {
       .getMinimumLiquidationCollateral()
       .call()
       .catch(err => {
-        console.warn(
-          'getMinimumLiquidationCollateral',
-          this.getErrorByHash(err.data),
+        this._logger.warn(
+          `getMinimumLiquidationCollateral ${JSON.stringify(
+            this.getErrorByHash(err.data),
+          )}`,
         );
         return;
       });
   }
 
-  async getETHBalance(): Promise<number> {
-    if (!process.env.ACCOUNT_PRIVATE_KEY) return 0;
-
-    const account = this.web3.eth.accounts.privateKeyToAccount(
-      process.env.ACCOUNT_PRIVATE_KEY,
-    );
-    const address = account.address;
-
-    const weiBalance = await this.web3.eth.getBalance(address);
+  async getLiquidatorETHBalance(): Promise<number> {
+    const weiBalance = await this.web3.eth.getBalance(this.liquidatorAddress);
     const ethBalance = this.web3.utils.fromWei(weiBalance, 'ether');
     return +ethBalance;
   }

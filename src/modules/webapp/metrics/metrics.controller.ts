@@ -17,7 +17,7 @@ export class MetricsController {
   private async collectStats() {
     const clustersActive = await this._clusterService.countActive();
     const toLiquidate = await this._clusterService.countLiquidatable();
-    const liquidatorETHBalance = await this._web3Provider.getETHBalance();
+    const liquidatorETHBalance = await this._web3Provider.getLiquidatorETHBalance();
     this._metricsService.totalActiveClusters.set(clustersActive);
     this._metricsService.totalLiquidatableClusters.set(toLiquidate.total);
     this._metricsService.burnt10LiquidatableClusters.set(toLiquidate.burnt10);
