@@ -25,7 +25,7 @@ export class LiquidationTask {
     private _clusterService: ClusterService,
     private _systemService: SystemService,
     private _web3Provider: Web3Provider,
-  ) {}
+  ) { }
 
   static get BLOCK_RANGE() {
     return 10;
@@ -50,7 +50,7 @@ export class LiquidationTask {
       latestBlockNumber
     ) {
       this._logger.debug(`Ignore task. Events are not fully synced yet.`);
-      // return;
+      return;
     }
 
     try {
@@ -92,8 +92,7 @@ export class LiquidationTask {
               item.cluster,
             );
             this._logger.log(
-              `${isLiquidated ? 'YES' : 'NO'}. Cluster has ${
-                isLiquidated ? '' : 'NOT'
+              `${isLiquidated ? 'YES' : 'NO'}. Cluster has ${isLiquidated ? '' : 'NOT'
               } been liquidated: ${logItem}`,
             );
             if (isLiquidated) {
