@@ -3,7 +3,33 @@
         "Injectable",
         "microservices",
         "nestjs",
-        "postgres"
+        "postgres",
+        "typeorm"
     ],
-    "editor.detectIndentation": false
+    "editor.detectIndentation": false,
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "editor.minimap.renderCharacters": true,
+    "workbench.editor.decorations.colors": true,
+    "git.allowNoVerifyCommit": true,
+    // Formatting
+    "editor.formatOnSave": true,
+    "prettier.eslintIntegration": true,
+    "eslint.run": "onType",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    "editor.fontFamily": "Operator Mono, Menlo, Monaco, 'Courier New', monospace",
+    "terminal.integrated.fontFamily": "'Operator Mono', 'Inconsolata for Powerline', monospace",
+    // SOP's highlight matching tag setting.
+    "highlight-matching-tag.styles": {
+        "opening": {
+            "full": {
+                "highlight": "rgba(165, 153, 233, 0.3)"
+            }
+        }
+    },
+    // SOP's Import Cost Extension Settings.
+    "importCost.largePackageColor": "#EC3A37F5",
+    "importCost.mediumPackageColor": "#B362FF",
+    "importCost.smallPackageColor": "#B362FF"
 }

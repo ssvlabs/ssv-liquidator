@@ -7,7 +7,7 @@ import { LiquidationTask } from '../tasks/liquidation.task';
 export class LiquidationCron {
   constructor(private _liquidationTask: LiquidationTask) {}
 
-  @Cron('*/10 * * * * *')
+  @Cron('*/20 * * * * *')
   async liquidate(): Promise<void> {
     try {
       await this._liquidationTask.liquidate();
