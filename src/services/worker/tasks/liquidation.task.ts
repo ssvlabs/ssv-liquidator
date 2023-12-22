@@ -25,7 +25,7 @@ export class LiquidationTask {
     private _clusterService: ClusterService,
     private _systemService: SystemService,
     private _web3Provider: Web3Provider,
-  ) {}
+  ) { }
 
   static get BLOCK_RANGE() {
     return 10;
@@ -92,8 +92,7 @@ export class LiquidationTask {
               item.cluster,
             );
             this._logger.log(
-              `${isLiquidated ? 'YES' : 'NO'}. Cluster has ${
-                isLiquidated ? '' : 'NOT'
+              `${isLiquidated ? 'YES' : 'NO'}. Cluster has ${isLiquidated ? '' : 'NOT'
               } been liquidated: ${logItem}`,
             );
             if (isLiquidated) {
@@ -424,7 +423,7 @@ export class LiquidationTask {
       this._web3Provider.operatorIdsToArray(operatorIds).length;
     transaction.gas = this._config.gasUsage(); // totalOperators
     if (!transaction.gas) {
-      this._logger.log(
+      this._logger.error(
         `Gas group was not found for ${totalOperators} operators. Going to estimate transaction gas...`,
       );
       transaction.gas = await this.getGas(transaction);
