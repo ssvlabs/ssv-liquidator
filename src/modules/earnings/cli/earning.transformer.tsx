@@ -1,9 +1,12 @@
+import { CustomLogger } from '@cli/shared/services/logger.service';
+
 /**
  * It transforms the items object from sqlite into a custom format
  * @param {Array<>} items list of clusters object from the sqlite
  * @returns List of custom formatted pod data
  */
 export const transformEarningData = items => {
+  const logger = new CustomLogger('EarningDataTransformer');
   const earnings = [];
   try {
     for (let i = 0; i < items.length; i++) {
@@ -16,7 +19,7 @@ export const transformEarningData = items => {
       });
     }
   } catch (e) {
-    console.log(e);
+    logger.error(`Failed to transform earning data. ${e}`);
   }
   return earnings;
 };

@@ -1,13 +1,14 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { WorkerService } from '@cli/services/worker/worker.service';
 import { SystemService, SystemType } from '@cli/modules/system/system.service';
 import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
 import { Web3Provider } from '@cli/shared/services/web3.provider';
+import { CustomLogger } from '@cli/shared/services/logger.service';
 
 @Injectable()
 export class FetchTask {
   private static isProcessLocked = false;
-  private readonly _logger = new Logger(FetchTask.name);
+  private readonly _logger = new CustomLogger(FetchTask.name);
 
   constructor(
     private _systemService: SystemService,
@@ -31,15 +32,6 @@ export class FetchTask {
     if (FetchTask.isProcessLocked) {
       this._logger.debug(`Fetching new events is already locked`);
       return;
-    }
-
-    try {
-      await this._web3Provider.getLiquidationThresholdPeriod();
-      // HERE we can validate the contract owner address
-    } catch (err) {
-      throw new Error(
-        `'The provided contract address is not valid. Error: ${err}`,
-      );
     }
 
     const latestSyncedBlockNumber = await this._systemService.get(
