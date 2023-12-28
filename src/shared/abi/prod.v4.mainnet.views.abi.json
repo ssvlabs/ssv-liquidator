@@ -88,6 +88,11 @@
     },
     {
       "inputs": [],
+      "name": "MaxValueExceeded",
+      "type": "error"
+    },
+    {
+      "inputs": [],
       "name": "NewBlockPeriodIsBelowMinimum",
       "type": "error"
     },
@@ -581,6 +586,19 @@
     },
     {
       "inputs": [],
+      "name": "getValidatorsPerOperatorLimit",
+      "outputs": [
+        {
+          "internalType": "uint32",
+          "name": "",
+          "type": "uint32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "getVersion",
       "outputs": [
         {
@@ -595,7 +613,7 @@
     {
       "inputs": [
         {
-          "internalType": "contract IFnSSVViews",
+          "internalType": "contract ISSVViews",
           "name": "ssvNetwork_",
           "type": "address"
         }
@@ -768,7 +786,7 @@
       "name": "ssvNetwork",
       "outputs": [
         {
-          "internalType": "contract IFnSSVViews",
+          "internalType": "contract ISSVViews",
           "name": "",
           "type": "address"
         }

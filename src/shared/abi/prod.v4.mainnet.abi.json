@@ -85,6 +85,11 @@
     },
     {
       "inputs": [],
+      "name": "MaxValueExceeded",
+      "type": "error"
+    },
+    {
+      "inputs": [],
       "name": "NewBlockPeriodIsBelowMinimum",
       "type": "error"
     },
@@ -993,21 +998,14 @@
       "name": "getRegisterAuth",
       "outputs": [
         {
-          "components": [
-            {
-              "internalType": "bool",
-              "name": "registerOperator",
-              "type": "bool"
-            },
-            {
-              "internalType": "bool",
-              "name": "registerValidator",
-              "type": "bool"
-            }
-          ],
-          "internalType": "struct Authorization",
-          "name": "",
-          "type": "tuple"
+          "internalType": "bool",
+          "name": "authOperators",
+          "type": "bool"
+        },
+        {
+          "internalType": "bool",
+          "name": "authValidators",
+          "type": "bool"
         }
       ],
       "stateMutability": "view",
@@ -1021,22 +1019,22 @@
           "type": "address"
         },
         {
-          "internalType": "contract IFnSSVOperators",
+          "internalType": "contract ISSVOperators",
           "name": "ssvOperators_",
           "type": "address"
         },
         {
-          "internalType": "contract IFnSSVClusters",
+          "internalType": "contract ISSVClusters",
           "name": "ssvClusters_",
           "type": "address"
         },
         {
-          "internalType": "contract IFnSSVDAO",
+          "internalType": "contract ISSVDAO",
           "name": "ssvDAO_",
           "type": "address"
         },
         {
-          "internalType": "contract IFnSSVViews",
+          "internalType": "contract ISSVViews",
           "name": "ssvViews_",
           "type": "address"
         },
@@ -1426,21 +1424,14 @@
           "type": "address"
         },
         {
-          "components": [
-            {
-              "internalType": "bool",
-              "name": "registerOperator",
-              "type": "bool"
-            },
-            {
-              "internalType": "bool",
-              "name": "registerValidator",
-              "type": "bool"
-            }
-          ],
-          "internalType": "struct Authorization",
-          "name": "auth",
-          "type": "tuple"
+          "internalType": "bool",
+          "name": "authOperator",
+          "type": "bool"
+        },
+        {
+          "internalType": "bool",
+          "name": "authValidator",
+          "type": "bool"
         }
       ],
       "name": "setRegisterAuth",
@@ -1516,6 +1507,24 @@
     {
       "inputs": [
         {
+          "internalType": "enum SSVModules",
+          "name": "moduleId",
+          "type": "uint8"
+        },
+        {
+          "internalType": "address",
+          "name": "moduleAddress",
+          "type": "address"
+        }
+      ],
+      "name": "updateModule",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "uint256",
           "name": "fee",
           "type": "uint256"
@@ -1535,24 +1544,6 @@
         }
       ],
       "name": "updateOperatorFeeIncreaseLimit",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "enum SSVModules",
-          "name": "moduleId",
-          "type": "uint8"
-        },
-        {
-          "internalType": "address",
-          "name": "moduleAddress",
-          "type": "address"
-        }
-      ],
-      "name": "upgradeModule",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

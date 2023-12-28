@@ -862,6 +862,31 @@
           "internalType": "bytes",
           "name": "publicKey",
           "type": "bytes"
+        }
+      ],
+      "name": "ValidatorExited",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint64[]",
+          "name": "operatorIds",
+          "type": "uint64[]"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes",
+          "name": "publicKey",
+          "type": "bytes"
         },
         {
           "components": [
@@ -1006,6 +1031,24 @@
         }
       ],
       "name": "executeOperatorFee",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "publicKey",
+          "type": "bytes"
+        },
+        {
+          "internalType": "uint64[]",
+          "name": "operatorIds",
+          "type": "uint64[]"
+        }
+      ],
+      "name": "exitValidator",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
