@@ -57,6 +57,7 @@
     "web3": "^1.5.1"
   },
   "devDependencies": {
+    "@nestjs/testing": "^10.3.0",
     "@nestjs/typeorm": "^9.0.1",
     "@types/argparse": "^2.0.10",
     "@types/cron": "^1.7.2",
