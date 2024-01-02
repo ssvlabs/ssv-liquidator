@@ -7,11 +7,15 @@ import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.ser
 import { SystemService, SystemType } from '@cli/modules/system/system.service';
 import { Web3Provider } from '@cli/shared/services/web3.provider';
 import { SSVLiquidatorException } from '@cli/exceptions/base';
+import moment from 'moment';
+import { CustomLogger } from '@cli/shared/services/logger.service';
 
 @Injectable()
 export class LiquidationTask {
+  private static MAX_LOCK_DURATION_HOURS = 1;
   private static isProcessLocked = false;
-  private readonly _logger = new Logger(LiquidationTask.name);
+  private static lockTime: moment.Moment = moment.utc();
+  private readonly _logger = new CustomLogger(LiquidationTask.name);
   private readonly alreadyLiquidatedClusterUpdates = {
     balance: null,
     burnRate: null,
@@ -31,25 +35,34 @@ export class LiquidationTask {
     return 10;
   }
 
-  async liquidate(): Promise<void> {
+  acquireLock() {
     if (LiquidationTask.isProcessLocked) {
-      this._logger.log(`Process is already locked`);
+      this._logger.log(`Process is already locked since ${LiquidationTask.lockTime}`);
+      if (moment.utc().diff(LiquidationTask.lockTime, 'hours') > LiquidationTask.MAX_LOCK_DURATION_HOURS) {
+        this._logger.log(`Process lock timeout exceeded. Lock was reset.`);
+        LiquidationTask.lockTime = moment().utc()
+        return true
+      }
+      return false;
+    }
+    LiquidationTask.lockTime = moment().utc()
+    LiquidationTask.isProcessLocked = true;
+    return true;
+  }
+
+  async isSynced() {
+    const latestSyncedBlockNumber = await this._systemService.get(SystemType.GENERAL_LAST_BLOCK_NUMBER);
+    const latestBlockNumber = await this._web3Provider.web3.eth.getBlockNumber();
+    return latestSyncedBlockNumber + LiquidationTask.BLOCK_RANGE >= latestBlockNumber;
+  }
+
+  async liquidate(): Promise<void> {
+    if (!this.acquireLock()) {
       return;
     }
-    LiquidationTask.isProcessLocked = true;
-
-    const latestSyncedBlockNumber = await this._systemService.get(
-      SystemType.GENERAL_LAST_BLOCK_NUMBER,
-    );
-
-    const latestBlockNumber =
-      await this._web3Provider.web3.eth.getBlockNumber();
-
-    if (
-      latestSyncedBlockNumber + LiquidationTask.BLOCK_RANGE <
-      latestBlockNumber
-    ) {
-      this._logger.debug(`Ignore task. Events are not fully synced yet.`);
+    if (!this.isSynced) {
+      this._logger.debug(`Liquidation task skipped. Events are not fully synced yet.`);
+      LiquidationTask.isProcessLocked = false;
       return;
     }
 
@@ -389,10 +402,10 @@ export class LiquidationTask {
    * @param cluster
    */
   async buildTransaction({
-    owner,
-    operatorIds,
-    cluster,
-  }: {
+                           owner,
+                           operatorIds,
+                           cluster,
+                         }: {
     owner: string;
     operatorIds: string[] | number[];
     cluster: Record<string, any>;
