@@ -16,7 +16,7 @@
       "outDir": "./dist",
       "baseUrl": "./src",
       "types": [
-          "node"
+          "node", "jest"
       ],
       "paths": {
           "@cli/*": ["./*"]
@@ -28,7 +28,6 @@
       "src/**/*"
   ],
   "exclude": [
-      "node_modules",
-      "**/*.spec.ts"
+      "node_modules"
   ]
 }
