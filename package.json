@@ -57,6 +57,7 @@
     "web3": "^1.5.1"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.23.7",
     "@nestjs/testing": "^10.3.0",
     "@nestjs/typeorm": "^9.0.1",
     "@types/argparse": "^2.0.10",
