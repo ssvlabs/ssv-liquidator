@@ -13,8 +13,7 @@ import { CustomLogger } from '@cli/shared/services/logger.service';
 @Injectable()
 export class LiquidationTask {
   private static MAX_LOCK_DURATION_HOURS = 1;
-  private static isProcessLocked = false;
-  private static lockTime: moment.Moment = moment.utc();
+  private static lock: moment.Moment = undefined;
   private readonly _logger = new CustomLogger(LiquidationTask.name);
   private readonly alreadyLiquidatedClusterUpdates = {
     balance: null,
@@ -36,18 +35,21 @@ export class LiquidationTask {
   }
 
   acquireLock() {
-    if (LiquidationTask.isProcessLocked) {
-      this._logger.log(`Process is already locked since ${LiquidationTask.lockTime}`);
-      if (moment.utc().diff(LiquidationTask.lockTime, 'hours') > LiquidationTask.MAX_LOCK_DURATION_HOURS) {
+    if (LiquidationTask.lock !== undefined){
+      this._logger.log(`Process is already locked since ${LiquidationTask.lock}`);
+      if (moment.utc().diff(LiquidationTask.lock, 'hours') > LiquidationTask.MAX_LOCK_DURATION_HOURS) {
         this._logger.log(`Process lock timeout exceeded. Lock was reset.`);
-        LiquidationTask.lockTime = moment().utc()
+        LiquidationTask.lock = moment().utc()
         return true
       }
-      return false;
+      return false
     }
-    LiquidationTask.lockTime = moment().utc()
-    LiquidationTask.isProcessLocked = true;
+    LiquidationTask.lock = moment().utc()
     return true;
+  }
+
+  releaseLock(){
+    LiquidationTask.lock = undefined;
   }
 
   async isSynced() {
@@ -62,7 +64,7 @@ export class LiquidationTask {
     }
     if (!this.isSynced) {
       this._logger.debug(`Liquidation task skipped. Events are not fully synced yet.`);
-      LiquidationTask.isProcessLocked = false;
+      this.releaseLock()
       return;
     }
 
