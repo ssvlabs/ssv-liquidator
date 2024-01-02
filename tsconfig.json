@@ -25,7 +25,9 @@
       "moduleResolution": "node"
   },
   "include": [
-      "src/**/*"
+      "src/**/*",
+      "babel.config.js",
+      "jest.config.js",
   ],
   "exclude": [
       "node_modules"
