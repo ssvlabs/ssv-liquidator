@@ -50,6 +50,7 @@ export class LiquidationTask {
       latestBlockNumber
     ) {
       this._logger.debug(`Ignore task. Events are not fully synced yet.`);
+      LiquidationTask.isProcessLocked = false;
       return;
     }
 
