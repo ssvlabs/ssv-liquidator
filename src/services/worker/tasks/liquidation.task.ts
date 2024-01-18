@@ -10,7 +10,7 @@ import { SSVLiquidatorException } from '@cli/exceptions/base';
 
 @Injectable()
 export class LiquidationTask {
-  private static isProcessLocked = false;
+  public static isProcessLocked = false;
   private readonly _logger = new Logger(LiquidationTask.name);
   private readonly alreadyLiquidatedClusterUpdates = {
     balance: null,
@@ -25,7 +25,7 @@ export class LiquidationTask {
     private _clusterService: ClusterService,
     private _systemService: SystemService,
     private _web3Provider: Web3Provider,
-  ) {}
+  ) { }
 
   static get BLOCK_RANGE() {
     return 10;
@@ -38,31 +38,29 @@ export class LiquidationTask {
     }
     LiquidationTask.isProcessLocked = true;
 
-    const latestSyncedBlockNumber = await this._systemService.get(
-      SystemType.GENERAL_LAST_BLOCK_NUMBER,
-    );
-
-    const latestBlockNumber =
-      await this._web3Provider.web3.eth.getBlockNumber();
-
-    if (
-      latestSyncedBlockNumber + LiquidationTask.BLOCK_RANGE <
-      latestBlockNumber
-    ) {
-      this._logger.debug(`Ignore task. Events are not fully synced yet.`);
-      LiquidationTask.isProcessLocked = false;
-      return;
-    }
-
     try {
-      const currentBlockNumber =
-        +(await this._web3Provider.currentBlockNumber());
+      const latestSyncedBlockNumber = await this._systemService.get(
+        SystemType.GENERAL_LAST_BLOCK_NUMBER,
+      );
+
+      const latestBlockNumber =
+        +(await this._web3Provider.web3.eth.getBlockNumber());
+
+      if (
+        latestSyncedBlockNumber + LiquidationTask.BLOCK_RANGE <
+        latestBlockNumber
+      ) {
+        this._logger.debug(`Ignore task. Events are not fully synced yet.`);
+        LiquidationTask.isProcessLocked = false;
+        return;
+      }
+
       const toLiquidateRecords = await this._clusterService.findBy({
         where: {
           liquidationBlockNumber: LessThanOrEqual(
             // Current block
             // than the block number when balance becomes zero if not liquidated
-            currentBlockNumber,
+            latestBlockNumber,
           ),
         },
       });
@@ -93,8 +91,7 @@ export class LiquidationTask {
               item.cluster,
             );
             this._logger.log(
-              `${isLiquidated ? 'YES' : 'NO'}. Cluster has ${
-                isLiquidated ? '' : 'NOT'
+              `${isLiquidated ? 'YES' : 'NO'}. Cluster has ${isLiquidated ? '' : 'NOT'
               } been liquidated: ${logItem}`,
             );
             if (isLiquidated) {
