@@ -1,15 +1,17 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
 import { Injectable } from '@nestjs/common';
 import { ArgumentParser } from 'argparse';
 import { ConfigService } from '@nestjs/config';
+
+dotenv.config();
 
 @Injectable()
 export class ConfService extends ConfigService {
   private GAS_PRICE = 'low';
   private NODE_URL = 'eth.infra.com';
   private MAX_VISIBLE_BLOCKS = 50000;
-  private SSV_SYNC_ENV = 'prod';
-  private SSV_SYNC = 'v4.prater';
+  private SSV_SYNC_ENV = 'stage';
+  private SSV_SYNC = 'v4.holesky';
 
   constructor() {
     super();
