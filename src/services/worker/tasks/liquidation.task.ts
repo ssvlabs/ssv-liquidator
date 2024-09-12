@@ -6,11 +6,18 @@ import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
 import { SystemService, SystemType } from '@cli/modules/system/system.service';
 import { Web3Provider } from '@cli/shared/services/web3.provider';
+import { SSVLiquidatorException } from '@cli/exceptions/base';
 
 @Injectable()
 export class LiquidationTask {
-  private static isProcessLocked = false;
+  public static isProcessLocked = false;
   private readonly _logger = new Logger(LiquidationTask.name);
+  private readonly alreadyLiquidatedClusterUpdates = {
+    balance: null,
+    burnRate: null,
+    isLiquidated: true,
+    liquidationBlockNumber: null,
+  };
 
   constructor(
     private _config: ConfService,
@@ -18,7 +25,7 @@ export class LiquidationTask {
     private _clusterService: ClusterService,
     private _systemService: SystemService,
     private _web3Provider: Web3Provider,
-  ) {}
+  ) { }
 
   static get BLOCK_RANGE() {
     return 10;
@@ -29,46 +36,39 @@ export class LiquidationTask {
       this._logger.log(`Process is already locked`);
       return;
     }
-
-    const latestSyncedBlockNumber = await this._systemService.get(
-      SystemType.GENERAL_LAST_BLOCK_NUMBER,
-    );
-
-    const latestBlockNumber =
-      await this._web3Provider.web3.eth.getBlockNumber();
-
-    if (
-      latestSyncedBlockNumber + LiquidationTask.BLOCK_RANGE <
-      latestBlockNumber
-    ) {
-      this._logger.debug(`Ignore task. Events are not fully synced yet.`);
-      return;
-    }
+    LiquidationTask.isProcessLocked = true;
 
     try {
-      LiquidationTask.isProcessLocked = true;
+      const latestSyncedBlockNumber = await this._systemService.get(
+        SystemType.GENERAL_LAST_BLOCK_NUMBER,
+      );
 
-      const currentBlockNumber =
-        +(await this._web3Provider.currentBlockNumber());
+      const latestBlockNumber =
+        +(await this._web3Provider.web3.eth.getBlockNumber());
+
+      if (
+        latestSyncedBlockNumber + LiquidationTask.BLOCK_RANGE <
+        latestBlockNumber
+      ) {
+        this._logger.debug(`Ignore task. Events are not fully synced yet.`);
+        LiquidationTask.isProcessLocked = false;
+        return;
+      }
+
       const toLiquidateRecords = await this._clusterService.findBy({
         where: {
           liquidationBlockNumber: LessThanOrEqual(
             // Current block
             // than the block number when balance becomes zero if not liquidated
-            currentBlockNumber,
+            latestBlockNumber,
           ),
         },
       });
       const clustersToLiquidate: Cluster[] = [];
-      const alreadyLiquidatedClusterUpdates = {
-        balance: null,
-        burnRate: null,
-        isLiquidated: true,
-        liquidationBlockNumber: null,
-      };
       for (const item of toLiquidateRecords) {
         item.cluster = JSON.parse(item.cluster);
         const logItem = JSON.stringify(item);
+
         try {
           this._logger.log(
             `Checking in a contract that cluster is liquidatable: ${logItem}`,
@@ -91,20 +91,19 @@ export class LiquidationTask {
               item.cluster,
             );
             this._logger.log(
-              `${isLiquidated ? 'YES' : 'NO'}. Cluster has ${
-                isLiquidated ? '' : 'NOT'
+              `${isLiquidated ? 'YES' : 'NO'}. Cluster has ${isLiquidated ? '' : 'NOT'
               } been liquidated: ${logItem}`,
             );
             if (isLiquidated) {
               const updated = await this._clusterService.update(
                 { owner: item.owner, operatorIds: item.operatorIds },
-                alreadyLiquidatedClusterUpdates,
+                this.alreadyLiquidatedClusterUpdates,
               );
               if (updated) {
                 this._logger.log(
                   `Updated liquidated cluster: ${JSON.stringify({
                     ...item,
-                    ...alreadyLiquidatedClusterUpdates,
+                    ...this.alreadyLiquidatedClusterUpdates,
                   })}`,
                 );
               }
@@ -116,7 +115,7 @@ export class LiquidationTask {
             `Error occurred during cluster liquidation preparations: ${JSON.stringify(
               {
                 ...item,
-                ...alreadyLiquidatedClusterUpdates,
+                ...this.alreadyLiquidatedClusterUpdates,
               },
             )}`,
             error,
@@ -124,12 +123,6 @@ export class LiquidationTask {
           this._metrics.liquidationStatus.set(0);
         }
       }
-      if (clustersToLiquidate.length === 0) {
-        // nothing to liquidate
-        this._metrics.liquidationStatus.set(1);
-        return;
-      }
-
       // When few liquidators of the same user works in parallel,
       // it is better to try to liquidate feq clusters at the same time.
       // Also, when different users try to liquidate the same list of clusters,
@@ -141,9 +134,10 @@ export class LiquidationTask {
         await this.liquidateCluster(item);
       }
     } catch (e) {
-      this._logger.error(`Failed to sync burn rates. Error: ${e}`);
+      this._logger.error(`Failed to liquidate. Error: ${JSON.stringify(e)}`);
     } finally {
       LiquidationTask.isProcessLocked = false;
+      this._metrics.liquidationStatus.set(1);
     }
   }
 
@@ -152,7 +146,7 @@ export class LiquidationTask {
    * @param item
    * @private
    */
-  private async liquidateCluster(item: any): Promise<boolean> {
+  private async liquidateCluster(item: any): Promise<void> {
     const { owner, operatorIds, cluster } = item;
     const logItem = JSON.stringify(item);
 
@@ -172,16 +166,106 @@ export class LiquidationTask {
       )}. Sending it now..`,
     );
 
-    return this.sendSignedTransaction(transaction)
-      .then(({ hash }) => {
-        this._logger.log(`🎉 The hash of liquidate transaction is: ${hash}`);
-        this._metrics.liquidationStatus.set(1);
-      })
-      .catch(({ error, hash }) => {
-        this._logger.error(`Can not send transaction`, { error, hash });
-        this._metrics.liquidationStatus.set(0);
-        return !error && hash;
-      });
+    try {
+      const { hash } = await this.sendSignedTransaction(transaction);
+      this._logger.log(`🔃 The hash of liquidate transaction is: ${hash}`);
+      await this.waitForTransactionConfirmation(hash);
+      this._metrics.liquidationStatus.set(1);
+    } catch (error) {
+      this._metrics.liquidationStatus.set(0);
+
+      const solidityError = this._web3Provider.getErrorByHash(error.data);
+      if (
+        solidityError &&
+        (solidityError.error.includes('IncorrectClusterState') ||
+          solidityError.error.includes('ClusterIsLiquidated') ||
+          solidityError.error.includes('ClusterNotLiquidatable'))
+      ) {
+        const updated = await this._clusterService.update(
+          { owner: item.owner, operatorIds: item.operatorIds },
+          this.alreadyLiquidatedClusterUpdates,
+        );
+        if (updated) {
+          this._logger.log(
+            `Updated liquidated cluster: ${JSON.stringify({
+              ...item,
+              ...this.alreadyLiquidatedClusterUpdates,
+            })}`,
+          );
+        }
+        this._logger.error(
+          `The cluster ${item.owner} ${item.operatorIds} is not possible to liquidate. Reason: ${solidityError.error}`,
+        );
+      }
+    }
+  }
+
+  private async waitForTransactionConfirmation(hash: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const checkInterval = setInterval(async () => {
+        try {
+          const receipt =
+            await this._web3Provider.web3.eth.getTransactionReceipt(hash);
+          if (receipt) {
+            clearInterval(checkInterval);
+            if (receipt.status) {
+              this._logger.log(`🎉 The cluster is liquidated: ${hash}`);
+              resolve();
+            } else {
+              await this.catchRevertReason(hash);
+            }
+          }
+        } catch (error) {
+          clearInterval(checkInterval);
+          reject(error);
+        }
+      }, 5000); // Check every 5 seconds
+    });
+  }
+
+  async catchRevertReason(hash: string): Promise<string> {
+    try {
+      // Get the transaction by hash
+      const tx = await this._web3Provider.web3.eth.getTransaction(hash);
+
+      // Prepare a call to simulate the transaction execution
+      const result = await this._web3Provider.web3.eth.call(
+        {
+          to: tx.to,
+          data: tx.input,
+          from: tx.from,
+          value: tx.value,
+          gas: tx.gas,
+          gasPrice: tx.gasPrice,
+        },
+        tx.blockNumber,
+      );
+
+      // The result will be the revert reason string encoded as bytes
+      // Decode the revert reason (the result is prefixed with '0x08c379a0' which is the method ID for Error(string))
+      if (result.startsWith('0x08c379a0')) {
+        const reason = this._web3Provider.web3.utils.toAscii(
+          result.substring(138),
+        );
+        throw new SSVLiquidatorException(
+          `Tx reverted reason is ${reason}`,
+          reason,
+          hash,
+        );
+      } else {
+        throw new SSVLiquidatorException(
+          'Revert reason could not be determined',
+          null,
+          hash,
+        );
+      }
+    } catch (error) {
+      throw new SSVLiquidatorException(
+        `Error revert reason: ${error.message}`,
+        error.data,
+        hash,
+      );
+    }
   }
 
   /**
@@ -234,8 +318,29 @@ export class LiquidationTask {
 
   async sendSignedTransaction(
     transaction: Record<string, any>,
-    maxTimeout = 1000 * 30,
+    maxTimeout = 1000 * 60,
   ): Promise<{ error; hash }> {
+    try {
+      const signedTx = await this.getRawSignedTransaction(transaction);
+      return new Promise((resolve, reject) => {
+        this._web3Provider.web3.eth
+          .sendSignedTransaction(signedTx)
+          .on('transactionHash', hash => resolve({ error: null, hash }))
+          .on('error', error => reject({ error, hash: null }));
+
+        setTimeout(() => {
+          reject({
+            error: new Error(
+              `sendSignedTransaction: Timeout expired: ${maxTimeout}ms`,
+            ),
+            hash: null,
+          });
+        }, maxTimeout);
+      });
+    } catch (error) {
+      return Promise.reject({ error, hash: null });
+    }
+    /*
     const transactionPromise: Promise<{ error: any; hash: any }> = new Promise(
       async (resolve, reject) => {
         this._web3Provider.web3.eth
@@ -272,6 +377,7 @@ export class LiquidationTask {
 
     // Send transaction and get rejected or resolved with the same reason
     return Promise.race([timeoutPromise, transactionPromise]);
+    */
   }
 
   /**
@@ -316,12 +422,12 @@ export class LiquidationTask {
       this._web3Provider.operatorIdsToArray(operatorIds).length;
     transaction.gas = this._config.gasUsage(); // totalOperators
     if (!transaction.gas) {
-      console.error(
+      this._logger.error(
         `Gas group was not found for ${totalOperators} operators. Going to estimate transaction gas...`,
       );
       transaction.gas = await this.getGas(transaction);
     } else {
-      console.info(
+      this._logger.log(
         `Gas group was found for ${totalOperators} operators and is: ${transaction.gas}`,
       );
     }

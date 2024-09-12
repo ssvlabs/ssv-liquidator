@@ -43,6 +43,11 @@
     },
     {
       "inputs": [],
+      "name": "EmptyPublicKeysList",
+      "type": "error"
+    },
+    {
+      "inputs": [],
       "name": "ExceedValidatorLimit",
       "type": "error"
     },
@@ -54,6 +59,11 @@
     {
       "inputs": [],
       "name": "FeeIncreaseNotAllowed",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "FeeTooHigh",
       "type": "error"
     },
     {
@@ -72,6 +82,17 @@
       "type": "error"
     },
     {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "publicKey",
+          "type": "bytes"
+        }
+      ],
+      "name": "IncorrectValidatorStateWithData",
+      "type": "error"
+    },
+    {
       "inputs": [],
       "name": "InsufficientBalance",
       "type": "error"
@@ -84,6 +105,11 @@
     {
       "inputs": [],
       "name": "InvalidPublicKeyLength",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "MaxValueExceeded",
       "type": "error"
     },
     {
@@ -118,6 +144,11 @@
     },
     {
       "inputs": [],
+      "name": "PublicKeysSharesLengthMismatch",
+      "type": "error"
+    },
+    {
+      "inputs": [],
       "name": "SameFeeChangeNotAllowed",
       "type": "error"
     },
@@ -139,6 +170,17 @@
     {
       "inputs": [],
       "name": "ValidatorAlreadyExists",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "publicKey",
+          "type": "bytes"
+        }
+      ],
+      "name": "ValidatorAlreadyExistsWithData",
       "type": "error"
     },
     {
@@ -253,7 +295,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "owner",
+          "name": "clusterOwner",
           "type": "address"
         },
         {
@@ -309,7 +351,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "owner",
+          "name": "clusterOwner",
           "type": "address"
         },
         {
@@ -376,6 +418,19 @@
     },
     {
       "inputs": [],
+      "name": "getMaximumOperatorFee",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "getMinimumLiquidationCollateral",
       "outputs": [
         {
@@ -408,6 +463,19 @@
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getNetworkValidatorsCount",
+      "outputs": [
+        {
+          "internalType": "uint32",
+          "name": "",
+          "type": "uint32"
         }
       ],
       "stateMutability": "view",
@@ -467,6 +535,11 @@
       ],
       "name": "getOperatorDeclaredFee",
       "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        },
         {
           "internalType": "uint256",
           "name": "",
@@ -530,7 +603,7 @@
       "outputs": [
         {
           "internalType": "uint64",
-          "name": "operatorMaxFeeIncrease",
+          "name": "",
           "type": "uint64"
         }
       ],
@@ -543,12 +616,12 @@
       "outputs": [
         {
           "internalType": "uint64",
-          "name": "declareOperatorFeePeriod",
+          "name": "",
           "type": "uint64"
         },
         {
           "internalType": "uint64",
-          "name": "executeOperatorFeePeriod",
+          "name": "",
           "type": "uint64"
         }
       ],
@@ -559,7 +632,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "owner",
+          "name": "clusterOwner",
           "type": "address"
         },
         {
@@ -572,8 +645,21 @@
       "outputs": [
         {
           "internalType": "bool",
-          "name": "active",
+          "name": "",
           "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getValidatorsPerOperatorLimit",
+      "outputs": [
+        {
+          "internalType": "uint32",
+          "name": "",
+          "type": "uint32"
         }
       ],
       "stateMutability": "view",
@@ -585,7 +671,7 @@
       "outputs": [
         {
           "internalType": "string",
-          "name": "version",
+          "name": "",
           "type": "string"
         }
       ],
@@ -595,7 +681,7 @@
     {
       "inputs": [
         {
-          "internalType": "contract IFnSSVViews",
+          "internalType": "contract ISSVViews",
           "name": "ssvNetwork_",
           "type": "address"
         }
@@ -609,7 +695,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "owner",
+          "name": "clusterOwner",
           "type": "address"
         },
         {
@@ -665,7 +751,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "owner",
+          "name": "clusterOwner",
           "type": "address"
         },
         {
@@ -768,7 +854,7 @@
       "name": "ssvNetwork",
       "outputs": [
         {
-          "internalType": "contract IFnSSVViews",
+          "internalType": "contract ISSVViews",
           "name": "",
           "type": "address"
         }

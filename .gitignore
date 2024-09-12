@@ -75,3 +75,6 @@ mongo
 db-data
 
 .env
+
+# Ignore macOS files
+.DS_Store

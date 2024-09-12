@@ -1,5 +1,6 @@
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
+import { CustomLogger } from '@cli/shared/services/logger.service';
 
 TimeAgo.addLocale(en);
 const timeAgo = new TimeAgo('en-US');
@@ -45,6 +46,7 @@ const textStatus = (item, extra: any) => {
  * @returns List of custom formatted pod data
  */
 export const transformClusterData = (items, extra: any) => {
+  const logger = new CustomLogger('ClusterDataTransformer');
   const clusters = [];
   try {
     for (let i = 0; i < items.length; i++) {
@@ -80,7 +82,7 @@ export const transformClusterData = (items, extra: any) => {
       return order.indexOf(a.status.text) - order.indexOf(b.status.text);
     });
   } catch (e) {
-    console.log(e);
+    logger.error(`Failed to transform cluster data. ${e}`);
   }
   return clusters;
 };

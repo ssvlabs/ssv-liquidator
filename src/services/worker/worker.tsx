@@ -1,5 +1,3 @@
-import 'dotenv/config';
-
 import importJsx from 'import-jsx';
 import React from 'react';
 import path from 'path';
@@ -13,18 +11,20 @@ import {
 import { Web3Provider } from '@cli/shared/services/web3.provider';
 import { ConfService } from '@cli/shared/services/conf.service';
 import { WorkerModule } from '@cli/services/worker/worker.module';
-import { getAllowedLogLevels } from '@cli/shared/services/logging';
 import { CustomLogger } from '@cli/shared/services/logger.service';
 import { EarningService } from '@cli/modules/earnings/earning.service';
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
 
+const logger = new CustomLogger('App');
+
 async function bootstrapApi() {
   const app = await NestFactory.create<NestExpressApplication>(
     WorkerModule,
     new ExpressAdapter(),
-    { cors: true },
+    { cors: true, logger: false },
   );
+
   app.enable('trust proxy');
   app.enableCors();
 
@@ -42,22 +42,24 @@ async function bootstrapApi() {
   );
 
   const confService = app.select(WorkerModule).get(ConfService);
-
   const port = confService.getNumber('PORT') || 3000;
   await app.listen(port);
 
-  // eslint-disable-next-line no-console
-  console.info(`WebApp is running on port: ${port}`);
+  app.useLogger(logger);
+  logger.log(`WebApp is running on port: ${port}`);
+  logger.log(`Node url: ${confService.get('NODE_URL')}`);
+  logger.log(`Network: ${confService.get('SSV_SYNC')}`);
+  await app.get(Web3Provider).printConfig();
 }
 
 async function bootstrapCli() {
   const app = await NestFactory.createApplicationContext(WorkerModule, {
-    logger: getAllowedLogLevels(),
+    logger: false,
     autoFlushLogs: false,
     bufferLogs: false,
   });
-
-  app.useLogger(app.get(CustomLogger));
+  app.useLogger(logger);
+  logger.log('Starting Liquidation worker');
 
   const confService = app.select(WorkerModule).get(ConfService);
 
@@ -80,15 +82,12 @@ async function bootstrapCli() {
 }
 
 async function bootstrap() {
-  process.on('unhandledRejection', error => {
-    console.error('[CRITICAL] unhandledRejection', error);
+  logger.log(`Liquidator starting`);
+  process.on('unhandledRejection', (error: Error) => {
+    logger.error(`[CRITICAL] unhandledRejection ${error} ${error.stack}`);
     MetricsService.criticalStatus.set(0);
   });
-
-  console.info('Starting API');
   await bootstrapApi();
-
-  console.info('Starting Liquidator worker');
   await bootstrapCli();
 }
 

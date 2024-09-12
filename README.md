@@ -16,7 +16,7 @@ The SSV Liquidator node executes liquidations on accounts that do not hold enoug
 
 ##### The liquidator node performs 2 main processes:
 
-- Syncing network contract data Every minute the liquidator node pulls recent balance-determining events for the SSV networks contract and maps all of the network's accounts on the node level to calculate the potential block for liquidation for each account in the network
+- Syncing network contract data Every minute the liquidator node pulls recent balance-determining events for the SSV networks contract and maps all the network's accounts on the node level to calculate the potential block for liquidation for each account in the network
 - Liquidating accounts once the potential liquidation block is reached. The liquidator node will call the liquidate() function in the network contract, if the node was the first to successfully pass the transaction the account will be liquidated and its SSV collateral will be sent to the wallet address which performed the liquidation
 
 ## Requirements 
@@ -24,10 +24,10 @@ The SSV Liquidator node executes liquidations on accounts that do not hold enoug
 ### ETH1 Node and other parameters
 
 In order to be able to fetch all the operators and their status from the contract and react on different events
-you need to specify an ETH1 Node URI. If you want to work with a production environment then you must specify `eth.infra.com` as the `--node-url` parameter for the CLI. As alternative you can set it up in `.env` file as the `NODE_URL`. Examples below for both scenarios.
+you need to specify an ETH1 Node URI. If you want to work with a production environment then you must specify `eth.infra.com` as the `--node-url` parameter for the CLI. As an alternative you can set it up in `.env` file as the `NODE_URL`. Examples below for both scenarios.
 
 If you want to play with the testnet you can register in `alchemyapi.io`.  Once registered the URL will look like: 
-`https://eth-goerli.alchemyapi.io/v2/<your-token-here>`
+`https://eth-holesky.alchemyapi.io/v2/<your-token-here>`
 
 Review `yarn cli --help` output and `.env.example` file for all of the parameters required for liquidator to work.
 
@@ -56,7 +56,7 @@ yarn cli --help
 
 #### Input parameters: 
 ssv-sync-env (sse) = The SSV sync environment (prod or stage). Default: prod
-ssv-sync (ss) = The SSV contract name (format: version.network). Default: v4.prater
+ssv-sync (ss) = The SSV contract name (format: version.network). Default: v4.holesky
 node-url (n) = ETH1 node url  
 private-key (pk) = Account private key  
 gas-price (g) = Gas price, default: low  
@@ -79,7 +79,7 @@ GAS_PRICE=medium
 HIDE_TABLE=false
 MAX_VISIBLE_BLOCKS=50000
 SSV_SYNC_ENV=prod # prod or stage, prod - is default value
-SSV_SYNC=v4.prater # v4.prater | v4.mainnet (only for prod) | v4.prater (only for prod)
+SSV_SYNC=v4.holesky # v4.holesky | v4.mainnet (only for prod) | v4.holesky (only for prod)
 ```
 
 If you saved all the parameters in the `.env` file you can run:
@@ -111,11 +111,6 @@ rm data/local.db
 ### Testing
 
 * TODO
-
-## Authors
-
-* [Wadym Chumak](https://github.com/vadiminc)
-* [Dmitri Meshin](https://github.com/meshin-blox)
 
 ## Troubleshooting
 
