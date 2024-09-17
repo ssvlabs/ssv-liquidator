@@ -8,7 +8,7 @@ export class ConfService extends ConfigService {
   private NODE_URL = 'eth.infra.com';
   private MAX_VISIBLE_BLOCKS = 50000;
   private SSV_SYNC_ENV = 'prod';
-  private SSV_SYNC = 'v4.prater';
+  private SSV_SYNC = 'v4.holesky';
 
   constructor() {
     super();

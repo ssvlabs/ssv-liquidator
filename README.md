@@ -1,13 +1,13 @@
 # SSV Network Liquidator
-![GitHub](https://img.shields.io/github/license/bloxapp/ssv-liquidator)
-![GitHub package.json version](https://img.shields.io/github/package-json/v/bloxapp/ssv-liquidator)
+![GitHub](https://img.shields.io/github/license/ssvlabs/ssv-liquidator)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/ssvlabs/ssv-liquidator)
 
-![GitHub commit activity](https://img.shields.io/github/commit-activity/y/bloxapp/ssv-liquidator)
-![GitHub contributors](https://img.shields.io/github/contributors/bloxapp/ssv-liquidator)
-![GitHub last commit](https://img.shields.io/github/last-commit/bloxapp/ssv-liquidator)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/y/ssvlabs/ssv-liquidator)
+![GitHub contributors](https://img.shields.io/github/contributors/ssvlabs/ssv-liquidator)
+![GitHub last commit](https://img.shields.io/github/last-commit/ssvlabs/ssv-liquidator)
 
-![GitHub package.json dynamic](https://img.shields.io/github/package-json/keywords/bloxapp/ssv-liquidator)
-![GitHub package.json dynamic](https://img.shields.io/github/package-json/author/bloxapp/ssv-liquidator)
+![GitHub package.json dynamic](https://img.shields.io/github/package-json/keywords/ssvlabs/ssv-liquidator)
+![GitHub package.json dynamic](https://img.shields.io/github/package-json/author/ssvlabs/ssv-liquidator)
 
 ![Discord](https://img.shields.io/discord/723834989506068561?style=for-the-badge&label=Ask%20for%20support&logo=discord&logoColor=white)
 
@@ -27,7 +27,7 @@ In order to be able to fetch all the operators and their status from the contrac
 you need to specify an ETH1 Node URI. If you want to work with a production environment then you must specify `eth.infra.com` as the `--node-url` parameter for the CLI. As alternative you can set it up in `.env` file as the `NODE_URL`. Examples below for both scenarios.
 
 If you want to play with the testnet you can register in `alchemyapi.io`.  Once registered the URL will look like: 
-`https://eth-goerli.alchemyapi.io/v2/<your-token-here>`
+`https://eth-holesky.alchemyapi.io/v2/<your-token-here>`
 
 Review `yarn cli --help` output and `.env.example` file for all of the parameters required for liquidator to work.
 
@@ -40,7 +40,7 @@ You can download it [here](https://nodejs.org/en/download/).
 ## Installation
 
 ```sh
-git clone https://github.com/bloxapp/ssv-liquidator.git
+git clone https://github.com/ssvlabs/ssv-liquidator.git
 cd ssv-liquidator
 yarn install
 ```
@@ -56,7 +56,7 @@ yarn cli --help
 
 #### Input parameters: 
 ssv-sync-env (sse) = The SSV sync environment (prod or stage). Default: prod
-ssv-sync (ss) = The SSV contract name (format: version.network). Default: v4.prater
+ssv-sync (ss) = The SSV contract name (format: version.network). Default: v4.holesky
 node-url (n) = ETH1 node url  
 private-key (pk) = Account private key  
 gas-price (g) = Gas price, default: low  
@@ -79,7 +79,7 @@ GAS_PRICE=medium
 HIDE_TABLE=false
 MAX_VISIBLE_BLOCKS=50000
 SSV_SYNC_ENV=prod # prod or stage, prod - is default value
-SSV_SYNC=v4.prater # v4.prater | v4.mainnet (only for prod) | v4.prater (only for prod)
+SSV_SYNC=v4.holesky # v4.holesky | v4.mainnet (only for prod) | v4.holesky (only for prod)
 ```
 
 If you saved all the parameters in the `.env` file you can run:
@@ -111,11 +111,6 @@ rm data/local.db
 ### Testing
 
 * TODO
-
-## Authors
-
-* [Wadym Chumak](https://github.com/vadiminc)
-* [Dmitri Meshin](https://github.com/meshin-blox)
 
 ## Troubleshooting
 
