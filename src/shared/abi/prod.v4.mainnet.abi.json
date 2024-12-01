@@ -5,6 +5,11 @@
   "abi": [
     {
       "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
       "name": "ApprovalNotWithinTimeframe",
       "type": "error"
     },
@@ -40,6 +45,11 @@
     },
     {
       "inputs": [],
+      "name": "EmptyPublicKeysList",
+      "type": "error"
+    },
+    {
+      "inputs": [],
       "name": "ExceedValidatorLimit",
       "type": "error"
     },
@@ -51,6 +61,11 @@
     {
       "inputs": [],
       "name": "FeeIncreaseNotAllowed",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "FeeTooHigh",
       "type": "error"
     },
     {
@@ -69,6 +84,17 @@
       "type": "error"
     },
     {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "publicKey",
+          "type": "bytes"
+        }
+      ],
+      "name": "IncorrectValidatorStateWithData",
+      "type": "error"
+    },
+    {
       "inputs": [],
       "name": "InsufficientBalance",
       "type": "error"
@@ -81,6 +107,11 @@
     {
       "inputs": [],
       "name": "InvalidPublicKeyLength",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "MaxValueExceeded",
       "type": "error"
     },
     {
@@ -115,6 +146,11 @@
     },
     {
       "inputs": [],
+      "name": "PublicKeysSharesLengthMismatch",
+      "type": "error"
+    },
+    {
+      "inputs": [],
       "name": "SameFeeChangeNotAllowed",
       "type": "error"
     },
@@ -136,6 +172,17 @@
     {
       "inputs": [],
       "name": "ValidatorAlreadyExists",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "publicKey",
+          "type": "bytes"
+        }
+      ],
+      "name": "ValidatorAlreadyExistsWithData",
       "type": "error"
     },
     {
@@ -564,7 +611,7 @@
           "type": "uint64"
         }
       ],
-      "name": "OperatorFeeCancellationDeclared",
+      "name": "OperatorFeeDeclarationCancelled",
       "type": "event"
     },
     {
@@ -640,6 +687,19 @@
         }
       ],
       "name": "OperatorFeeIncreaseLimitUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "maxFee",
+          "type": "uint64"
+        }
+      ],
+      "name": "OperatorMaximumFeeUpdated",
       "type": "event"
     },
     {
@@ -834,6 +894,31 @@
           "internalType": "bytes",
           "name": "publicKey",
           "type": "bytes"
+        }
+      ],
+      "name": "ValidatorExited",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint64[]",
+          "name": "operatorIds",
+          "type": "uint64[]"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes",
+          "name": "publicKey",
+          "type": "bytes"
         },
         {
           "components": [
@@ -886,6 +971,134 @@
     {
       "inputs": [
         {
+          "internalType": "bytes[]",
+          "name": "publicKeys",
+          "type": "bytes[]"
+        },
+        {
+          "internalType": "uint64[]",
+          "name": "operatorIds",
+          "type": "uint64[]"
+        }
+      ],
+      "name": "bulkExitValidator",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes[]",
+          "name": "publicKeys",
+          "type": "bytes[]"
+        },
+        {
+          "internalType": "uint64[]",
+          "name": "operatorIds",
+          "type": "uint64[]"
+        },
+        {
+          "internalType": "bytes[]",
+          "name": "sharesData",
+          "type": "bytes[]"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint32",
+              "name": "validatorCount",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint64",
+              "name": "networkFeeIndex",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "index",
+              "type": "uint64"
+            },
+            {
+              "internalType": "bool",
+              "name": "active",
+              "type": "bool"
+            },
+            {
+              "internalType": "uint256",
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ISSVNetworkCore.Cluster",
+          "name": "cluster",
+          "type": "tuple"
+        }
+      ],
+      "name": "bulkRegisterValidator",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes[]",
+          "name": "publicKeys",
+          "type": "bytes[]"
+        },
+        {
+          "internalType": "uint64[]",
+          "name": "operatorIds",
+          "type": "uint64[]"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint32",
+              "name": "validatorCount",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint64",
+              "name": "networkFeeIndex",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "index",
+              "type": "uint64"
+            },
+            {
+              "internalType": "bool",
+              "name": "active",
+              "type": "bool"
+            },
+            {
+              "internalType": "uint256",
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ISSVNetworkCore.Cluster",
+          "name": "cluster",
+          "type": "tuple"
+        }
+      ],
+      "name": "bulkRemoveValidator",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "uint64",
           "name": "operatorId",
           "type": "uint64"
@@ -918,7 +1131,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "owner",
+          "name": "clusterOwner",
           "type": "address"
         },
         {
@@ -985,32 +1198,32 @@
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "userAddress",
-          "type": "address"
+          "internalType": "bytes",
+          "name": "publicKey",
+          "type": "bytes"
+        },
+        {
+          "internalType": "uint64[]",
+          "name": "operatorIds",
+          "type": "uint64[]"
         }
       ],
-      "name": "getRegisterAuth",
+      "name": "exitValidator",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getVersion",
       "outputs": [
         {
-          "components": [
-            {
-              "internalType": "bool",
-              "name": "registerOperator",
-              "type": "bool"
-            },
-            {
-              "internalType": "bool",
-              "name": "registerValidator",
-              "type": "bool"
-            }
-          ],
-          "internalType": "struct Authorization",
-          "name": "",
-          "type": "tuple"
+          "internalType": "string",
+          "name": "version",
+          "type": "string"
         }
       ],
-      "stateMutability": "view",
+      "stateMutability": "pure",
       "type": "function"
     },
     {
@@ -1021,22 +1234,22 @@
           "type": "address"
         },
         {
-          "internalType": "contract IFnSSVOperators",
+          "internalType": "contract ISSVOperators",
           "name": "ssvOperators_",
           "type": "address"
         },
         {
-          "internalType": "contract IFnSSVClusters",
+          "internalType": "contract ISSVClusters",
           "name": "ssvClusters_",
           "type": "address"
         },
         {
-          "internalType": "contract IFnSSVDAO",
+          "internalType": "contract ISSVDAO",
           "name": "ssvDAO_",
           "type": "address"
         },
         {
-          "internalType": "contract IFnSSVViews",
+          "internalType": "contract ISSVViews",
           "name": "ssvViews_",
           "type": "address"
         },
@@ -1080,7 +1293,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "owner",
+          "name": "clusterOwner",
           "type": "address"
         },
         {
@@ -1422,36 +1635,6 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "userAddress",
-          "type": "address"
-        },
-        {
-          "components": [
-            {
-              "internalType": "bool",
-              "name": "registerOperator",
-              "type": "bool"
-            },
-            {
-              "internalType": "bool",
-              "name": "registerValidator",
-              "type": "bool"
-            }
-          ],
-          "internalType": "struct Authorization",
-          "name": "auth",
-          "type": "tuple"
-        }
-      ],
-      "name": "setRegisterAuth",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
           "name": "newOwner",
           "type": "address"
         }
@@ -1503,12 +1686,43 @@
     {
       "inputs": [
         {
+          "internalType": "uint64",
+          "name": "maxFee",
+          "type": "uint64"
+        }
+      ],
+      "name": "updateMaximumOperatorFee",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "uint256",
           "name": "amount",
           "type": "uint256"
         }
       ],
       "name": "updateMinimumLiquidationCollateral",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum SSVModules",
+          "name": "moduleId",
+          "type": "uint8"
+        },
+        {
+          "internalType": "address",
+          "name": "moduleAddress",
+          "type": "address"
+        }
+      ],
+      "name": "updateModule",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -1535,24 +1749,6 @@
         }
       ],
       "name": "updateOperatorFeeIncreaseLimit",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "enum SSVModules",
-          "name": "moduleId",
-          "type": "uint8"
-        },
-        {
-          "internalType": "address",
-          "name": "moduleAddress",
-          "type": "address"
-        }
-      ],
-      "name": "upgradeModule",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -1641,6 +1837,19 @@
     {
       "inputs": [
         {
+          "internalType": "uint64",
+          "name": "operatorId",
+          "type": "uint64"
+        }
+      ],
+      "name": "withdrawAllOperatorEarnings",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "uint256",
           "name": "amount",
           "type": "uint256"
@@ -1662,19 +1871,6 @@
           "internalType": "uint256",
           "name": "amount",
           "type": "uint256"
-        }
-      ],
-      "name": "withdrawOperatorEarnings",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint64",
-          "name": "operatorId",
-          "type": "uint64"
         }
       ],
       "name": "withdrawOperatorEarnings",
