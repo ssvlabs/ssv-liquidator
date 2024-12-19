@@ -39,6 +39,7 @@ export class WorkerService implements OnModuleInit {
           const earnedData = await this._earningService.fetch(
             item.transactionHash,
           );
+          if (!earnedData) continue;
           await this._earningService.update(earnedData);
           this._logger.debug(
             `Updated earned data after cluster liquidation: ${JSON.stringify(

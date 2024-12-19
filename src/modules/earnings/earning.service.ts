@@ -39,6 +39,10 @@ export class EarningService {
       transactionHash,
     );
 
+    if (!txReceipt) {
+      return null;
+    }
+
     const earnedData = {
       hash: transactionHash,
       from: txReceipt.from,
