@@ -1,18 +1,10 @@
 stages:
   - build
-  - deploy
 
 variables:
 
   #GLOBAL
   IMAGE_NAME: ssv-liquidator
-
-  #STAGE
-  ACCOUNT_ID_INFRA_STAGE: 121827225315
-  AWS_REGION_INFRA_STAGE: "us-west-2"
-  DOCKER_REPO_INFRA_STAGE: $ACCOUNT_ID_INFRA_STAGE.dkr.ecr.$AWS_REGION_INFRA_STAGE.amazonaws.com/$IMAGE_NAME
-  APP_REPLICAS_INFRA_STAGE: "1"
-  ECRLOGIN_INFRA_STAGE: "aws ecr get-login --registry-ids $ACCOUNT_ID_INFRA_STAGE --region $AWS_REGION_INFRA_STAGE --no-include-email"
 
   #PRODUCTION
   ACCOUNT_ID_INFRA_PROD: 764289642555
@@ -22,74 +14,19 @@ variables:
   ECRLOGIN_INFRA_PROD: "aws ecr get-login --registry-ids $ACCOUNT_ID_INFRA_PROD --region $AWS_REGION_INFRA_PROD --no-include-email"
 
 
-#blox-infra-stage
-Build stage Docker image:
-  stage: build
-  tags:
-    - blox-infra-stage 
-  script:
-    - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA -f Dockerfile .
-    - DOCKER_LOGIN_TO_INFRA_STAGE_REPO=`$ECRLOGIN_INFRA_STAGE`
-    - docker tag $IMAGE_NAME:$CI_COMMIT_SHA $DOCKER_REPO_INFRA_STAGE:$CI_COMMIT_SHA
-    - $DOCKER_LOGIN_TO_INFRA_STAGE_REPO && docker push $DOCKER_REPO_INFRA_STAGE:$CI_COMMIT_SHA
-  only:
-    - stage
-
-Helm deploy on stage:
-  stage: deploy
-  tags:
-    - blox-infra-stage
-  image: devth/helm:v3.3.4
-  script:
-    - mkdir ~/.kube/
-    - echo $STAGE_KUBECONFIG | base64 -d > kubeconfig
-    - mv kubeconfig ~/.kube/
-    - export KUBECONFIG=~/.kube/kubeconfig
-    - kubectl config get-contexts
-    - IMAGE_TAG=$CI_COMMIT_SHA
-    - helm upgrade
-      --install
-      --namespace liquidation
-      --set image.tag=$IMAGE_TAG
-      --values .k8/helm3/ssv-liquidator/stage-values.yaml
-      --wait
-      ssv-liquidator
-      .k8/helm3/ssv-liquidator/
-  only:
-    - stage
-
 #blox-infra-prod
 Build prod Docker image:
   stage: build
+  image: docker:20.10.23
   tags:
     - blox-infra-prod
   script:
+    - apk add --no-cache py-pip
+    - pip install pyyaml==5.3.1
+    - pip install awscli
     - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA -f Dockerfile .
     - DOCKER_LOGIN_TO_INFRA_PROD_REPO=`$ECRLOGIN_INFRA_PROD`
     - docker tag $IMAGE_NAME:$CI_COMMIT_SHA $DOCKER_REPO_INFRA_PROD:$CI_COMMIT_SHA
     - $DOCKER_LOGIN_TO_INFRA_PROD_REPO && docker push $DOCKER_REPO_INFRA_PROD:$CI_COMMIT_SHA
   only:
     - main
-
-Helm deploy on production:
-  stage: deploy
-  tags:
-    - blox-infra-prod
-  image: devth/helm:v3.3.4
-  script:
-    - mkdir ~/.kube/
-    - echo $PROD_KUBECONFIG | base64 -d > kubeconfig
-    - mv kubeconfig ~/.kube/
-    - export KUBECONFIG=~/.kube/kubeconfig
-    - kubectl config get-contexts
-    - IMAGE_TAG=$CI_COMMIT_SHA
-    - helm upgrade
-      --install
-      --namespace liquidation
-      --set image.tag=$IMAGE_TAG
-      --values .k8/helm3/ssv-liquidator/prod-values.yaml
-      --wait
-      ssv-liquidator
-      .k8/helm3/ssv-liquidator/
-  only:
-     - main      
