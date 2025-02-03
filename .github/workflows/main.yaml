@@ -1,0 +1,36 @@
+name: build
+on:
+  push:
+    branches:
+      - "main"
+jobs:
+  build-image-and-deploy:
+    runs-on: self-hosted
+    container: 
+      image: docker:27.5.1
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: build image
+        uses: ssvlabsinfra/github-actions/actions/argo-workflow-submit@v0.2.0
+        with:
+          argo_workflow_file: .argo/build-image.yaml
+          parameters: '["imageTag=${GITHUB_SHA}",
+                      "dockerBuildExtraArgs="]'
+      - name: deploy Holesky liquidator
+        uses: ssvlabsinfra/github-actions/actions/argo-workflow-submit@v0.2.0
+        with:
+          argo_workflow_file: .argo/deploy.yaml
+          parameters: '["imageTag=${GITHUB_SHA}",
+                        "app=ssv-liquidator",
+                        "gitopsRepo=gitops-production",
+                        "filePath=environment/holesky/ssv-liquidator/application.yaml"]'
+      - name: deploy Mainnet liquidator
+        uses: ssvlabsinfra/github-actions/actions/argo-workflow-submit@v0.2.0
+        with:
+          argo_workflow_file: .argo/deploy.yaml
+          parameters: '["imageTag=${GITHUB_SHA}",
+                        "app=ssv-liquidator",
+                        "gitopsRepo=gitops-production",
+                        "filePath=environment/mainnet/ssv-liquidator/application.yaml"]'
+
