@@ -1,0 +1,43 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  namespace: argo-events
+spec:
+  entrypoint: main
+  serviceAccountName: operate-workflow-sa
+  templates:
+    - name: main
+      steps:
+        - - name: checkout-code
+            templateRef:
+              name: cwft-git
+              template: checkout-with-token
+              clusterScope: true
+            arguments:
+              parameters:
+                - name: appName
+                  value: '{{workflow.parameters.appName}}'
+                - name: appOrg
+                  value: '{{workflow.parameters.appOrg}}'
+                - name: branch
+                  value: '{{workflow.parameters.branch}}'
+        - - name: docker-build-push-container
+            templateRef:
+              name: cwft-docker-ssvlabs
+              template: docker-build-push-ecr-private
+              clusterScope: true
+            arguments:
+              artifacts:
+                - name: repo-source
+                  from: '{{steps.checkout-code.outputs.artifacts.repo-source}}'
+              parameters:
+                - name: appName
+                  value: '{{workflow.parameters.appName}}'
+                - name: branch
+                  value: '{{workflow.parameters.branch}}'
+                - name: imageTag
+                  value: '{{workflow.parameters.imageTag}}'
+                - name: imageName
+                  value: '{{workflow.parameters.appName}}'
+                - name: dockerBuildExtraArgs
+                  value: '{{workflow.parameters.dockerBuildExtraArgs}}'

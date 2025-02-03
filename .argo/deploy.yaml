@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  namespace: argo-events
+spec:
+  entrypoint: main
+  serviceAccountName: operate-workflow-sa
+  templates:
+    - name: main
+      steps:
+        - - name: update-gitops
+            templateRef:
+              name: cwft-git
+              template: update-gitops-repo-githubapp
+              clusterScope: true
+            arguments:
+              parameters:
+                - name: gitopsRepo
+                  value: '{{workflow.parameters.gitopsRepo}}'
+                - name: filePath
+                  value: '{{workflow.parameters.filePath}}'
+                - name: replaceRegexp
+                  value: 'tag:.*'
+                - name: replaceWith
+                  value: 'tag: {{workflow.parameters.imageTag}}'
+                - name: commitMessage
+                  value: 'Updated {{workflow.parameters.app}} docker image to {{workflow.parameters.imageTag}}'
