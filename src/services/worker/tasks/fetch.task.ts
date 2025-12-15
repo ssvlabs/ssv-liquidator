@@ -107,6 +107,7 @@ export class FetchTask {
     latestBlockNumber: number,
   ): Promise<void> {
     // TODO: move these constants out from the method
+    const HOUR = 450;
     const DAY = 5_400;
     const WEEK = DAY * 7;
     const MONTH = DAY * 30;
@@ -151,8 +152,10 @@ export class FetchTask {
         } else if (step === WEEK) {
           step = DAY;
         } else if (step === DAY) {
+          step = HOUR;
+        } else if (step === HOUR) {
           throw new Error(
-            `FetchTask::_syncUpdates: already using 1 day period for syncing and still getting error: ${e}`,
+            `FetchTask::_syncUpdates: already using 1 hour period for syncing and still getting error: ${e}`,
           );
         }
       } finally {
