@@ -227,6 +227,26 @@ export class BurnRatesTask {
         }
         continue;
       } else if (error) {
+        // Check if this is an IncorrectClusterState error - means snapshot is stale
+        if (error.includes('IncorrectClusterState')) {
+          this._logger.warn(
+            `Cluster has stale snapshot (IncorrectClusterState). Resetting snapshot to allow re-calculation: ${logRecord}`,
+          );
+          await this._clusterService.update(
+            {
+              owner: record.owner,
+              operatorIds: record.operatorIds,
+            },
+            {
+              burnRate: null,
+              balance: null,
+              liquidationBlockNumber: null,
+              // Keep the cluster but clear calculated fields
+            },
+          );
+          continue;
+        }
+
         this._logger.error(
           `${
             error.startsWith('Error:')
