@@ -1,4 +1,3 @@
-# Build stage - use full image for compilation
 FROM node:20 AS builder
 
 ENV APP_WORKDIR=/opt/app/
