@@ -109,10 +109,10 @@ export class FetchTask {
     // TODO: move these constants out from the method
     const MINUTES = 75;
     const HOUR = 450;
-    const DAY = 5_400;
+    const DAY = 2000;
     const WEEK = DAY * 7;
     const MONTH = DAY * 30;
-    let step = WEEK;
+    let step = DAY;
     const filters = {
       fromBlock,
       toBlock:
