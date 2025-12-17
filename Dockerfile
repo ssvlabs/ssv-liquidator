@@ -12,7 +12,7 @@ COPY . $APP_WORKDIR
 # Runtime stage - use slim image for smaller footprint
 FROM node:20-slim
 
-ENV NODE_OPTIONS=--openssl-legacy-provider
+ENV NODE_OPTIONS="--openssl-legacy-provider --max-old-space-size=5120"
 ENV APP_WORKDIR=/opt/app/
 
 WORKDIR $APP_WORKDIR
