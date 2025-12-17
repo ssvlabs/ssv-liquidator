@@ -112,7 +112,7 @@ export class FetchTask {
     const DAY = 5_400;
     const WEEK = DAY * 7;
     const MONTH = DAY * 30;
-    let step = MONTH;
+    let step = HOUR;
     const filters = {
       fromBlock,
       toBlock:
