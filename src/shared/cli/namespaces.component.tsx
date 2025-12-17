@@ -6,6 +6,8 @@ export const NamespacesComponent = ({ namespaces, onNamespaceChange }) => {
     <Tabs
       onChange={name => onNamespaceChange(name)}
       keyMap={{ useNumbers: true, useTab: true }}
+      // @ts-ignore - isRawModeSupported fixes ink-tab warning but not in types
+      isRawModeSupported={!!(process.stdin && process.stdin.isTTY)}
     >
       {namespaces.map(namespace => (
         <Tab key={namespace} name={namespace}>
