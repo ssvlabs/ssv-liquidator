@@ -17,7 +17,7 @@ export class FetchTask {
   ) {}
 
   static get BLOCK_RANGE() {
-    return 500;
+    return 5000;
   }
 
   static get MAX_DELAY_BLOCK_RANGE() {
