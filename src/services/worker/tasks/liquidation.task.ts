@@ -62,6 +62,7 @@ export class LiquidationTask {
       const clustersToLiquidate: Cluster[] = [];
       const alreadyLiquidatedClusterUpdates = {
         balance: null,
+        ebBalance: null,
         burnRate: null,
         isLiquidated: true,
         liquidationBlockNumber: null,
