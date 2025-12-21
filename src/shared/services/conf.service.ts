@@ -8,7 +8,8 @@ export class ConfService extends ConfigService {
   private NODE_URL = 'eth.infra.com';
   private MAX_VISIBLE_BLOCKS = 50000;
   private SSV_SYNC_ENV = 'prod';
-  private SSV_SYNC = 'v4.prater';
+  private SSV_SYNC = 'v4.hoodi';
+  private SSV_CLUSTER_MIGRATION_BLOCK = null; 
 
   constructor() {
     super();
@@ -43,10 +44,14 @@ export class ConfService extends ConfigService {
       help: `Max block range to display active clusters. Default: ${this.MAX_VISIBLE_BLOCKS}`,
       required: false,
     });
+    parser.add_argument('-scmb', '--ssv-cluster-migration-block', {
+      help: `Block number where clusters become ETH-native. Default: ${this.SSV_CLUSTER_MIGRATION_BLOCK}`,
+      required: false,
+    });
 
     const args = parser.parse_args();
     Object.keys(args).forEach(key => {
-      if (args[key] === undefined) args[key] = '';
+      if (args[key] === undefined || args[key] === null) args[key] = '';
     });
 
     const envVars = {
@@ -58,6 +63,7 @@ export class ConfService extends ConfigService {
       NODE_URL: 'node_url',
       HIDE_TABLE: 'hide_table',
       MAX_VISIBLE_BLOCKS: 'max_visible_blocks',
+      SSV_CLUSTER_MIGRATION_BLOCK: 'ssv_cluster_migration_block',
     };
 
     for (const envVarName of Object.keys(envVars)) {

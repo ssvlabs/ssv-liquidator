@@ -180,7 +180,8 @@ export class BurnRatesTask {
       // Build fields object
       const fields = {
         burnRate: burnRate.value,
-        balance: balance.value,
+        balance: balance.value.balance,
+        ebBalance: balance.value.ebBalance,
         isLiquidated: isLiquidated.value,
         currentBlockNumber: currentBlockNumber.value,
       };
@@ -206,6 +207,7 @@ export class BurnRatesTask {
             { owner: record.owner, operatorIds: record.operatorIds },
             {
               balance: null,
+              ebBalance: null,
               burnRate: null,
               isLiquidated: true,
               liquidationBlockNumber: null,
@@ -247,6 +249,7 @@ export class BurnRatesTask {
         this._calculateCluster(record, {
           burnRate: fields.burnRate,
           balance: fields.balance,
+          ebBalance: fields.ebBalance,
           isLiquidated: fields.isLiquidated,
           minimumBlocksBeforeLiquidation,
           currentBlockNumber: fields.currentBlockNumber,
@@ -261,6 +264,7 @@ export class BurnRatesTask {
       } else {
         record.burnRate = fields.burnRate;
         record.balance = fields.balance;
+        record.ebBalance = fields.ebBalance;
         record.liquidationBlockNumber = null;
         this._logger.verbose(
           `Erased cluster data: ${JSON.stringify({
@@ -363,6 +367,7 @@ export class BurnRatesTask {
     record,
     {
       balance,
+      ebBalance,
       burnRate,
       isLiquidated,
       minimumBlocksBeforeLiquidation,
@@ -371,6 +376,7 @@ export class BurnRatesTask {
     },
   ): void {
     record.balance = balance;
+    record.ebBalance = ebBalance;
     record.burnRate = burnRate;
     record.isLiquidated = isLiquidated;
 

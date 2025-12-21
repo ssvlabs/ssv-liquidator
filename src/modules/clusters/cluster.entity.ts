@@ -34,6 +34,9 @@ export class Cluster {
   @Column({ default: null })
   balance: number;
 
+  @Column({ default: null })
+  ebBalance: number;
+
   @Column({ default: false })
   isLiquidated: boolean;
 
