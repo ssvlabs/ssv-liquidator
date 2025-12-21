@@ -9,7 +9,6 @@ import { ConfService } from '@cli/shared/services/conf.service';
 @Injectable()
 export class WorkerService implements OnModuleInit {
   private readonly _logger = new Logger(WorkerService.name);
-  private readonly _migrationBlock: number | null;
 
   constructor(
     private _clusterService: ClusterService,
@@ -95,7 +94,7 @@ export class WorkerService implements OnModuleInit {
         case SystemType.EVENT_VALIDATOR_ADDED:
           // Skip adding cluster if after cutoff block
           const cutoffBlock = this._config.get('SSV_CLUSTER_MIGRATION_BLOCK');
-          
+
           if (cutoffBlock && dataItem.blockNumber > cutoffBlock) {
             this._logger.debug(
               `Skipped ETH cluster (block ${dataItem.blockNumber} > cutoff ${cutoffBlock})`,
