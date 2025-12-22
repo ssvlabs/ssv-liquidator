@@ -105,6 +105,24 @@ export class WorkerService implements OnModuleInit {
           // Create new cluster entry for ETH cluster from SSV cluster migration
           await this._clusterService.create(dataItem)
           break;
+        case SystemType.EVENT_CLUSTER_BALANCE_UPDATED:
+          // Update cluster with new effective balance
+          (await this._clusterService.update(
+            {
+              owner: dataItem.owner,
+              operatorIds: dataItem.operatorIds,
+            },
+            {
+              ebBalance: dataItem.effectiveBalance,
+              burnRate: null,
+              isLiquidated: false,
+              cluster: dataItem.cluster,
+            },
+          )) &&
+            this._logger.debug(
+              `Updated cluster effective balance: ${JSON.stringify(dataItem)}`,
+            );
+          break;
         case SystemType.EVENT_COLLATERAL_UPDATED:
           await this._systemService.save(
             SystemType.MINIMUM_LIQUIDATION_COLLATERAL,
