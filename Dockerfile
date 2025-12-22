@@ -9,7 +9,6 @@ RUN npm i -g node-gyp
 RUN yarn install
 COPY . $APP_WORKDIR
 
-# Runtime stage - use slim image for smaller footprint
 FROM node:20-slim
 
 ENV NODE_OPTIONS=--openssl-legacy-provider
