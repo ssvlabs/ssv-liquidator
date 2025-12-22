@@ -113,7 +113,6 @@ export class WorkerService implements OnModuleInit {
               operatorIds: dataItem.operatorIds,
             },
             {
-              ebBalance: dataItem.effectiveBalance,
               burnRate: null,
               isLiquidated: false,
               cluster: dataItem.cluster,
