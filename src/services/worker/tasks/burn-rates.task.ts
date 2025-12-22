@@ -180,7 +180,7 @@ export class BurnRatesTask {
       // Build fields object
       const fields = {
         burnRate: burnRate.value,
-        balance: balance.value,
+        balance: balance.value.balance,
         isLiquidated: isLiquidated.value,
         currentBlockNumber: currentBlockNumber.value,
       };
