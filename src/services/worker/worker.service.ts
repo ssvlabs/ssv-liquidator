@@ -93,7 +93,7 @@ export class WorkerService implements OnModuleInit {
           break;
         case SystemType.EVENT_VALIDATOR_ADDED:
           const cutoffBlock = this._config.get('SSV_CLUSTER_MIGRATION_BLOCK');
-          if (cutoffBlock && dataItem.blockNumber > cutoffBlock) {
+          if (cutoffBlock && dataItem.blockNumber >= cutoffBlock) {
             await this._clusterService.create(dataItem);
           }else{
             this._logger.debug(
