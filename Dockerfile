@@ -9,6 +9,7 @@ RUN npm i -g node-gyp
 RUN yarn install
 COPY . $APP_WORKDIR
 
+# slim
 FROM node:20-slim
 
 ENV NODE_OPTIONS=--openssl-legacy-provider
