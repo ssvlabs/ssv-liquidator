@@ -1,5 +1,5 @@
 {
-  "contractAddress": "0xB2f6671Ca7F4B7319FD9e76E6656283578Bf8ED9",
+  "contractAddress": "0x0aEBCB50A5cB3d4318a5061ecb8E373029DDD87a",
   "genesisBlock": 1856595,
    "abi": [
   {
@@ -457,9 +457,9 @@
       },
       {
         "indexed": false,
-        "internalType": "uint256",
+        "internalType": "uint32",
         "name": "effectiveBalance",
-        "type": "uint256"
+        "type": "uint32"
       },
       {
         "components": [
@@ -637,9 +637,9 @@
       },
       {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "clusterEB",
-        "type": "uint256"
+        "internalType": "uint32",
+        "name": "effectiveBalance",
+        "type": "uint32"
       },
       {
         "components": [
