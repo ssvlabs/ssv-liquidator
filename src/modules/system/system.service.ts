@@ -20,6 +20,7 @@ export enum SystemType {
   EVENT_CLUSTER_WITHDRAWN = 'ClusterWithdrawn',
   EVENT_CLUSTER_REACTIVATED = 'ClusterReactivated',
   EVENT_CLUSTER_MIGRATED_TO_ETH = 'ClusterMigratedToETH',
+  EVENT_CLUSTER_BALANCE_UPDATED = 'ClusterBalanceUpdated',
 }
 
 @Injectable()

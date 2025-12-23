@@ -1,5 +1,5 @@
 {
-   "contractAddress": "0x5888116f5863CA1A311F51ab79a03fBd34Ac6487",
+   "contractAddress": "0x5c78D3B7A70a5C0daF121e2e40d24dC780F5333C",
    "abi":[
   {
     "inputs": [],
@@ -579,12 +579,12 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "balance",
         "type": "uint256"
       },
       {
         "internalType": "uint32",
-        "name": "",
+        "name": "effectiveBalance",
         "type": "uint32"
       }
     ],
@@ -640,12 +640,12 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "balance",
         "type": "uint256"
       },
       {
         "internalType": "uint32",
-        "name": "",
+        "name": "effectiveBalance",
         "type": "uint32"
       }
     ],

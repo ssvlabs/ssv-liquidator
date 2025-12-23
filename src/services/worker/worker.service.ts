@@ -115,6 +115,24 @@ export class WorkerService implements OnModuleInit {
             )}`,
           );
           break;
+        case SystemType.EVENT_CLUSTER_BALANCE_UPDATED:
+          // Update cluster with new effective balance and balance 
+          (await this._clusterService.update(
+            {
+              owner: dataItem.owner,
+              operatorIds: dataItem.operatorIds,
+            },
+            {
+              balance: dataItem.newBalance,
+              burnRate: null,
+              isLiquidated: false,
+              cluster: dataItem.cluster,
+            },
+          )) &&
+            this._logger.debug(
+              `Updated cluster effective balance: ${JSON.stringify(dataItem)}`,
+            );
+          break;
         case SystemType.EVENT_COLLATERAL_UPDATED:
           await this._systemService.save(
             SystemType.MINIMUM_LIQUIDATION_COLLATERAL,
