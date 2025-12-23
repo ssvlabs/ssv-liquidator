@@ -99,20 +99,21 @@ export class WorkerService implements OnModuleInit {
             this._logger.debug(
               `Skipped SSV cluster (block ${dataItem.blockNumber} < cutoff ${cutoffBlock})`,
             );
-          }  
+          }
           break;
         case SystemType.EVENT_CLUSTER_MIGRATED_TO_ETH:
           // Create new cluster entry for ETH cluster from SSV cluster migration
           await this._clusterService.create(dataItem)
           break;
         case SystemType.EVENT_CLUSTER_BALANCE_UPDATED:
-          // Update cluster with new effective balance
+          // Update cluster with new effective balance and balance
           (await this._clusterService.update(
             {
               owner: dataItem.owner,
               operatorIds: dataItem.operatorIds,
             },
             {
+              balance: dataItem.balance,
               burnRate: null,
               isLiquidated: false,
               cluster: dataItem.cluster,
