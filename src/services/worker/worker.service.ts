@@ -104,7 +104,12 @@ export class WorkerService implements OnModuleInit {
           break;
         case SystemType.EVENT_CLUSTER_MIGRATED_TO_ETH:
           // Create new cluster entry for ETH cluster from SSV cluster migration
-          await this._clusterService.create(dataItem)
+          this._logger.debug(
+            `Creating new ETH cluster from migrated SSV cluster: ${JSON.stringify(
+              dataItem,
+            )}`,
+          );
+          await this._clusterService.create(dataItem);
           break;
         case SystemType.EVENT_CLUSTER_BALANCE_UPDATED:
           // Update cluster with new effective balance and balance
