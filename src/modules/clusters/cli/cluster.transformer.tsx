@@ -55,7 +55,7 @@ export const transformClusterData = (items, extra: any) => {
         operatorIds: { text: item.operatorIds },
         balance: { text: item.balance },
         burnRate: {
-          text: item.burnRate !== null ? `${item.burnRate / 1e18} SSV` : '',
+          text: item.burnRate !== null ? `${item.burnRate / 1e18} ETH` : '',
         },
         status: {
           text: status,

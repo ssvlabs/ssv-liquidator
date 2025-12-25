@@ -48,6 +48,7 @@ export class WorkerService implements OnModuleInit {
               dataItem,
             )}`,
           );
+          break;
         case SystemType.EVENT_CLUSTER_DEPOSITED:
         case SystemType.EVENT_CLUSTER_WITHDRAWN:
         case SystemType.EVENT_CLUSTER_REACTIVATED:

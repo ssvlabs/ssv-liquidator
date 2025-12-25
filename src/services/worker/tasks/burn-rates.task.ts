@@ -176,11 +176,19 @@ export class BurnRatesTask {
 
       // Extract final data
       const [burnRate, balance, isLiquidated, currentBlockNumber] = clusterData;
-
+    this._logger.verbose(
+        `Resolved cluster data from contract: ${JSON.stringify(
+          {
+            burnRateTask,
+            balance,
+            isLiquidated,
+          },
+        )}. Cluster: ${logRecord}`,
+      );
       // Build fields object
       const fields = {
         burnRate: burnRate.value,
-        balance: balance.value[0],
+        balance: balance.value,
         isLiquidated: isLiquidated.value,
         currentBlockNumber: currentBlockNumber.value,
       };
