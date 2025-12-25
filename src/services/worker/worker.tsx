@@ -66,15 +66,17 @@ async function bootstrap() {
   await app.listen(port);
   console.info(`WebApp is running on port: ${port}`);
 
-  // Render CLI UI
-  const { App } = importJsx(path.join(__dirname, '/../../shared/cli/app'));
-  render(
-    <App
-      clusterService={clusterService}
-      web3Provider={web3Provider}
-      earningService={earningService}
-    />,
-  );
+  if (confService.get('HIDE_TABLE') === 'true') {
+    // Render CLI UI
+    const { App } = importJsx(path.join(__dirname, '/../../shared/cli/app'));
+    render(
+      <App
+        clusterService={clusterService}
+        web3Provider={web3Provider}
+        earningService={earningService}
+      />,
+    );
+  }
 }
 
 void bootstrap();

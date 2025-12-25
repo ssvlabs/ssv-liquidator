@@ -109,7 +109,7 @@ export class WorkerService implements OnModuleInit {
             owner: dataItem.owner,
             operatorIds: dataItem.operatorIds,
           });
-          this._logger.log(
+          this._logger.debug(
             `Removed migrated cluster to ETH from DB: ${JSON.stringify(
               dataItem,
             )}`,
