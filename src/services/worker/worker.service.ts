@@ -4,6 +4,7 @@ import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { EarningService } from '@cli/modules/earnings/earning.service';
 
 import { Web3Provider } from '@cli/shared/services/web3.provider';
+import { ConfService } from '@cli/shared/services/conf.service';
 
 @Injectable()
 export class WorkerService implements OnModuleInit {
@@ -14,6 +15,7 @@ export class WorkerService implements OnModuleInit {
     private _earningService: EarningService,
     private _systemService: SystemService,
     private _web3Provider: Web3Provider,
+    private _config: ConfService,
   ) {}
 
   async onModuleInit() {
@@ -90,7 +92,46 @@ export class WorkerService implements OnModuleInit {
           }
           break;
         case SystemType.EVENT_VALIDATOR_ADDED:
-          await this._clusterService.create(dataItem);
+          // Skip adding cluster if after cutoff block
+          const cutoffBlock = this._config.get('SSV_CLUSTER_MIGRATION_BLOCK');
+
+          if (cutoffBlock && dataItem.blockNumber > cutoffBlock) {
+            this._logger.debug(
+              `Skipped ETH cluster (block ${dataItem.blockNumber} > cutoff ${cutoffBlock})`,
+            );
+          } else {
+            await this._clusterService.create(dataItem);
+          }
+          break;
+        case SystemType.EVENT_CLUSTER_MIGRATED_TO_ETH:
+          // Remove cluster from database when migrated to ETH
+          await this._clusterService.remove({
+            owner: dataItem.owner,
+            operatorIds: dataItem.operatorIds,
+          });
+          this._logger.debug(
+            `Removed migrated cluster to ETH from DB: ${JSON.stringify(
+              dataItem,
+            )}`,
+          );
+          break;
+        case SystemType.EVENT_CLUSTER_BALANCE_UPDATED:
+          // Update cluster with new effective balance and balance 
+          (await this._clusterService.update(
+            {
+              owner: dataItem.owner,
+              operatorIds: dataItem.operatorIds,
+            },
+            {
+              balance: dataItem.newBalance,
+              burnRate: null,
+              isLiquidated: false,
+              cluster: dataItem.cluster,
+            },
+          )) &&
+            this._logger.debug(
+              `Updated cluster effective balance: ${JSON.stringify(dataItem)}`,
+            );
           break;
         case SystemType.EVENT_COLLATERAL_UPDATED:
           await this._systemService.save(

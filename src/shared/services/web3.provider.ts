@@ -170,7 +170,7 @@ export class Web3Provider {
   @Retryable(Web3Provider.RETRY_OPTIONS)
   async liquidatable(owner, operatorIds, clusterSnapshot): Promise<boolean> {
     return this.contractViews.methods
-      .isLiquidatable(
+      .isLiquidatableSSV(
         owner,
         this.operatorIdsToArray(operatorIds),
         clusterSnapshot,
@@ -188,17 +188,21 @@ export class Web3Provider {
   @Retryable(Web3Provider.RETRY_OPTIONS)
   async isLiquidated(owner, operatorIds, clusterSnapshot): Promise<boolean> {
     return this.contractViews.methods
-      .isLiquidated(
+      .isLiquidatableSSV(
         owner,
         this.operatorIdsToArray(operatorIds),
         clusterSnapshot,
       )
       .call()
       .catch(err => {
-        console.warn('isLiquidated', this.getErrorByHash(err.data) || err, {
-          owner,
-          operatorIds,
-        });
+        console.warn(
+          'isLiquidatableSSV',
+          this.getErrorByHash(err.data) || err,
+          {
+            owner,
+            operatorIds,
+          },
+        );
         return;
       });
   }
@@ -206,10 +210,14 @@ export class Web3Provider {
   @Retryable(Web3Provider.RETRY_OPTIONS)
   async getBurnRate(owner, operatorIds, clusterSnapshot): Promise<string> {
     return this.contractViews.methods
-      .getBurnRate(owner, this.operatorIdsToArray(operatorIds), clusterSnapshot)
+      .getBurnRateSSV(
+        owner,
+        this.operatorIdsToArray(operatorIds),
+        clusterSnapshot,
+      )
       .call()
       .catch(err => {
-        console.warn('getBurnRate', this.getErrorByHash(err.data) || err, {
+        console.warn('getBurnRateSSV', this.getErrorByHash(err.data) || err, {
           owner,
           operatorIds,
         });
@@ -220,10 +228,14 @@ export class Web3Provider {
   @Retryable(Web3Provider.RETRY_OPTIONS)
   async getBalance(owner, operatorIds, clusterSnapshot): Promise<string> {
     return this.contractViews.methods
-      .getBalance(owner, this.operatorIdsToArray(operatorIds), clusterSnapshot)
+      .getBalanceSSV(
+        owner,
+        this.operatorIdsToArray(operatorIds),
+        clusterSnapshot,
+      )
       .call()
       .catch(err => {
-        console.warn('getBalance', this.getErrorByHash(err.data) || err, {
+        console.warn('getBalanceSSV', this.getErrorByHash(err.data) || err, {
           owner,
           operatorIds,
         });
