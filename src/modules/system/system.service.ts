@@ -10,8 +10,6 @@ export enum SystemType {
   MINIMUM_LIQUIDATION_COLLATERAL = 'MINIMUM_LIQUIDATION_COLLATERAL',
   LIQUIDATION_THRESHOLD_PERIOD = 'LIQUIDATION_THRESHOLD_PERIOD',
   // event names
-  EVENT_OPERATOR_ADDED = 'OperatorAdded',
-  EVENT_OPERATOR_REMOVED = 'OperatorRemoved',
   EVENT_COLLATERAL_UPDATED = 'MinimumLiquidationCollateralUpdated',
   EVENT_LIQUIDATION_THRESHOLD_PERIOD_UPDATED = 'LiquidationThresholdPeriodUpdated',
   EVENT_OPERATOR_FEE_APPROVED = 'OperatorFeeExecuted',
@@ -21,6 +19,8 @@ export enum SystemType {
   EVENT_CLUSTER_DEPOSITED = 'ClusterDeposited',
   EVENT_CLUSTER_WITHDRAWN = 'ClusterWithdrawn',
   EVENT_CLUSTER_REACTIVATED = 'ClusterReactivated',
+  EVENT_CLUSTER_MIGRATED_TO_ETH = 'ClusterMigratedToETH',
+  EVENT_CLUSTER_BALANCE_UPDATED = 'ClusterBalanceUpdated',
 }
 
 @Injectable()
