@@ -49,8 +49,6 @@ export class WorkerService implements OnModuleInit {
             )}`,
           );
           break;
-        case SystemType.EVENT_CLUSTER_DEPOSITED:
-        case SystemType.EVENT_CLUSTER_WITHDRAWN:
         case SystemType.EVENT_CLUSTER_REACTIVATED:
           const cutoffBlockReactivated = this._config.get(
             'SSV_CLUSTER_MIGRATION_BLOCK',
@@ -94,6 +92,8 @@ export class WorkerService implements OnModuleInit {
               );
           }
           break;
+        case SystemType.EVENT_CLUSTER_DEPOSITED:
+        case SystemType.EVENT_CLUSTER_WITHDRAWN:
         case SystemType.EVENT_VALIDATOR_REMOVED:
           // /Mark as cluster was updated and need to get
           // its fresh metrics in burn-rates task
