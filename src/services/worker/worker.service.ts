@@ -52,6 +52,41 @@ export class WorkerService implements OnModuleInit {
         case SystemType.EVENT_CLUSTER_DEPOSITED:
         case SystemType.EVENT_CLUSTER_WITHDRAWN:
         case SystemType.EVENT_CLUSTER_REACTIVATED:
+          const cutoffBlockReactivated = this._config.get(
+            'SSV_CLUSTER_MIGRATION_BLOCK',
+          );
+          if (
+            cutoffBlockReactivated &&
+            dataItem.blockNumber >= cutoffBlockReactivated
+          ) {
+            // Check if cluster exists
+            const existing = await this._clusterService.findBy({
+              where: {
+                owner: dataItem.owner,
+                operatorIds: dataItem.operatorIds,
+              },
+            });
+            if (existing && existing.length > 0) {
+              (await this._clusterService.update(
+                {
+                  owner: dataItem.owner,
+                  operatorIds: dataItem.operatorIds,
+                },
+                {
+                  burnRate: null,
+                  isLiquidated: false,
+                  cluster: dataItem.cluster,
+                },
+              )) &&
+                this._logger.debug(
+                  `Updated cluster: ${JSON.stringify(dataItem)}`,
+                );
+            } else {
+              await this._clusterService.create(dataItem);
+            }
+          }
+
+          break;
         case SystemType.EVENT_VALIDATOR_REMOVED:
           // /Mark as cluster was updated and need to get
           // its fresh metrics in burn-rates task
@@ -96,7 +131,7 @@ export class WorkerService implements OnModuleInit {
           const cutoffBlock = this._config.get('SSV_CLUSTER_MIGRATION_BLOCK');
           if (cutoffBlock && dataItem.blockNumber >= cutoffBlock) {
             await this._clusterService.create(dataItem);
-          }else{
+          } else {
             this._logger.debug(
               `Skipped SSV cluster (block ${dataItem.blockNumber} < cutoff ${cutoffBlock})`,
             );
