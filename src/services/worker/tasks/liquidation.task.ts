@@ -291,7 +291,7 @@ export class LiquidationTask {
   }) {
     // Prepare liquidation method signature
     const methodSignature = (
-      await this._web3Provider.contractCore.methods.liquidate(
+      await this._web3Provider.contractCore.methods.liquidateSSV(
         owner,
         this._web3Provider.operatorIdsToArray(operatorIds),
         cluster,

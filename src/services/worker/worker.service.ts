@@ -48,6 +48,14 @@ export class WorkerService implements OnModuleInit {
               dataItem,
             )}`,
           );
+          (await this._clusterService.update(
+            {
+              owner: dataItem.owner,
+              operatorIds: dataItem.operatorIds,
+            },
+            { burnRate: null, isLiquidated: true, cluster: dataItem.cluster },
+          )) &&
+            this._logger.debug(`Updated cluster: ${JSON.stringify(dataItem)}`);
           break;
         case SystemType.EVENT_CLUSTER_REACTIVATED:
           const cutoffBlockReactivated = this._config.get(
