@@ -156,11 +156,11 @@ export class Web3Provider {
   @Retryable(Web3Provider.RETRY_OPTIONS)
   async getLiquidationThresholdPeriod(): Promise<number> {
     return this.contractViews.methods
-      .getLiquidationThresholdPeriod()
+      .getLiquidationThresholdPeriodSSV()
       .call()
       .catch(err => {
         console.warn(
-          'getLiquidationThresholdPeriod',
+          'getLiquidationThresholdPeriodSSV',
           this.getErrorByHash(err.data),
         );
         return;
@@ -246,11 +246,11 @@ export class Web3Provider {
   @Retryable(Web3Provider.RETRY_OPTIONS)
   async getMinimumLiquidationCollateral(): Promise<string> {
     return this.contractViews.methods
-      .getMinimumLiquidationCollateral()
+      .getMinimumLiquidationCollateralSSV()
       .call()
       .catch(err => {
         console.warn(
-          'getMinimumLiquidationCollateral',
+          'getMinimumLiquidationCollateralSSV',
           this.getErrorByHash(err.data),
         );
         return;

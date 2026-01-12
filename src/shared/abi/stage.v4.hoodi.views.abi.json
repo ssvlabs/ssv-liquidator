@@ -1,5 +1,5 @@
 {
-   "contractAddress": "0xB13ba3B8a1535F337B6A038fec3B25d027DE1800",
+   "contractAddress": "0xd5D1A0A832fD4714bDEfa793971b240eB41EeFC7",
    "abi":[
   {
     "inputs": [],
@@ -794,6 +794,25 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint64",
+        "name": "blockNum",
+        "type": "uint64"
+      }
+    ],
+    "name": "getCommittedRoot",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "getDefaultOracleIds",
     "outputs": [
@@ -877,6 +896,19 @@
   },
   {
     "inputs": [],
+    "name": "getLiquidationThresholdPeriodSSV",
+    "outputs": [
+      {
+        "internalType": "uint64",
+        "name": "",
+        "type": "uint64"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getMaximumOperatorFee",
     "outputs": [
       {
@@ -890,7 +922,33 @@
   },
   {
     "inputs": [],
+    "name": "getMaximumOperatorFeeSSV",
+    "outputs": [
+      {
+        "internalType": "uint64",
+        "name": "",
+        "type": "uint64"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getMinimumLiquidationCollateral",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getMinimumLiquidationCollateralSSV",
     "outputs": [
       {
         "internalType": "uint256",
