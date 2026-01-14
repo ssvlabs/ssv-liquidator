@@ -1,0 +1,82 @@
+import 'dotenv/config';
+
+import importJsx from 'import-jsx';
+import React from 'react';
+import path from 'path';
+import { render } from 'ink';
+import { NestFactory, Reflector } from '@nestjs/core';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import {
+  ExpressAdapter,
+  NestExpressApplication,
+} from '@nestjs/platform-express';
+import { Web3Provider } from '@cli-ssv/shared/services/web3.provider';
+import { ConfService } from '@cli-ssv/shared/services/conf.service';
+import { WorkerModule } from '@cli-ssv/services/worker/worker.module';
+import { getAllowedLogLevels } from '@cli-ssv/shared/services/logging';
+import { CustomLogger } from '@cli-ssv/shared/services/logger.service';
+import { EarningService } from '@cli-ssv/modules/earnings/earning.service';
+import { ClusterService } from '@cli-ssv/modules/clusters/cluster.service';
+import { MetricsService } from '@cli-ssv/modules/webapp/metrics/services/metrics.service';
+
+async function bootstrap() {
+  process.on('unhandledRejection', error => {
+    console.error('[CRITICAL] unhandledRejection', error);
+    MetricsService.criticalStatus.set(0);
+  });
+
+  console.info('Starting unified API + Worker');
+
+  // Create single app instance with API + Crons + CLI
+  const app = await NestFactory.create<NestExpressApplication>(
+    WorkerModule,
+    new ExpressAdapter(),
+    {
+      cors: true,
+      logger: getAllowedLogLevels(),
+      autoFlushLogs: false,
+      bufferLogs: false,
+    },
+  );
+
+  app.useLogger(app.get(CustomLogger));
+  app.enable('trust proxy');
+  app.enableCors();
+
+  const reflector = app.get(Reflector);
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      dismissDefaultMessages: true,
+      validationError: {
+        target: false,
+      },
+    }),
+  );
+
+  const confService = app.select(WorkerModule).get(ConfService);
+  const clusterService = app.select(WorkerModule).get(ClusterService);
+  const earningService = app.select(WorkerModule).get(EarningService);
+  const web3Provider = app.select(WorkerModule).get(Web3Provider);
+
+  // Start API server
+  const port = confService.getNumber('PORT') || 3000;
+  await app.listen(port);
+  console.info(`WebApp is running on port: ${port}`);
+
+  if (confService.get('HIDE_TABLE') === 'true') {
+    // Render CLI UI
+    const { App } = importJsx(path.join(__dirname, '/../../shared/cli/app'));
+    render(
+      <App
+        clusterService={clusterService}
+        web3Provider={web3Provider}
+        earningService={earningService}
+      />,
+    );
+  }
+}
+
+void bootstrap();
