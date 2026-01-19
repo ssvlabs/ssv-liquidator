@@ -1,11 +1,6 @@
 {
-   "contractAddress": "0xd5D1A0A832fD4714bDEfa793971b240eB41EeFC7",
+   "contractAddress": "0x02e67E48e64ad381C386cdB59295aD2B79675F25",
    "abi":[
-  {
-    "inputs": [],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
   {
     "inputs": [
       {
@@ -82,16 +77,6 @@
   {
     "inputs": [],
     "name": "ClusterNotLiquidatable",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "CooldownActive",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "CooldownNotFinished",
     "type": "error"
   },
   {
@@ -242,6 +227,11 @@
       }
     ],
     "name": "InvalidWhitelistingContract",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "MaxRequestsAmountReached",
     "type": "error"
   },
   {
@@ -417,102 +407,6 @@
     "type": "error"
   },
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "previousAdmin",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "newAdmin",
-        "type": "address"
-      }
-    ],
-    "name": "AdminChanged",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "beacon",
-        "type": "address"
-      }
-    ],
-    "name": "BeaconUpgraded",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint8",
-        "name": "version",
-        "type": "uint8"
-      }
-    ],
-    "name": "Initialized",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "previousOwner",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "OwnershipTransferStarted",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "previousOwner",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "OwnershipTransferred",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "implementation",
-        "type": "address"
-      }
-    ],
-    "name": "Upgraded",
-    "type": "event"
-  },
-  {
     "inputs": [],
     "name": "accEthPerShare",
     "outputs": [
@@ -523,13 +417,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "acceptOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -773,7 +660,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "owner",
+        "name": "clusterOwner",
         "type": "address"
       },
       {
@@ -1036,32 +923,32 @@
     "outputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "owner",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "ethFee",
         "type": "uint256"
       },
       {
         "internalType": "uint32",
-        "name": "",
+        "name": "ethValidatorCount",
         "type": "uint32"
       },
       {
         "internalType": "address",
-        "name": "",
+        "name": "whitelistedAddress",
         "type": "address"
       },
       {
         "internalType": "bool",
-        "name": "",
+        "name": "isPrivate",
         "type": "bool"
       },
       {
         "internalType": "bool",
-        "name": "",
+        "name": "isActive",
         "type": "bool"
       }
     ],
@@ -1080,32 +967,32 @@
     "outputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "owner",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "fee",
         "type": "uint256"
       },
       {
         "internalType": "uint32",
-        "name": "",
+        "name": "validatorCount",
         "type": "uint32"
       },
       {
         "internalType": "address",
-        "name": "",
+        "name": "whitelistedAddress",
         "type": "address"
       },
       {
         "internalType": "bool",
-        "name": "",
+        "name": "isPrivate",
         "type": "bool"
       },
       {
         "internalType": "bool",
-        "name": "",
+        "name": "isActive",
         "type": "bool"
       }
     ],
@@ -1375,7 +1262,7 @@
         "type": "string"
       }
     ],
-    "stateMutability": "view",
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -1387,7 +1274,7 @@
       },
       {
         "internalType": "address",
-        "name": "whitelistedAddress",
+        "name": "addressToCheck",
         "type": "address"
       }
     ],
@@ -1400,19 +1287,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract ISSVViews",
-        "name": "ssvNetwork_",
-        "type": "address"
-      }
-    ],
-    "name": "initialize",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -1437,7 +1311,7 @@
     "outputs": [
       {
         "internalType": "bool",
-        "name": "isWhitelisted",
+        "name": "",
         "type": "bool"
       }
     ],
@@ -1632,32 +1506,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "pendingOwner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "address",
@@ -1668,14 +1516,14 @@
     "name": "pendingUnstake",
     "outputs": [
       {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
+        "internalType": "uint256[]",
+        "name": "amounts",
+        "type": "uint256[]"
       },
       {
-        "internalType": "uint256",
-        "name": "unlockTime",
-        "type": "uint256"
+        "internalType": "uint256[]",
+        "name": "unlockTimes",
+        "type": "uint256[]"
       }
     ],
     "stateMutability": "view",
@@ -1695,39 +1543,6 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "proxiableUUID",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "ssvNetwork",
-    "outputs": [
-      {
-        "internalType": "contract ISSVViews",
-        "name": "",
-        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -1776,50 +1591,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "transferOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "newImplementation",
-        "type": "address"
-      }
-    ],
-    "name": "upgradeTo",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "newImplementation",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes",
-        "name": "data",
-        "type": "bytes"
-      }
-    ],
-    "name": "upgradeToAndCall",
-    "outputs": [],
-    "stateMutability": "payable",
     "type": "function"
   }
 ]
