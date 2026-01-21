@@ -1,5 +1,5 @@
 {
-   "contractAddress": "0xd5D1A0A832fD4714bDEfa793971b240eB41EeFC7",
+   "contractAddress": "0x02e67E48e64ad381C386cdB59295aD2B79675F25",
    "abi":[
   {
     "inputs": [],
@@ -82,16 +82,6 @@
   {
     "inputs": [],
     "name": "ClusterNotLiquidatable",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "CooldownActive",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "CooldownNotFinished",
     "type": "error"
   },
   {
@@ -242,6 +232,11 @@
       }
     ],
     "name": "InvalidWhitelistingContract",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "MaxRequestsAmountReached",
     "type": "error"
   },
   {
@@ -1668,14 +1663,14 @@
     "name": "pendingUnstake",
     "outputs": [
       {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
+        "internalType": "uint256[]",
+        "name": "amounts",
+        "type": "uint256[]"
       },
       {
-        "internalType": "uint256",
-        "name": "unlockTime",
-        "type": "uint256"
+        "internalType": "uint256[]",
+        "name": "unlockTimes",
+        "type": "uint256[]"
       }
     ],
     "stateMutability": "view",

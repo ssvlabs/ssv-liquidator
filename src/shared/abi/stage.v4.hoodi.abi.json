@@ -1,6 +1,6 @@
 {
-  "contractAddress": "0x5Ec6aBaC8cB238D68d310A2b1656405161988bFC",
-  "genesisBlock": 1930389,
+  "contractAddress": "0xdf4f52446DA26D29f10acafb8F1C4F658A0C92b5",
+  "genesisBlock": 1930402,
    "abi": [
   {
     "inputs": [],
@@ -83,16 +83,6 @@
   {
     "inputs": [],
     "name": "ClusterNotLiquidatable",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "CooldownActive",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "CooldownNotFinished",
     "type": "error"
   },
   {
@@ -243,6 +233,11 @@
       }
     ],
     "name": "InvalidWhitelistingContract",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "MaxRequestsAmountReached",
     "type": "error"
   },
   {
@@ -1050,6 +1045,25 @@
       }
     ],
     "name": "NetworkFeeUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "oldFee",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newFee",
+        "type": "uint256"
+      }
+    ],
+    "name": "NetworkFeeUpdatedSSV",
     "type": "event"
   },
   {
