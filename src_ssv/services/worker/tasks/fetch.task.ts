@@ -1,6 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { WorkerService } from '@cli-ssv/services/worker/worker.service';
-import { SystemService, SystemType } from '@cli-ssv/modules/system/system.service';
+import {
+  SystemService,
+  SystemType,
+} from '@cli-ssv/modules/system/system.service';
 import { MetricsService } from '@cli-ssv/modules/webapp/metrics/services/metrics.service';
 import { Web3Provider } from '@cli-ssv/shared/services/web3.provider';
 

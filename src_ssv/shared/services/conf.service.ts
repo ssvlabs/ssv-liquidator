@@ -9,7 +9,7 @@ export class ConfService extends ConfigService {
   private MAX_VISIBLE_BLOCKS = 50000;
   private SSV_SYNC_ENV = 'prod';
   private SSV_SYNC = 'v4.hoodi';
-  private SSV_CLUSTER_MIGRATION_BLOCK = null; 
+  private SSV_CLUSTER_MIGRATION_BLOCK = null;
 
   constructor() {
     super();

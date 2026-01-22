@@ -4,7 +4,10 @@ import { Cluster } from '@cli-ssv/modules/clusters/cluster.entity';
 import { ConfService } from '@cli-ssv/shared/services/conf.service';
 import { ClusterService } from '@cli-ssv/modules/clusters/cluster.service';
 import { MetricsService } from '@cli-ssv/modules/webapp/metrics/services/metrics.service';
-import { SystemService, SystemType } from '@cli-ssv/modules/system/system.service';
+import {
+  SystemService,
+  SystemType,
+} from '@cli-ssv/modules/system/system.service';
 import { Web3Provider } from '@cli-ssv/shared/services/web3.provider';
 
 @Injectable()
