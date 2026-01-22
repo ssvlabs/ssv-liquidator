@@ -24,7 +24,7 @@ async function bootstrap() {
     console.error('[CRITICAL] unhandledRejection', error);
     MetricsService.criticalStatus.set(0);
   });
-
+  console.info('Running SSV Liquidator Worker');
   console.info('Starting unified API + Worker');
 
   // Create single app instance with API + Crons + CLI

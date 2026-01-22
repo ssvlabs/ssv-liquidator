@@ -6,7 +6,10 @@ import {
 } from '@cli-ssv/shared/services/web3.provider';
 import { ClusterService } from '@cli-ssv/modules/clusters/cluster.service';
 import { MetricsService } from '@cli-ssv/modules/webapp/metrics/services/metrics.service';
-import { SystemService, SystemType } from '@cli-ssv/modules/system/system.service';
+import {
+  SystemService,
+  SystemType,
+} from '@cli-ssv/modules/system/system.service';
 
 @Injectable()
 export class BurnRatesTask {
@@ -178,8 +181,7 @@ export class BurnRatesTask {
       const [burnRate, balance, isLiquidated, currentBlockNumber] = clusterData;
 
       this._logger.verbose(
-        `Resolved cluster data from contract: ${JSON.stringify(
-          {
+        `Resolved cluster data from contract: ${JSON.stringify({
           burnRateTask,
           balance,
           isLiquidated,
