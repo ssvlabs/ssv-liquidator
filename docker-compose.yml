@@ -13,8 +13,10 @@ services:
       - '$PORT:$PORT'
     volumes:
       - ./src:/opt/app/src
+      - ./src_ssv:/opt/app/src_ssv
       - sqlite-data:/opt/app/data
     environment:
+      - LIQUIDATOR_TYPE
       - SSV_SYNC_ENV
       - SSV_SYNC
       - NODE_URL
