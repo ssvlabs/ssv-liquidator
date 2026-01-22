@@ -114,11 +114,6 @@ rm data/local.db
 
 * TODO
 
-## Authors
-
-* [Wadym Chumak](https://github.com/vadiminc)
-* [Dmitri Meshin](https://github.com/meshin-blox)
-
 ## Troubleshooting
 
 1. Getting `ERR_OSSL_EVP_UNSUPPORTED` error.
