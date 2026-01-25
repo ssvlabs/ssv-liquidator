@@ -15,6 +15,10 @@ export class ConfService extends ConfigService {
     super();
     const parser = new ArgumentParser();
 
+    parser.add_argument('-lt', '--liquidator-type', {
+      help: 'The liquidator type (eth or ssv). Required to specify which worker to run',
+      required: false,
+    });
     parser.add_argument('-sse', '--ssv-sync-env', {
       help: `The SSV sync environment (prod or stage). Default: ${this.SSV_SYNC_ENV}`,
       required: false,
@@ -56,6 +60,7 @@ export class ConfService extends ConfigService {
 
     const envVars = {
       // ENV name -> argparse name
+      LIQUIDATOR_TYPE: 'liquidator_type',
       SSV_SYNC_ENV: 'ssv_sync_env',
       SSV_SYNC: 'ssv_sync',
       GAS_PRICE: 'gas_price',
