@@ -1,6 +1,6 @@
 {
-   "contractAddress": "0x02e67E48e64ad381C386cdB59295aD2B79675F25",
-   "abi":[
+  "contractAddress": "0x9143b8c25efa53f28de4cbefd0b6dfd66d43fea6",
+  "abi": [
   {
     "inputs": [],
     "stateMutability": "nonpayable",
@@ -232,6 +232,11 @@
       }
     ],
     "name": "InvalidWhitelistingContract",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "LegacyOperatorFeeDeclarationInvalid",
     "type": "error"
   },
   {
@@ -541,6 +546,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getActiveOracleIds",
+    "outputs": [
+      {
+        "internalType": "uint32[4]",
+        "name": "",
+        "type": "uint32[4]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -777,7 +795,7 @@
         "type": "uint64[]"
       }
     ],
-    "name": "getClusterVersion",
+    "name": "getClusterAssetType",
     "outputs": [
       {
         "internalType": "uint8",
@@ -802,19 +820,6 @@
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getDefaultOracleIds",
-    "outputs": [
-      {
-        "internalType": "uint32[4]",
-        "name": "",
-        "type": "uint32[4]"
       }
     ],
     "stateMutability": "view",
