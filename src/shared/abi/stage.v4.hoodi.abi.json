@@ -1,7 +1,7 @@
 {
-  "contractAddress": "0xdf4f52446DA26D29f10acafb8F1C4F658A0C92b5",
-  "genesisBlock": 1930402,
-   "abi": [
+  "contractAddress": "0x0aaace4e8affc47c6834171c88d342a4abd8f105",
+  "genesisBlock": 101653,
+  "abi": [
   {
     "inputs": [],
     "stateMutability": "nonpayable",
@@ -233,6 +233,11 @@
       }
     ],
     "name": "InvalidWhitelistingContract",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "LegacyOperatorFeeDeclarationInvalid",
     "type": "error"
   },
   {
@@ -1827,11 +1832,6 @@
         "type": "bytes[]"
       },
       {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
         "components": [
           {
             "internalType": "uint32",
@@ -1986,11 +1986,6 @@
         "internalType": "uint64[]",
         "name": "operatorIds",
         "type": "uint64[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
       },
       {
         "components": [
@@ -2369,11 +2364,6 @@
         "type": "uint64[]"
       },
       {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
         "components": [
           {
             "internalType": "uint32",
@@ -2474,11 +2464,6 @@
         "internalType": "bytes",
         "name": "sharesData",
         "type": "bytes"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
       },
       {
         "components": [
