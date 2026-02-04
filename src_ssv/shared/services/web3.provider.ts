@@ -177,7 +177,7 @@ export class Web3Provider {
       )
       .call()
       .catch(err => {
-        console.warn('liquidatable', this.getErrorByHash(err.data) || err, {
+        console.warn('isLiquidatableSSV', this.getErrorByHash(err.data) || err, {
           owner,
           operatorIds,
         });
@@ -188,7 +188,7 @@ export class Web3Provider {
   @Retryable(Web3Provider.RETRY_OPTIONS)
   async isLiquidated(owner, operatorIds, clusterSnapshot): Promise<boolean> {
     return this.contractViews.methods
-      .isLiquidatableSSV(
+      .isLiquidated(
         owner,
         this.operatorIdsToArray(operatorIds),
         clusterSnapshot,
@@ -196,7 +196,7 @@ export class Web3Provider {
       .call()
       .catch(err => {
         console.warn(
-          'isLiquidatableSSV',
+          'isLiquidated',
           this.getErrorByHash(err.data) || err,
           {
             owner,
