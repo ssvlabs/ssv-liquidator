@@ -55,8 +55,9 @@ yarn cli --help
 ```
 
 #### Input parameters: 
+liquidator-type = The liquidator type (eth or ssv). Required to specify which worker to run
 ssv-sync-env (sse) = The SSV sync environment (prod or stage). Default: prod
-ssv-sync (ss) = The SSV contract name (format: version.network). Default: v4.prater
+ssv-sync (ss) = The SSV contract name (format: version.network). Default: v4.hoodi
 node-url (n) = ETH1 node url  
 private-key (pk) = Account private key  
 gas-price (g) = Gas price, default: low  
@@ -73,13 +74,14 @@ Copy the `.env.example` file to `.env` and update `.env` with your parameters.
 Example content below:
 
 ```sh
+LIQUIDATOR_TYPE=eth # eth or ssv (required)
 NODE_URL=eth.infra.com 
 ACCOUNT_PRIVATE_KEY=a70478942bf...  
 GAS_PRICE=medium  
 HIDE_TABLE=false
 MAX_VISIBLE_BLOCKS=50000
 SSV_SYNC_ENV=prod # prod or stage, prod - is default value
-SSV_SYNC=v4.prater # v4.prater | v4.mainnet (only for prod) | v4.prater (only for prod)
+SSV_SYNC=v4.hoodi # v4.hoodi | v4.mainnet (only for prod) | v4.hoodi (only for prod)
 ```
 
 If you saved all the parameters in the `.env` file you can run:
@@ -111,11 +113,6 @@ rm data/local.db
 ### Testing
 
 * TODO
-
-## Authors
-
-* [Wadym Chumak](https://github.com/vadiminc)
-* [Dmitri Meshin](https://github.com/meshin-blox)
 
 ## Troubleshooting
 

@@ -1,5 +1,5 @@
 {
-  "contractAddress": "0xcDc4423E9ffa9542d4CdDf42a70859C84859d2A9",
+  "contractAddress": "0xafE830B6Ee262ba11cce5F32fDCd760FFE6a66e4",
   "abi": [
     {
       "inputs": [],
@@ -58,11 +58,6 @@
     },
     {
       "inputs": [],
-      "name": "FeeTooHigh",
-      "type": "error"
-    },
-    {
-      "inputs": [],
       "name": "FeeTooLow",
       "type": "error"
     },
@@ -89,11 +84,6 @@
     {
       "inputs": [],
       "name": "InvalidPublicKeyLength",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "MaxValueExceeded",
       "type": "error"
     },
     {
@@ -263,7 +253,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "clusterOwner",
+          "name": "owner",
           "type": "address"
         },
         {
@@ -319,7 +309,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "clusterOwner",
+          "name": "owner",
           "type": "address"
         },
         {
@@ -378,19 +368,6 @@
         {
           "internalType": "uint64",
           "name": "",
-          "type": "uint64"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getMaximumOperatorFee",
-      "outputs": [
-        {
-          "internalType": "uint64",
-          "name": "operatorMaxFee",
           "type": "uint64"
         }
       ],
@@ -491,11 +468,6 @@
       "name": "getOperatorDeclaredFee",
       "outputs": [
         {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        },
-        {
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
@@ -587,7 +559,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "clusterOwner",
+          "name": "owner",
           "type": "address"
         },
         {
@@ -609,19 +581,6 @@
     },
     {
       "inputs": [],
-      "name": "getValidatorsPerOperatorLimit",
-      "outputs": [
-        {
-          "internalType": "uint32",
-          "name": "",
-          "type": "uint32"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
       "name": "getVersion",
       "outputs": [
         {
@@ -636,7 +595,7 @@
     {
       "inputs": [
         {
-          "internalType": "contract ISSVViews",
+          "internalType": "contract IFnSSVViews",
           "name": "ssvNetwork_",
           "type": "address"
         }
@@ -650,7 +609,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "clusterOwner",
+          "name": "owner",
           "type": "address"
         },
         {
@@ -706,7 +665,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "clusterOwner",
+          "name": "owner",
           "type": "address"
         },
         {
@@ -809,7 +768,7 @@
       "name": "ssvNetwork",
       "outputs": [
         {
-          "internalType": "contract ISSVViews",
+          "internalType": "contract IFnSSVViews",
           "name": "",
           "type": "address"
         }

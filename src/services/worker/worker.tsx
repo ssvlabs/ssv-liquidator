@@ -19,12 +19,27 @@ import { EarningService } from '@cli/modules/earnings/earning.service';
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
 import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
 
-async function bootstrapApi() {
+async function bootstrap() {
+  process.on('unhandledRejection', error => {
+    console.error('[CRITICAL] unhandledRejection', error);
+    MetricsService.criticalStatus.set(0);
+  });
+  console.info('Running ETH Liquidator Worker');
+  console.info('Starting unified API + Worker');
+
+  // Create single app instance with API + Crons + CLI
   const app = await NestFactory.create<NestExpressApplication>(
     WorkerModule,
     new ExpressAdapter(),
-    { cors: true },
+    {
+      cors: true,
+      logger: getAllowedLogLevels(),
+      autoFlushLogs: false,
+      bufferLogs: false,
+    },
   );
+
+  app.useLogger(app.get(CustomLogger));
   app.enable('trust proxy');
   app.enableCors();
 
@@ -42,54 +57,26 @@ async function bootstrapApi() {
   );
 
   const confService = app.select(WorkerModule).get(ConfService);
-
-  const port = confService.getNumber('PORT') || 3000;
-  await app.listen(port);
-
-  // eslint-disable-next-line no-console
-  console.info(`WebApp is running on port: ${port}`);
-}
-
-async function bootstrapCli() {
-  const app = await NestFactory.createApplicationContext(WorkerModule, {
-    logger: getAllowedLogLevels(),
-    autoFlushLogs: false,
-    bufferLogs: false,
-  });
-
-  app.useLogger(app.get(CustomLogger));
-
-  const confService = app.select(WorkerModule).get(ConfService);
-
   const clusterService = app.select(WorkerModule).get(ClusterService);
   const earningService = app.select(WorkerModule).get(EarningService);
   const web3Provider = app.select(WorkerModule).get(Web3Provider);
 
-  if (confService.get('HIDE_TABLE') === '1') {
-    return;
+  // Start API server
+  const port = confService.getNumber('PORT') || 3000;
+  await app.listen(port);
+  console.info(`WebApp is running on port: ${port}`);
+
+  if (confService.get('HIDE_TABLE') === 'true') {
+    // Render CLI UI
+    const { App } = importJsx(path.join(__dirname, '/../../shared/cli/app'));
+    render(
+      <App
+        clusterService={clusterService}
+        web3Provider={web3Provider}
+        earningService={earningService}
+      />,
+    );
   }
-
-  const { App } = importJsx(path.join(__dirname, '/../../shared/cli/app'));
-  render(
-    <App
-      clusterService={clusterService}
-      web3Provider={web3Provider}
-      earningService={earningService}
-    />,
-  );
-}
-
-async function bootstrap() {
-  process.on('unhandledRejection', error => {
-    console.error('[CRITICAL] unhandledRejection', error);
-    MetricsService.criticalStatus.set(0);
-  });
-
-  console.info('Starting API');
-  await bootstrapApi();
-
-  console.info('Starting Liquidator worker');
-  await bootstrapCli();
 }
 
 void bootstrap();

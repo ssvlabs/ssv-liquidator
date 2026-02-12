@@ -1,12 +1,8 @@
 {
-  "contractAddress": "0x38A4794cCEd47d3baf7370CcC43B560D3a1beEFA",
-  "genesisBlock": 181612,
+  "contractAddress": "0xDD9BC35aE942eF0cFa76930954a156B3fF30a4E1",
+  "tokenAddress": "0x9D65fF81a3c488d585bBfb0Bfe3c7707c7917f54",
+  "genesisBlock": 17428695,
   "abi": [
-    {
-      "inputs": [],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
     {
       "inputs": [],
       "name": "ApprovalNotWithinTimeframe",
@@ -59,11 +55,6 @@
     },
     {
       "inputs": [],
-      "name": "FeeTooHigh",
-      "type": "error"
-    },
-    {
-      "inputs": [],
       "name": "FeeTooLow",
       "type": "error"
     },
@@ -90,11 +81,6 @@
     {
       "inputs": [],
       "name": "InvalidPublicKeyLength",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "MaxValueExceeded",
       "type": "error"
     },
     {
@@ -578,7 +564,7 @@
           "type": "uint64"
         }
       ],
-      "name": "OperatorFeeDeclarationCancelled",
+      "name": "OperatorFeeCancellationDeclared",
       "type": "event"
     },
     {
@@ -654,19 +640,6 @@
         }
       ],
       "name": "OperatorFeeIncreaseLimitUpdated",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "uint64",
-          "name": "maxFee",
-          "type": "uint64"
-        }
-      ],
-      "name": "OperatorMaximumFeeUpdated",
       "type": "event"
     },
     {
@@ -846,25 +819,6 @@
       "inputs": [
         {
           "indexed": true,
-          "internalType": "bytes",
-          "name": "publicKey",
-          "type": "bytes"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint64[]",
-          "name": "operatorIds",
-          "type": "uint64[]"
-        }
-      ],
-      "name": "ValidatorExited",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
           "internalType": "address",
           "name": "owner",
           "type": "address"
@@ -964,7 +918,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "clusterOwner",
+          "name": "owner",
           "type": "address"
         },
         {
@@ -1031,32 +985,32 @@
     {
       "inputs": [
         {
-          "internalType": "bytes",
-          "name": "publicKey",
-          "type": "bytes"
-        },
-        {
-          "internalType": "uint64[]",
-          "name": "operatorIds",
-          "type": "uint64[]"
+          "internalType": "address",
+          "name": "userAddress",
+          "type": "address"
         }
       ],
-      "name": "exitValidator",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getVersion",
+      "name": "getRegisterAuth",
       "outputs": [
         {
-          "internalType": "string",
-          "name": "version",
-          "type": "string"
+          "components": [
+            {
+              "internalType": "bool",
+              "name": "registerOperator",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "registerValidator",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct Authorization",
+          "name": "",
+          "type": "tuple"
         }
       ],
-      "stateMutability": "pure",
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -1067,22 +1021,22 @@
           "type": "address"
         },
         {
-          "internalType": "contract ISSVOperators",
+          "internalType": "contract IFnSSVOperators",
           "name": "ssvOperators_",
           "type": "address"
         },
         {
-          "internalType": "contract ISSVClusters",
+          "internalType": "contract IFnSSVClusters",
           "name": "ssvClusters_",
           "type": "address"
         },
         {
-          "internalType": "contract ISSVDAO",
+          "internalType": "contract IFnSSVDAO",
           "name": "ssvDAO_",
           "type": "address"
         },
         {
-          "internalType": "contract ISSVViews",
+          "internalType": "contract IFnSSVViews",
           "name": "ssvViews_",
           "type": "address"
         },
@@ -1126,7 +1080,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "clusterOwner",
+          "name": "owner",
           "type": "address"
         },
         {
@@ -1468,6 +1422,36 @@
       "inputs": [
         {
           "internalType": "address",
+          "name": "userAddress",
+          "type": "address"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bool",
+              "name": "registerOperator",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "registerValidator",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct Authorization",
+          "name": "auth",
+          "type": "tuple"
+        }
+      ],
+      "name": "setRegisterAuth",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
           "name": "newOwner",
           "type": "address"
         }
@@ -1519,43 +1503,12 @@
     {
       "inputs": [
         {
-          "internalType": "uint64",
-          "name": "maxFee",
-          "type": "uint64"
-        }
-      ],
-      "name": "updateMaximumOperatorFee",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "uint256",
           "name": "amount",
           "type": "uint256"
         }
       ],
       "name": "updateMinimumLiquidationCollateral",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "enum SSVModules",
-          "name": "moduleId",
-          "type": "uint8"
-        },
-        {
-          "internalType": "address",
-          "name": "moduleAddress",
-          "type": "address"
-        }
-      ],
-      "name": "updateModule",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -1582,6 +1535,24 @@
         }
       ],
       "name": "updateOperatorFeeIncreaseLimit",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum SSVModules",
+          "name": "moduleId",
+          "type": "uint8"
+        },
+        {
+          "internalType": "address",
+          "name": "moduleAddress",
+          "type": "address"
+        }
+      ],
+      "name": "upgradeModule",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -1670,19 +1641,6 @@
     {
       "inputs": [
         {
-          "internalType": "uint64",
-          "name": "operatorId",
-          "type": "uint64"
-        }
-      ],
-      "name": "withdrawAllOperatorEarnings",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "uint256",
           "name": "amount",
           "type": "uint256"
@@ -1704,6 +1662,19 @@
           "internalType": "uint256",
           "name": "amount",
           "type": "uint256"
+        }
+      ],
+      "name": "withdrawOperatorEarnings",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "operatorId",
+          "type": "uint64"
         }
       ],
       "name": "withdrawOperatorEarnings",

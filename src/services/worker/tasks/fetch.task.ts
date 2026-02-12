@@ -17,7 +17,7 @@ export class FetchTask {
   ) {}
 
   static get BLOCK_RANGE() {
-    return 10_000;
+    return 5000;
   }
 
   static get MAX_DELAY_BLOCK_RANGE() {
@@ -107,10 +107,12 @@ export class FetchTask {
     latestBlockNumber: number,
   ): Promise<void> {
     // TODO: move these constants out from the method
+    const MINUTES = 75;
+    const HOUR = 450;
     const DAY = 5_400;
     const WEEK = DAY * 7;
     const MONTH = DAY * 30;
-    let step = MONTH;
+    let step = HOUR;
     const filters = {
       fromBlock,
       toBlock:
@@ -151,8 +153,12 @@ export class FetchTask {
         } else if (step === WEEK) {
           step = DAY;
         } else if (step === DAY) {
+          step = HOUR;
+        } else if (step === HOUR) {
+          step = MINUTES;
+        } else if (step === MINUTES) {
           throw new Error(
-            `FetchTask::_syncUpdates: already using 1 day period for syncing and still getting error: ${e}`,
+            `FetchTask::_syncUpdates: already using minutes period for syncing and still getting error: ${e}`,
           );
         }
       } finally {

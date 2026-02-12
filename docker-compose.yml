@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   worker:
     hostname: ssv-liquidator
@@ -10,14 +8,15 @@ services:
       dockerfile: Dockerfile
     command: sh -c "yarn cli:dev"
     env_file:
-      - ./.env.example
       - ./.env
     ports:
       - '$PORT:$PORT'
     volumes:
       - ./src:/opt/app/src
+      - ./src_ssv:/opt/app/src_ssv
       - sqlite-data:/opt/app/data
     environment:
+      - LIQUIDATOR_TYPE
       - SSV_SYNC_ENV
       - SSV_SYNC
       - NODE_URL
@@ -36,7 +35,6 @@ services:
       context: .
       dockerfile: ./monitoring/Dockerfile
     env_file:
-      - ./.env.example
       - ./.env
     ports:
       - 9090:9090
