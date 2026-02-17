@@ -1,5 +1,5 @@
 {
-  "contractAddress": "0x9143b8c25efa53f28de4cbefd0b6dfd66d43fea6",
+  "contractAddress": "0x3234e84b7d1eE1AF8b586E26814d4e268336D142",
   "abi": [
   {
     "inputs": [],
@@ -28,11 +28,6 @@
     "type": "error"
   },
   {
-    "inputs": [],
-    "name": "CallerNotOwner",
-    "type": "error"
-  },
-  {
     "inputs": [
       {
         "internalType": "address",
@@ -46,11 +41,6 @@
       }
     ],
     "name": "CallerNotOwnerWithData",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "CallerNotWhitelisted",
     "type": "error"
   },
   {
@@ -71,7 +61,7 @@
   },
   {
     "inputs": [],
-    "name": "ClusterDoesNotExists",
+    "name": "ClusterDoesNotExist",
     "type": "error"
   },
   {
@@ -102,17 +92,6 @@
   {
     "inputs": [],
     "name": "EmptyPublicKeysList",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint64",
-        "name": "operatorId",
-        "type": "uint64"
-      }
-    ],
-    "name": "ExceedValidatorLimit",
     "type": "error"
   },
   {
@@ -173,11 +152,6 @@
     "type": "error"
   },
   {
-    "inputs": [],
-    "name": "IncorrectValidatorState",
-    "type": "error"
-  },
-  {
     "inputs": [
       {
         "internalType": "bytes",
@@ -211,6 +185,11 @@
   {
     "inputs": [],
     "name": "InvalidPublicKeyLength",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidQuorum",
     "type": "error"
   },
   {
@@ -266,11 +245,6 @@
   },
   {
     "inputs": [],
-    "name": "NotAuthorizedOracle",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "NotCSSV",
     "type": "error"
   },
@@ -311,6 +285,11 @@
   },
   {
     "inputs": [],
+    "name": "OracleHasZeroWeight",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "PublicKeysSharesLengthMismatch",
     "type": "error"
   },
@@ -337,11 +316,6 @@
   {
     "inputs": [],
     "name": "StaleUpdate",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "TargetModuleDoesNotExist",
     "type": "error"
   },
   {
@@ -376,11 +350,6 @@
     "type": "error"
   },
   {
-    "inputs": [],
-    "name": "ValidatorAlreadyExists",
-    "type": "error"
-  },
-  {
     "inputs": [
       {
         "internalType": "bytes",
@@ -409,11 +378,6 @@
   {
     "inputs": [],
     "name": "ZeroAmount",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "ZeroInterval",
     "type": "error"
   },
   {
@@ -912,9 +876,9 @@
     "name": "getMaximumOperatorFee",
     "outputs": [
       {
-        "internalType": "uint64",
+        "internalType": "uint256",
         "name": "",
-        "type": "uint64"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -925,9 +889,9 @@
     "name": "getMaximumOperatorFeeSSV",
     "outputs": [
       {
-        "internalType": "uint64",
+        "internalType": "uint256",
         "name": "",
-        "type": "uint64"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -949,6 +913,19 @@
   {
     "inputs": [],
     "name": "getMinimumLiquidationCollateralSSV",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getMinimumOperatorEthFee",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1035,34 +1012,41 @@
     "name": "getOperatorById",
     "outputs": [
       {
-        "internalType": "address",
+        "components": [
+          {
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "fee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint32",
+            "name": "validatorCount",
+            "type": "uint32"
+          },
+          {
+            "internalType": "address",
+            "name": "whitelistedAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isPrivate",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isActive",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct ISSVViewsTypes.OperatorData",
         "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint32",
-        "name": "",
-        "type": "uint32"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      },
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",
@@ -1079,34 +1063,41 @@
     "name": "getOperatorByIdSSV",
     "outputs": [
       {
-        "internalType": "address",
+        "components": [
+          {
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "fee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint32",
+            "name": "validatorCount",
+            "type": "uint32"
+          },
+          {
+            "internalType": "address",
+            "name": "whitelistedAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isPrivate",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isActive",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct ISSVViewsTypes.OperatorData",
         "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint32",
-        "name": "",
-        "type": "uint32"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      },
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",
@@ -1123,24 +1114,31 @@
     "name": "getOperatorDeclaredFee",
     "outputs": [
       {
-        "internalType": "bool",
+        "components": [
+          {
+            "internalType": "bool",
+            "name": "isFeeDeclared",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "fee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "approvalBeginTime",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "approvalEndTime",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct ISSVViewsTypes.OperatorDeclaredFeeData",
         "name": "",
-        "type": "bool"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint64",
-        "name": "",
-        "type": "uint64"
-      },
-      {
-        "internalType": "uint64",
-        "name": "",
-        "type": "uint64"
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",
@@ -1221,14 +1219,21 @@
     "name": "getOperatorFeePeriods",
     "outputs": [
       {
-        "internalType": "uint64",
+        "components": [
+          {
+            "internalType": "uint64",
+            "name": "declarePeriod",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "executePeriod",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct ISSVViewsTypes.OperatorFeePeriodsData",
         "name": "",
-        "type": "uint64"
-      },
-      {
-        "internalType": "uint64",
-        "name": "",
-        "type": "uint64"
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",
@@ -1299,30 +1304,6 @@
         "internalType": "uint16",
         "name": "",
         "type": "uint16"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      }
-    ],
-    "name": "getUserDelegation",
-    "outputs": [
-      {
-        "internalType": "uint32[4]",
-        "name": "oracleIds",
-        "type": "uint32[4]"
-      },
-      {
-        "internalType": "uint256[4]",
-        "name": "amounts",
-        "type": "uint256[4]"
       }
     ],
     "stateMutability": "view",
@@ -1668,14 +1649,21 @@
     "name": "pendingUnstake",
     "outputs": [
       {
-        "internalType": "uint256[]",
-        "name": "amounts",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "unlockTimes",
-        "type": "uint256[]"
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "unlockTime",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ISSVViewsTypes.UnstakeRequestsData[]",
+        "name": "",
+        "type": "tuple[]"
       }
     ],
     "stateMutability": "view",
@@ -1757,9 +1745,9 @@
     "name": "stakingEthPoolBalance",
     "outputs": [
       {
-        "internalType": "uint64",
+        "internalType": "uint256",
         "name": "",
-        "type": "uint64"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
