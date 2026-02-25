@@ -51,13 +51,29 @@ export class EarningService {
       earned: null,
       earnedAtBlock: txReceipt.blockNumber,
     };
-    const { logs } = txReceipt;
-    const transferData = logs.find(
-      log => log.address.toLowerCase() === this._web3Provider.getTokenAddress(),
+    const blockNumber = txReceipt.blockNumber;
+    if (!blockNumber || blockNumber <= 0) {
+      return earnedData;
+    }
+
+    const beforeBalance = await this._web3Provider.web3.eth.getBalance(
+      earnedData.from,
+      blockNumber - 1,
     );
-    earnedData.earned =
-      transferData &&
-      +this._web3Provider.web3.utils.hexToNumberString(transferData.data);
+    const afterBalance = await this._web3Provider.web3.eth.getBalance(
+      earnedData.from,
+      blockNumber,
+    );
+
+    const gasPrice = tx.gasPrice || '0';
+    const gasUsed = txReceipt.gasUsed || 0;
+
+    const gasCost = BigInt(gasPrice) * BigInt(gasUsed);
+    const valueSent = BigInt(tx?.value || '0');
+    const balanceDelta = BigInt(afterBalance) - BigInt(beforeBalance);
+
+    const bounty = balanceDelta + gasCost + valueSent;
+    earnedData.earned = Number(bounty.toString());
 
     return earnedData;
   }
