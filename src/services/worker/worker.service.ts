@@ -12,7 +12,6 @@ export class WorkerService implements OnModuleInit {
 
   constructor(
     private _clusterService: ClusterService,
-    private _earningService: EarningService,
     private _systemService: SystemService,
     private _web3Provider: Web3Provider,
     private _config: ConfService,
@@ -38,16 +37,6 @@ export class WorkerService implements OnModuleInit {
 
       switch (item.event) {
         case SystemType.EVENT_CLUSTER_LIQUIDATED:
-          const earnedData = await this._earningService.fetch(
-            item.transactionHash,
-          );
-          if (!earnedData) continue;
-          await this._earningService.update(earnedData);
-          this._logger.debug(
-            `Updated earned data after cluster liquidation: ${JSON.stringify(
-              dataItem,
-            )}`,
-          );
           (await this._clusterService.update(
             {
               owner: dataItem.owner,
@@ -235,3 +224,4 @@ export class WorkerService implements OnModuleInit {
     }, {});
   }
 }
+

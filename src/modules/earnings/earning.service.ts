@@ -32,7 +32,7 @@ export class EarningService {
   }
 
   async fetch(transactionHash: string): Promise<any> {
-    const tx = await this._web3Provider.web3.eth.getTransaction(
+     const tx = await this._web3Provider.web3.eth.getTransaction(
       transactionHash,
     );
     const txReceipt = await this._web3Provider.web3.eth.getTransactionReceipt(
@@ -51,29 +51,13 @@ export class EarningService {
       earned: null,
       earnedAtBlock: txReceipt.blockNumber,
     };
-    const blockNumber = txReceipt.blockNumber;
-    if (!blockNumber || blockNumber <= 0) {
-      return earnedData;
-    }
-
-    const beforeBalance = await this._web3Provider.web3.eth.getBalance(
-      earnedData.from,
-      blockNumber - 1,
+    const { logs } = txReceipt;
+    const transferData = logs.find(
+      log => log.address.toLowerCase() === this._web3Provider.getTokenAddress(),
     );
-    const afterBalance = await this._web3Provider.web3.eth.getBalance(
-      earnedData.from,
-      blockNumber,
-    );
-
-    const gasPrice = tx.gasPrice || '0';
-    const gasUsed = txReceipt.gasUsed || 0;
-
-    const gasCost = BigInt(gasPrice) * BigInt(gasUsed);
-    const valueSent = BigInt(tx?.value || '0');
-    const balanceDelta = BigInt(afterBalance) - BigInt(beforeBalance);
-
-    const bounty = balanceDelta + gasCost + valueSent;
-    earnedData.earned = Number(bounty.toString());
+    earnedData.earned =
+      transferData &&
+      +this._web3Provider.web3.utils.hexToNumberString(transferData.data);
 
     return earnedData;
   }

@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cluster } from '@cli/modules/clusters/cluster.entity';
 import { ConfService } from '@cli/shared/services/conf.service';
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
+import { EarningService } from '@cli/modules/earnings/earning.service';
 import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
 import { SystemService, SystemType } from '@cli/modules/system/system.service';
 import { Web3Provider } from '@cli/shared/services/web3.provider';
@@ -18,6 +19,7 @@ export class LiquidationTask {
     private _clusterService: ClusterService,
     private _systemService: SystemService,
     private _web3Provider: Web3Provider,
+    private _earningService: EarningService,
   ) {}
 
   static get BLOCK_RANGE() {
@@ -236,6 +238,14 @@ export class LiquidationTask {
     transaction: Record<string, any>,
     maxTimeout = 1000 * 30,
   ): Promise<{ error; hash }> {
+    const liquidatorAddress =
+      this._web3Provider.web3.eth.accounts.privateKeyToAccount(
+        this._config.get('ACCOUNT_PRIVATE_KEY'),
+      ).address;
+    const balanceBefore = await this._web3Provider.web3.eth.getBalance(
+      liquidatorAddress,
+    );
+
     const transactionPromise: Promise<{ error: any; hash: any }> = new Promise(
       async (resolve, reject) => {
         this._web3Provider.web3.eth
@@ -249,9 +259,45 @@ export class LiquidationTask {
               }
             },
           )
-          .on('receipt', data => {
+          .on('receipt', async data => {
             this._metrics.liquidationStatus.set(1);
             this._logger.log(`📝 Transaction receipt: ${JSON.stringify(data)}`);
+            try {
+              if (data.status !== true) {
+                return;
+              }
+              const balanceAfter = await this._web3Provider.web3.eth.getBalance(
+                liquidatorAddress,
+              );
+              const gasPriceWei = transaction.gasPrice;
+              const gasCost =
+                BigInt(transaction.gasPrice) * BigInt(data.gasUsed.toString());
+              const earned =
+                BigInt(balanceAfter) - BigInt(balanceBefore) + gasCost;
+              const earnedWei = earned > 0n ? earned : 0n;
+              await this._earningService.update({
+                hash: data.transactionHash,
+                from: liquidatorAddress,
+                gasPrice: Number(gasPriceWei),
+                gasUsed: data.gasUsed,
+                earned: Number(earnedWei.toString()),
+                earnedAtBlock: data.blockNumber,
+              });
+              this._logger.debug(
+                `Updated earned data after transaction receipt: ${JSON.stringify({
+                    hash: data.transactionHash,
+                    from: liquidatorAddress,
+                    gasPrice: Number(gasPriceWei),
+                    gasUsed: data.gasUsed,
+                    earned: Number(earnedWei.toString()),
+                    earnedAtBlock: data.blockNumber,
+                })} `,
+               );
+            } catch (e) {
+              this._logger.warn(
+                `Failed to precompute earned amount: ${String(e)}`,
+              );
+            }
           });
       },
     );
@@ -331,3 +377,4 @@ export class LiquidationTask {
     return transaction;
   }
 }
+
