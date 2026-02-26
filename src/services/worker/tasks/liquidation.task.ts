@@ -270,8 +270,7 @@ export class LiquidationTask {
                 liquidatorAddress,
               );
               const gasPriceWei = transaction.gasPrice;
-              const gasCost =
-                BigInt(transaction.gasPrice) * BigInt(data.gasUsed.toString());
+              const gasCost = BigInt(data.gasUsed.toString());
               const earned =
                 BigInt(balanceAfter) - BigInt(balanceBefore) + gasCost;
               const earnedWei = earned > 0n ? earned : 0n;
