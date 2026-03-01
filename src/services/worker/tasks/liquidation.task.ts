@@ -274,6 +274,8 @@ export class LiquidationTask {
               const earned =
                 BigInt(balanceAfter) - BigInt(balanceBefore) + gasCost;
               const earnedWei = earned > 0n ? earned : 0n;
+              this._logger.debug((`Transaction success balance before: ${balanceBefore}, balance after: ${balanceAfter}, gas cost: ${gasCost}, earned: ${earnedWei}`));
+
               await this._earningService.update({
                 hash: data.transactionHash,
                 from: liquidatorAddress,
