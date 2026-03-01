@@ -11,7 +11,7 @@ export enum SystemType {
   LIQUIDATION_THRESHOLD_PERIOD = 'LIQUIDATION_THRESHOLD_PERIOD',
   // event names
   EVENT_COLLATERAL_UPDATED = 'MinimumLiquidationCollateralUpdated',
-  EVENT_LIQUIDATION_THRESHOLD_PERIOD_UPDATED = 'LiquidationThresholdPeriodUpdated',
+  EVENT_LIQUIDATION_THRESHOLD_PERIOD_UPDATED = 'LiquidationThresholdPeriodSSVUpdated',
   EVENT_OPERATOR_FEE_APPROVED = 'OperatorFeeExecuted',
   EVENT_VALIDATOR_ADDED = 'ValidatorAdded',
   EVENT_VALIDATOR_REMOVED = 'ValidatorRemoved',
