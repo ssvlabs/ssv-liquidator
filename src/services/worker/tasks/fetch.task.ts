@@ -24,6 +24,10 @@ export class FetchTask {
     return 1;
   }
 
+  static get isLocked() {
+    return FetchTask.isProcessLocked;
+  }
+
   /*
     This task used to collect all contract events for specific period of time/blocks
   */
