@@ -177,9 +177,8 @@ export class WorkerService implements OnModuleInit {
               operatorIds: dataItem.operatorIds,
             },
             {
-              balance: dataItem.newBalance,
+              balance: dataItem.balance,
               burnRate: null,
-              isLiquidated: false,
               cluster: dataItem.cluster,
             },
           )) &&
