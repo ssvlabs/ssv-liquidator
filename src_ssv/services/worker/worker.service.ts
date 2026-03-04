@@ -36,6 +36,7 @@ export class WorkerService implements OnModuleInit {
     for (const item of events) {
       if (!Object.values(SystemType).includes(item.event)) continue;
       const dataItem: any = this._convert(item.returnValues);
+      const clusterBalance = dataItem.cluster?.balance;
       dataItem.cluster = JSON.stringify(dataItem.cluster);
       dataItem.blockNumber = item.blockNumber;
 
@@ -177,7 +178,7 @@ export class WorkerService implements OnModuleInit {
               operatorIds: dataItem.operatorIds,
             },
             {
-              balance: dataItem.balance,
+              balance: clusterBalance,
               burnRate: null,
               cluster: dataItem.cluster,
             },
