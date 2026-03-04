@@ -31,37 +31,6 @@ export class EarningService {
     await this._earningRepository.insert(items);
   }
 
-  async fetch(transactionHash: string): Promise<any> {
-     const tx = await this._web3Provider.web3.eth.getTransaction(
-      transactionHash,
-    );
-    const txReceipt = await this._web3Provider.web3.eth.getTransactionReceipt(
-      transactionHash,
-    );
-
-    if (!txReceipt) {
-      return null;
-    }
-
-    const earnedData = {
-      hash: transactionHash,
-      from: txReceipt.from,
-      gasPrice: +tx.gasPrice,
-      gasUsed: txReceipt.gasUsed,
-      earned: null,
-      earnedAtBlock: txReceipt.blockNumber,
-    };
-    const { logs } = txReceipt;
-    const transferData = logs.find(
-      log => log.address.toLowerCase() === this._web3Provider.getTokenAddress(),
-    );
-    earnedData.earned =
-      transferData &&
-      +this._web3Provider.web3.utils.hexToNumberString(transferData.data);
-
-    return earnedData;
-  }
-
   async update(item: any): Promise<void> {
     const liquidatorAddress =
       this._web3Provider.web3.eth.accounts.privateKeyToAccount(

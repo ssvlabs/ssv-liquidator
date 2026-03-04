@@ -262,6 +262,18 @@ export class LiquidationTask {
           .on('receipt', async data => {
             this._metrics.liquidationStatus.set(1);
             this._logger.log(`📝 Transaction receipt: ${JSON.stringify(data)}`);
+            this._logger.log(
+              `Receipt economics: ${JSON.stringify({
+                transactionHash: data.transactionHash,
+                status: data.status,
+                from: data.from,
+                to: data.to,
+                blockNumber: data.blockNumber,
+                gasUsed: data.gasUsed,
+                effectiveGasPrice: (data as any).effectiveGasPrice,
+                txGasPrice: transaction.gasPrice,
+              })}`,
+            );
             try {
               if (data.status !== true) {
                 return;
@@ -269,31 +281,37 @@ export class LiquidationTask {
               const balanceAfter = await this._web3Provider.web3.eth.getBalance(
                 liquidatorAddress,
               );
-              const gasPriceWei = transaction.gasPrice;
-              const gasCost = BigInt(data.gasUsed.toString());
+              const txGasPriceWei = BigInt(
+                (transaction.gasPrice || 0).toString(),
+              );
+              const receiptEffectiveGasPrice = (data as any).effectiveGasPrice;
+              const effectiveGasPriceWei = BigInt(
+                (receiptEffectiveGasPrice || txGasPriceWei).toString(),
+              );
+              const gasCost =
+                BigInt(data.gasUsed.toString()) * effectiveGasPriceWei;
               const earned =
                 BigInt(balanceAfter) - BigInt(balanceBefore) + gasCost;
               const earnedWei = earned > 0n ? earned : 0n;
-              this._logger.debug((`Transaction success balance before: ${balanceBefore}, balance after: ${balanceAfter}, gas cost: ${gasCost}, earned: ${earnedWei}`));
+              this._logger.debug(
+                `Transaction success balance before: ${balanceBefore}, balance after: ${balanceAfter}, gas cost: ${gasCost}, effective gas price: ${effectiveGasPriceWei}, earned: ${earnedWei}`,
+              );
 
-              await this._earningService.update({
+              const earnedData = {
                 hash: data.transactionHash,
                 from: liquidatorAddress,
-                gasPrice: Number(gasPriceWei),
+                gasPrice: effectiveGasPriceWei.toString(),
                 gasUsed: data.gasUsed,
-                earned: Number(earnedWei.toString()),
+                earned: earnedWei.toString(),
                 earnedAtBlock: data.blockNumber,
-              });
+              };
+
+              await this._earningService.update(earnedData);
               this._logger.debug(
-                `Updated earned data after transaction receipt: ${JSON.stringify({
-                    hash: data.transactionHash,
-                    from: liquidatorAddress,
-                    gasPrice: Number(gasPriceWei),
-                    gasUsed: data.gasUsed,
-                    earned: Number(earnedWei.toString()),
-                    earnedAtBlock: data.blockNumber,
-                })} `,
-               );
+                `Updated earned data after transaction receipt: ${JSON.stringify(
+                  earnedData,
+                )}`,
+              );
             } catch (e) {
               this._logger.warn(
                 `Failed to precompute earned amount: ${String(e)}`,
@@ -378,4 +396,3 @@ export class LiquidationTask {
     return transaction;
   }
 }
-
