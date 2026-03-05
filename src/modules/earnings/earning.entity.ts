@@ -11,14 +11,14 @@ export class Earning {
   @PrimaryColumn()
   hash: string;
 
-  @Column({ default: null })
-  gasPrice: number;
+  @Column({ type: 'text', default: null })
+  gasPrice: string;
 
   @Column({ default: null })
   gasUsed: number;
 
-  @Column({ default: null })
-  earned: number;
+  @Column({ type: 'text', default: null })
+  earned: string;
 
   @Column({ default: null })
   earnedAtBlock: number;

@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cluster } from '@cli/modules/clusters/cluster.entity';
 import { ConfService } from '@cli/shared/services/conf.service';
 import { ClusterService } from '@cli/modules/clusters/cluster.service';
+import { EarningService } from '@cli/modules/earnings/earning.service';
 import { MetricsService } from '@cli/modules/webapp/metrics/services/metrics.service';
 import { SystemService, SystemType } from '@cli/modules/system/system.service';
 import { Web3Provider } from '@cli/shared/services/web3.provider';
@@ -18,6 +19,7 @@ export class LiquidationTask {
     private _clusterService: ClusterService,
     private _systemService: SystemService,
     private _web3Provider: Web3Provider,
+    private _earningService: EarningService,
   ) {}
 
   static get BLOCK_RANGE() {
@@ -236,6 +238,14 @@ export class LiquidationTask {
     transaction: Record<string, any>,
     maxTimeout = 1000 * 30,
   ): Promise<{ error; hash }> {
+    const liquidatorAddress =
+      this._web3Provider.web3.eth.accounts.privateKeyToAccount(
+        this._config.get('ACCOUNT_PRIVATE_KEY'),
+      ).address;
+    const balanceBefore = await this._web3Provider.web3.eth.getBalance(
+      liquidatorAddress,
+    );
+
     const transactionPromise: Promise<{ error: any; hash: any }> = new Promise(
       async (resolve, reject) => {
         this._web3Provider.web3.eth
@@ -249,9 +259,64 @@ export class LiquidationTask {
               }
             },
           )
-          .on('receipt', data => {
+          .on('receipt', async data => {
             this._metrics.liquidationStatus.set(1);
             this._logger.log(`📝 Transaction receipt: ${JSON.stringify(data)}`);
+            this._logger.log(
+              `Receipt economics: ${JSON.stringify({
+                transactionHash: data.transactionHash,
+                status: data.status,
+                from: data.from,
+                to: data.to,
+                blockNumber: data.blockNumber,
+                gasUsed: data.gasUsed,
+                effectiveGasPrice: (data as any).effectiveGasPrice,
+                txGasPrice: transaction.gasPrice,
+              })}`,
+            );
+            try {
+              if (data.status !== true) {
+                return;
+              }
+              const balanceAfter = await this._web3Provider.web3.eth.getBalance(
+                liquidatorAddress,
+              );
+              const txGasPriceWei = BigInt(
+                (transaction.gasPrice || 0).toString(),
+              );
+              const receiptEffectiveGasPrice = (data as any).effectiveGasPrice;
+              const effectiveGasPriceWei = BigInt(
+                (receiptEffectiveGasPrice || txGasPriceWei).toString(),
+              );
+              const gasCost =
+                BigInt(data.gasUsed.toString()) * effectiveGasPriceWei;
+              const earned =
+                BigInt(balanceAfter) - BigInt(balanceBefore) + gasCost;
+              const earnedWei = earned > 0n ? earned : 0n;
+              this._logger.debug(
+                `Transaction success balance before: ${balanceBefore}, balance after: ${balanceAfter}, gas cost: ${gasCost}, effective gas price: ${effectiveGasPriceWei}, earned: ${earnedWei}`,
+              );
+
+              const earnedData = {
+                hash: data.transactionHash,
+                from: liquidatorAddress,
+                gasPrice: effectiveGasPriceWei.toString(),
+                gasUsed: data.gasUsed,
+                earned: earnedWei.toString(),
+                earnedAtBlock: data.blockNumber,
+              };
+
+              await this._earningService.update(earnedData);
+              this._logger.debug(
+                `Updated earned data after transaction receipt: ${JSON.stringify(
+                  earnedData,
+                )}`,
+              );
+            } catch (e) {
+              this._logger.warn(
+                `Failed to precompute earned amount: ${String(e)}`,
+              );
+            }
           });
       },
     );
