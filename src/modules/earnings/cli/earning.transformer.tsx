@@ -1,4 +1,4 @@
-const WEI_PER_ETH = 1000000000000000000n;
+const WEI_PER_ETH = 10n ** 18n;
 
 const formatWeiToEth = value => {
   if (value === null || value === undefined) {
