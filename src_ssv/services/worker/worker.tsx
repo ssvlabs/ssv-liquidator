@@ -62,7 +62,7 @@ async function bootstrap() {
   const web3Provider = app.select(WorkerModule).get(Web3Provider);
 
   // Start API server
-  const port = confService.getNumber('PORT') || 3000;
+  const port = confService.getNumber('PORT') || 3001;
   await app.listen(port);
   console.info(`WebApp is running on port: ${port}`);
 
