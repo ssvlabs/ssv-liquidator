@@ -1,6 +1,6 @@
 {
   "contractAddress": "0x3234e84b7d1eE1AF8b586E26814d4e268336D142",
-  "abi": [
+  "abi":[
   {
     "inputs": [],
     "stateMutability": "nonpayable",
@@ -195,6 +195,16 @@
   },
   {
     "inputs": [],
+    "name": "InvalidOperatorFeeIncreaseLimit",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidOperatorFeeRange",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "InvalidOperatorIdsLength",
     "type": "error"
   },
@@ -242,6 +252,11 @@
   {
     "inputs": [],
     "name": "LegacyOperatorFeeDeclarationInvalid",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "MaxPrecisionExceeded",
     "type": "error"
   },
   {
