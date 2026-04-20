@@ -9,6 +9,7 @@ import {
   SystemType,
 } from '@cli-ssv/modules/system/system.service';
 import { Web3Provider } from '@cli-ssv/shared/services/web3.provider';
+import { FetchTask } from '@cli-ssv/services/worker/tasks/fetch.task';
 
 @Injectable()
 export class LiquidationTask {
@@ -28,7 +29,7 @@ export class LiquidationTask {
   }
 
   async liquidate(): Promise<void> {
-    if (LiquidationTask.isProcessLocked) {
+    if (LiquidationTask.isProcessLocked || FetchTask.isLocked) {
       this._logger.log(`Process is already locked`);
       return;
     }
