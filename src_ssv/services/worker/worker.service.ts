@@ -42,16 +42,23 @@ export class WorkerService implements OnModuleInit {
 
       switch (item.event) {
         case SystemType.EVENT_CLUSTER_LIQUIDATED:
-          const earnedData = await this._earningService.fetch(
-            item.transactionHash,
-          );
-          if (!earnedData) continue;
-          await this._earningService.update(earnedData);
-          this._logger.debug(
-            `Updated earned data after cluster liquidation: ${JSON.stringify(
-              dataItem,
-            )}`,
-          );
+          try {
+            const earnedData = await this._earningService.fetch(
+              item.transactionHash,
+            );
+            if (earnedData) {
+              await this._earningService.update(earnedData);
+              this._logger.debug(
+                `Updated earned data after cluster liquidation: ${JSON.stringify(
+                  dataItem,
+                )}`,
+              );
+            }
+          } catch (e) {
+            this._logger.warn(
+              `Could not update earnings for cluster liquidation tx ${item.transactionHash}: ${e}`,
+            );
+          }
           (await this._clusterService.update(
             {
               owner: dataItem.owner,

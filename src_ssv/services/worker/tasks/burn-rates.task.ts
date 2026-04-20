@@ -10,6 +10,7 @@ import {
   SystemService,
   SystemType,
 } from '@cli-ssv/modules/system/system.service';
+import { FetchTask } from '@cli-ssv/services/worker/tasks/fetch.task';
 
 @Injectable()
 export class BurnRatesTask {
@@ -72,7 +73,7 @@ export class BurnRatesTask {
    * and generate updated cluster profile
    */
   async syncBurnRates(): Promise<void> {
-    if (BurnRatesTask.isProcessLocked) {
+    if (BurnRatesTask.isProcessLocked || FetchTask.isLocked) {
       this._logger.log(`Process is already locked`);
       return;
     }
