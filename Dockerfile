@@ -1,4 +1,4 @@
-FROM node:20 AS builder
+FROM node:24.22.2 AS builder
 
 ENV APP_WORKDIR=/opt/app/
 
@@ -10,7 +10,7 @@ RUN yarn install
 COPY . $APP_WORKDIR
 
 # slim
-FROM node:20-slim
+FROM node:24.22.2-slim
 
 ENV NODE_OPTIONS=--openssl-legacy-provider
 ENV APP_WORKDIR=/opt/app/
