@@ -28,6 +28,11 @@ export class LiquidationTask {
     return 10;
   }
 
+  // Buffer on top of eth_estimateGas (same 60% as ssv-oracle prod config)
+  static get GAS_ESTIMATE_MULTIPLIER() {
+    return 1.6;
+  }
+
   async liquidate(): Promise<void> {
     if (LiquidationTask.isProcessLocked || FetchTask.isLocked) {
       this._logger.log(`Process is already locked`);
@@ -165,11 +170,25 @@ export class LiquidationTask {
     this._logger.debug(
       `Building transaction to liquidate a cluster: ${logItem}`,
     );
-    const transaction: Record<string, any> = await this.buildTransaction({
-      owner,
-      operatorIds,
-      cluster,
-    });
+    let transaction: Record<string, any>;
+    try {
+      transaction = await this.buildTransaction({
+        owner,
+        operatorIds,
+        cluster,
+      });
+    } catch (error) {
+      // Gas estimation failed: the call would revert (e.g. already liquidated)
+      // or the RPC failed. Skip this cluster, it will be retried next round.
+      const reason = this._web3Provider.getErrorByHash(error?.data);
+      this._logger.error(
+        `Could not build liquidation transaction, skipping cluster: ${logItem}. Reason: ${
+          reason ? reason.error : error?.message || error
+        }`,
+      );
+      this._metrics.liquidationStatus.set(0);
+      return false;
+    }
     this._logger.debug(
       `Built transaction to liquidate a cluster: ${logItem}. Transaction: ${JSON.stringify(
         transaction,
@@ -315,20 +334,14 @@ export class LiquidationTask {
       data: methodSignature,
     };
 
-    // Build gas and gas price values
-    const totalOperators =
-      this._web3Provider.operatorIdsToArray(operatorIds).length;
-    transaction.gas = this._config.gasUsage(); // totalOperators
-    if (!transaction.gas) {
-      console.error(
-        `Gas group was not found for ${totalOperators} operators. Going to estimate transaction gas...`,
-      );
-      transaction.gas = await this.getGas(transaction);
-    } else {
-      console.info(
-        `Gas group was found for ${totalOperators} operators and is: ${transaction.gas}`,
-      );
-    }
+    // Estimate gas for every liquidation (gas cost depends on operators count
+    // and effective balance) and add a safety buffer on top of the estimate.
+    // Throws if the call would revert or the RPC fails - the caller skips the cluster.
+    transaction.gas = await this.getGas(
+      transaction,
+      LiquidationTask.GAS_ESTIMATE_MULTIPLIER,
+    );
+    this._logger.debug(`Estimated liquidation gas limit: ${transaction.gas}`);
 
     transaction.gasPrice = await this.getGasPrice();
 
