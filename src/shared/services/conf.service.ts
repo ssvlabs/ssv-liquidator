@@ -98,15 +98,4 @@ export class ConfService extends ConfigService {
   get nodeEnv(): string {
     return this.get('NODE_ENV') || 'development';
   }
-
-  gasUsage(): number {
-    return 300000; // tmp solution
-    // const gasGroups = {
-    //   '4': 132700,
-    //   '7': 173600,
-    //   '10': 215300,
-    //   '13': 257200,
-    // };
-    // return gasGroups[`${operatorsCount}`];
-  }
 }
